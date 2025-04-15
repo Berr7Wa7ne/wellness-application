@@ -1,22 +1,21 @@
 import React from 'react';
-import Navbar from "../layout/Navbar";
 import heroPic from "../../assets/hero-pic.png"
 
-export const HeroSection = () => {
+export const HeroSection = ({ children }) => {
   return (
     <section className="relative h-[80vh] md:h-screen w-full">
       {/* Background Image */}
       <img
-        src={heroPic} // Replace with your actual image path
+        src={heroPic}
         alt="Hero background"
         className="absolute inset-0 w-full h-full object-cover z-0"
       />
 
       {/* Overlay */}
-      <div className="absolute" />
+      <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
 
-      {/* Navbar */}
-      <Navbar />
+      {/* Inject Navbar (or other children) */}
+      {children}
 
       {/* Hero Text */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center text-white px-4">

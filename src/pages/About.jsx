@@ -4,13 +4,16 @@ import {AboutText} from "../components/about/AboutText";
 import {MissionVision} from "../components/about/MissionVision";
 import {ProductPreviewSection} from "../components/about/ProductPreviewSection";
 import {CTASection} from "../components/about/CTASection";
-import {Newsletter} from "../components/about/Newsletter";
+import {Newsletter} from "../components/shared/Newsletter";
 import {Footer} from "../components/layout/Footer";
+import Navbar from "../components/layout/Navbar";
 
 const About = () => {
   return (
     <>
-      <HeroSection />
+    <HeroSection>
+      <Navbar />
+    </HeroSection>
       <div className="md:mx-12">
       <AboutText />
       <MissionVision />
