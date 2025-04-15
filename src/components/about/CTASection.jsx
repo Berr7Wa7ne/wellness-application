@@ -17,7 +17,7 @@ export const CTASection = () => {
           <h2 className="text-3xl md:text-[70px] text-[#F2F6EF] mb-4">
             Ready to Begin Your Healing Journey?
           </h2>
-          <p className="mb-6 text-base md:text-[20px] text-[#213721]">
+          <p className="mb-6 text-base md:text-[20px] text-[#4ebb4e]">
             Shop now to start aligning with your path.
           </p>
           <button className="mt-6 px-[40px] py-[20px] bg-[#F2F6EF] text-[#213721] rounded-md font-semibold hover:bg-gray-200 md:text-[22px]">

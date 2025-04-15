@@ -78,15 +78,15 @@ const ScrollableRow = ({ products }) => {
 export const ProductPreviewSection = () => {
   return (
     <section className="px-4 py-12 bg-white text-black">
-      <p className="text-[28px] text-[#617C5F] text-center mb-4">
+      <p className="md:text-[28px] text-[16px] text-[#617C5F] text-center mb-4">
         Popular Category
       </p>
-      <h2 className="text-center text-[56px] text-[#213721] font-semibold mb-8">
+      <h2 className="text-center md:text-[56px] text-[27px] text-[#213721] font-semibold md:mb-8">
         Explore the essence of<br />elegance
       </h2>
       {Object.entries(productsByCategory).map(([category, products], idx) => (
-        <div key={idx} className="py-6 mb-10">
-          <h3 className="text-[40px] text-[#213721] font-semibold mb-10 px-16">{category}</h3>
+        <div key={idx} className="py-6 md:mb-10">
+          <h3 className="md:text-[40px] text-[20px] text-[#213721] font-semibold mb-10 px-16">{category}</h3>
           <ScrollableRow products={products} />
         </div>
       ))}
@@ -100,12 +100,12 @@ export const ProductCard = ({ name, price, image }) => (
       <img
         src={image}
         alt={name}
-        className="w-full h-[330px] object-cover"
+        className="md:w-full md:h-[330px] object-cover"
       />
       <div className="p-6"> {/* Increased padding */}
-        <h4 className="font-medium text-[28px] text-[#213721] mb-2">{name}</h4>
+        <h4 className="font-medium md:text-[28px] text-[16px] text-[#213721] mb-2">{name}</h4>
         <div className="flex justify-between items-center">
-          <p className="text-[22px] text-[#213721]">{price}</p>
+          <p className="md:text-[22px] text-[12px] text-[#213721]">{price}</p>
           <div className="text-sm text-green-950">★ ★ ★ ★ ☆</div>
         </div>
       </div>

@@ -11,9 +11,11 @@ const About = () => {
   return (
     <>
       <HeroSection />
+      <div className="md:mx-12">
       <AboutText />
       <MissionVision />
       <ProductPreviewSection />
+      </div>
       <CTASection />
       <Newsletter />
       <Footer />
