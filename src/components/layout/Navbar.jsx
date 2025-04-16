@@ -13,7 +13,7 @@ const Navbar = () => {
         <nav className="hidden md:flex gap-6 text-sm font-medium uppercase text-[#F2F6EF]">
           <Link to="/" className="hover:text-emerald-300">About</Link>
           <Link to="/services" className="hover:text-emerald-300">Services</Link>
-          <Link to="#" className="hover:text-emerald-300">Videos</Link>
+          <Link to="/videos" className="hover:text-emerald-300">Videos</Link>
           <Link to="#" className="hover:text-emerald-300">Merchandise</Link>
           <Link to="#" className="hover:text-emerald-300">Contact Us</Link>
         </nav>

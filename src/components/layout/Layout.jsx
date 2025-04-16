@@ -5,7 +5,7 @@ import Navbar from './Navbar';
 
 const Layout = () => {
   const location = useLocation();
-  const isHeroPage = ["/", "/services"].includes(location.pathname); // Adjust as needed
+  const isHeroPage = ["/", "/services", "/videos"].includes(location.pathname); // Adjust as needed
 
   return (
     <div className="relative min-h-screen">
