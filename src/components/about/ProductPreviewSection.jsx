@@ -13,8 +13,8 @@ import licensePortal from "../../assets/license-portal.png";
 const productsByCategory = {
   "Ritual Essentials": [
     { name: "Moonlight Calm", price: "$20", image: moonlightCalm },
-    { name: "Manifest Fire – Magickal Oil", price: "$23", image: manifestFire },
-    { name: "Heart Opening – Magickal Oil", price: "$20", image: heartOpening },
+    { name: "Manifest Fire", price: "$23", image: manifestFire },
+    { name: "Heart Opening", price: "$20", image: heartOpening },
   ],
   "Spiritual Power & Protection": [
     { name: "Energy Clearing Spray", price: "$20", image: energyClearing },
@@ -78,7 +78,7 @@ const ScrollableRow = ({ products }) => {
 export const ProductPreviewSection = () => {
   return (
     <section className="px-4 py-12 bg-white text-black">
-      <p className="md:text-[28px] text-[16px] text-[#617C5F] text-center mb-4">
+      <p className="md:text-[28px] text-[16px] text-[#617C5F] text-center mb-4 font-serif">
         Popular Category
       </p>
       <h2 className="text-center md:text-[56px] text-[27px] text-[#213721] font-semibold md:mb-8">
@@ -103,10 +103,10 @@ export const ProductCard = ({ name, price, image }) => (
         className="md:w-full md:h-[330px] object-cover"
       />
       <div className="p-6"> {/* Increased padding */}
-        <h4 className="font-medium md:text-[28px] text-[16px] text-[#213721] mb-2">{name}</h4>
+        <h4 className="font-medium md:text-[28px] text-[16px] text-[#213721] mb-2 font-mono">{name}</h4>
         <div className="flex justify-between items-center">
-          <p className="md:text-[22px] text-[12px] text-[#213721]">{price}</p>
-          <div className="text-sm text-green-950">★ ★ ★ ★ ☆</div>
+          <p className="md:text-[22px] text-[12px] text-[#213721] font-serif font-semibold">{price}</p>
+          <div className="text-xl text-green-950">★ ★ ★ ★ ☆</div>
         </div>
       </div>
     </div>

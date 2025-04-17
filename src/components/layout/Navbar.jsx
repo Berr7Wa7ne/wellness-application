@@ -18,7 +18,7 @@ const Navbar = () => {
           <div className="text-lg font-bold tracking-wide text-white">
             SoulScape
           </div>
-          <nav className="hidden md:flex gap-6 text-sm font-medium uppercase text-[#F2F6EF]">
+          <nav className="hidden md:flex gap-6 text-xl font-medium font-mono uppercase text-[#F2F6EF]">
             <Link to="/" className="hover:text-emerald-300">About</Link>
             <Link to="/services" className="hover:text-emerald-300">Services</Link>
             <Link to="/videos" className="hover:text-emerald-300">Videos</Link>

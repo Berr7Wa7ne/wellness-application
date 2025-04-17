@@ -14,7 +14,7 @@ export const MissionVision = () => {
             className="w-7 md:w-[48px]"
             />
             <h3 className="md:text-[40px] text-[20px] text-[#213721] font-semibold mb-2"> Our mission</h3>
-            <p className='text-[#3C5E39] md:text-[20px] text-[15px] leading-tight'>
+            <p className='text-[#3C5E39] md:text-[20px] text-[15px] leading-tight font-serif'>
               To empower individuals through sacred tools, spiritual education,<br />
               and healing rituals — supporting the journey of personal growth, <br />
               energetic balance, and inner transformation.<br />
@@ -27,7 +27,7 @@ export const MissionVision = () => {
             className="w-7 md:w-[48px]"
             />
             <h3 className="md:text-[40px] text-[20px] text-[#213721] font-semibold mb-2">Our vision</h3>
-            <p className='text-[#3C5E39] md:text-[20px] text-[15px] leading-tight'>
+            <p className='text-[#3C5E39] md:text-[20px] text-[15px] leading-tight font-serif'>
               To be a trusted spiritual guide and global wellness portal —<br />
               inspiring deeper self-connection, community, and purposeful living<br />
               through elevated metaphysical spaces & tools.<br />

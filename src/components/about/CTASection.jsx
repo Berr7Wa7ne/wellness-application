@@ -14,13 +14,13 @@ export const CTASection = () => {
       {/* Centered Content */}
       <div className="absolute inset-0 flex items-center justify-center z-10">
         <div className="p-6 rounded max-w-2xl text-center">
-          <h2 className="text-3xl md:text-[70px] text-[#F2F6EF] mb-4">
+          <h2 className="text-3xl md:text-[75px] text-[#F2F6EF] mb-4">
             Ready to Begin Your Healing Journey?
           </h2>
-          <p className="mb-6 text-base md:text-[20px] text-[#4ebb4e]">
-            Shop now to start aligning with your path.
+          <p className="mb-6 text-base md:text-[20px] text-[#fdfdf4] font-mono">
+          Whether you're seeking clarity, connection, or transformation — your path starts here. Explore our offerings, book a service, or connect with us to receive guidance aligned with your so
           </p>
-          <button className="mt-6 px-[40px] py-[20px] bg-[#F2F6EF] text-[#213721] rounded-md font-semibold hover:bg-gray-200 md:text-[22px]">
+          <button className="mt-6 px-[40px] py-[20px] bg-[#F2F6EF] text-[#213721] rounded-md font-semibold hover:bg-gray-200 md:text-[22px] font-mono">
           Shop now →
         </button>
         </div>

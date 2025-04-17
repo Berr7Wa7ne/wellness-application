@@ -12,7 +12,7 @@ export const ServicesHero = ({ children }) => {
 
       {/* Hero Content */}
       <div className="absolute inset-0 z-20 flex flex-col justify-center items-start px-6 md:px-12">
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-4 font-mono">
         {/* Horizontal line with dot at the end */}
         <div className="relative w-32 h-px bg-white">
             <span className="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-white rounded-full" />

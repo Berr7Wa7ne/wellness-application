@@ -6,7 +6,7 @@ import twitter from '../../assets/twitter.png';
 export const Footer = () => {
   return (
     <div>
-      <footer className="bg-[#F2F6EF]  px-4 border-t">
+      <footer className="bg-[#F2F6EF]  px-4 border-t font-mono">
         <div className="mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
         <div className='text-center border-r-2 border-[#C8D8C0] md:px-4 md:py-12 px-2 py-6'>
           <h4 className="font-semibold md:mb-14 mb-7 text-[22px]">SoulScape</h4>
@@ -57,7 +57,7 @@ export const Footer = () => {
           </div>
         </div>
       </footer>
-      <p className='md:text-[18px] text-[#617C5F] ml-16 my-7'>© soulscape2025</p>
+      <p className='md:text-[18px] text-[#617C5F] ml-16 my-7 font-serif'>© soulscape2025</p>
     </div>
   )
 }

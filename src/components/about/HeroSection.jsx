@@ -22,12 +22,12 @@ export const HeroSection = ({ children }) => {
         <h1 className="text-lg md:text-[108px] leading-tight">
           Get to know us better,<br /> about our brand
         </h1>
-        <p className="mt-4 max-w-xl text-sm md:text-[20px] text-[#C7D1C6]">
+        <p className="mt-4 max-w-xl text-sm md:text-[20px] text-[#C7D1C6] font-mono">
           We’re here to inspire a mindful journey through ancient knowledge, rituals,
           and healing. Learn how our brand can help you reconnect with your own clarity,
           purpose, and inner peace.
         </p>
-        <button className="mt-6 px-[40px] py-[20px] bg-[#F2F6EF] text-[#213721] rounded-md font-semibold hover:bg-gray-200 md:text-[22px]">
+        <button className="mt-6 px-[40px] py-[20px] bg-[#F2F6EF] text-[#213721] rounded-md font-semibold hover:bg-gray-200 md:text-[22px] font-mono">
           Shop now →
         </button>
       </div>
