@@ -1,5 +1,6 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import heroPic from "../../assets/hero-pic.png";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from 'react-router-dom';
@@ -11,10 +12,54 @@ export const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Sign Up:', { name, email, password });
+        setLoading(true);
+        setError('');
+
+        // Basic validation
+        if (password !== confirmPassword) {
+            setError("Passwords don't match");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const response = await axios.post(`${API_BASE_URL}/auth/register`, {
+                name,
+                email,
+                password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Registration successful:', response.data);
+            
+            // Redirect to login page after successful registration
+            navigate('/', { 
+                state: { 
+                    registrationSuccess: true,
+                    email: email 
+                } 
+            });
+
+        } catch (err) {
+            console.error('Registration error:', err.response?.data);
+            setError(
+                err.response?.data?.message || 
+                err.message || 
+                'Registration failed. Please try again.'
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     const togglePasswordVisibility = () => {
@@ -115,8 +160,9 @@ export const SignUp = () => {
                     <button 
                         type="submit" 
                         className="w-full py-3 bg-[#213721] text-white font-semibold shadow-md hover:bg-green-600 transition duration-300"
+                        disabled={loading}
                     >
-                        Sign Up
+                        {loading ? 'Creating account...' : 'Sign Up'}
                     </button>
                     <p className="pt-4 text-center text-sm text-[#7B8499] lg:text-end">
                         Already registered?{" "}

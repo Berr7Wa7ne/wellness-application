@@ -1,5 +1,5 @@
 // src/controllers/authController.js
-const { registerUser, loginUser, registerAdmin, loginAdmin } = require("../services/authServices");
+const { registerUser, loginUser, registerAdmin, loginAdmin, sendPasswordResetEmail, resetPassword } = require("../services/authServices");
 
 // Register a new user
 const register = async (req, res) => {
@@ -59,4 +59,29 @@ const loginAdminController = async (req, res) => {
     }
 };
 
-module.exports = { register, login, registerAdminController, loginAdminController };
+
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log("Thi is the email", email)
+        const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+        console.log("Frontend url", frontendUrl)
+        const response = await sendPasswordResetEmail(email, frontendUrl);
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const resetPasswordController  = async (req, res) => {
+    try {
+        const { userId, token, newPassword } = req.body;
+        console.log("These are the request body", userId, token, newPassword)
+        const response = await resetPassword(userId, token, newPassword);
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+module.exports = { register, login, registerAdminController, loginAdminController, resetPasswordController, forgotPassword };

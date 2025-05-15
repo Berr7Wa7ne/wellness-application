@@ -14,7 +14,17 @@ const productAdminRoutes = require("./src/routes/admin/productAdminRoutes");
 
 const app = express();
 
-app.use(cors());
+  app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "https://wellness-application.vercel.app"
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+
+app.options('*', cors());
 app.use(express.json());
 
 connectDB();
