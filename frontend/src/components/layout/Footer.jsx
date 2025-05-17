@@ -33,7 +33,7 @@ export const Footer = () => {
   <h4 className="font-semibold mb-2 md:text-[28px] text-[20px] text-[#617C5F]">Quick Links</h4>
   <ul className="space-y-1 md:text-[22px] text-[18px] text-[#101C10]">
     <li className='mb-2'>
-      <a href="/" className="hover:underline hover:text-[#617C5F]">About</a>
+      <a href="/about" className="hover:underline hover:text-[#617C5F]">About</a>
     </li>
     <li className='mb-2'>
       <a href="/services" className="hover:underline hover:text-[#617C5F]">Services</a>

@@ -4,7 +4,7 @@ import goddess from '../../assets/goddess.png';
 export const AboutText = () => {
   return (
     <div>
-    <section className="md:py-16 py-8 px-4 text-left">
+    <section className="md:py-16 py-8 px-4 text-left bg-white">
         <h2 className="md:text-[28px] text-[16px] font-semibold mb-4 text-[#617C5F] font-mono">About Us</h2>
         <p className="md:text-[56px] text-[27px] mb-8 text-[#213721]">
           We are a sanctuary for seekers, <br />healers, and those ready to <br />reclaim their inner light.

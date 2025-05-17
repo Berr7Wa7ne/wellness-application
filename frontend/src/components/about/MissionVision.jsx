@@ -5,7 +5,7 @@ import vision from '../../assets/vision.png';
 export const MissionVision = () => {
   return (
     <div>
-    <section className="md:py-12 px-4">
+    <section className="mission-vision md:py-12 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center md:text-left">
           <div>
             <img

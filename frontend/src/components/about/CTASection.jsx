@@ -3,7 +3,7 @@ import ctaPic from "../../assets/cta-pic.png";
 
 export const CTASection = () => {
   return (
-    <section className="relative h-[80vh] md:h-screen w-full mb-16">
+    <section className=" cta-section relative h-[80vh] md:h-screen w-full mb-16">
       {/* Background Image */}
       <img
         src={ctaPic}

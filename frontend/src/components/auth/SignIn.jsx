@@ -148,7 +148,7 @@ const handleLogin = async (e) => {
                         Sign In
                     </button>
                     <p className="pt-4 text-center text-sm text-[#7B8499] lg:text-end">
-                        New to Occupy?{" "}
+                        New to SoulScape?{" "}
                         <Link
                             to="/sign-up"
                             className="font-medium text-[#f1bf60] underline"

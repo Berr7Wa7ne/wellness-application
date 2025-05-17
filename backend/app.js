@@ -9,6 +9,8 @@ const serviceRoutes = require('./src/routes/public/serviceRoutes');
 const serviceAdminRoutes = require('./src/routes/admin/serviceAdminRoutes');
 const productRoutes = require('./src/routes/public/productRoutes');
 const productAdminRoutes = require("./src/routes/admin/productAdminRoutes");
+const categoryAdminRoutes = require('./src/routes/admin/categoryAdminRoutes');
+const tierAdminRoutes = require('./src/routes/admin/tierAdminRoutes');
 
 
 
@@ -37,5 +39,7 @@ app.use('/public', serviceRoutes);
 app.use('/admin', serviceAdminRoutes);
 app.use('/public', productRoutes);
 app.use('/admin', productAdminRoutes);
+app.use('/admin', categoryAdminRoutes);
+app.use('/admin', tierAdminRoutes); 
 
 module.exports = app;

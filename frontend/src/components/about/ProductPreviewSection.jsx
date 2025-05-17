@@ -77,7 +77,7 @@ const ScrollableRow = ({ products }) => {
 
 export const ProductPreviewSection = () => {
   return (
-    <section className="px-4 py-12 bg-white text-black">
+    <section className="product-preview px-4 py-12 bg-white text-black">
       <p className="md:text-[28px] text-[16px] text-[#617C5F] text-center mb-4 font-serif">
         Popular Category
       </p>
@@ -95,20 +95,25 @@ export const ProductPreviewSection = () => {
 };
 
 export const ProductCard = ({ name, price, image }) => (
-  <div className="h-full flex flex-col">
-    <div className="border-2 border-[#C8D8C0] flex-grow bg-white rounded-none overflow-hidden hover:shadow-md transition-shadow duration-300">
-      <img
-        src={image}
-        alt={name}
-        className="md:w-full md:h-[330px] object-cover"
-      />
-      <div className="p-6"> {/* Increased padding */}
-        <h4 className="font-medium md:text-[28px] text-[16px] text-[#213721] mb-2 font-mono">{name}</h4>
-        <div className="flex justify-between items-center">
-          <p className="md:text-[22px] text-[12px] text-[#213721] font-serif font-semibold">{price}</p>
-          <div className="text-xl text-green-950">★ ★ ★ ★ ☆</div>
-        </div>
+<div className="h-full flex flex-col">
+  <div className="border-2 border-[#C8D8C0] flex-grow bg-white rounded-none overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col">
+    <img
+      src={image}
+      alt={name}
+      className="md:w-full md:h-[330px] object-cover"
+    />
+    <div className="p-6 flex-grow"> {/* Added flex-grow to push button down */}
+      <h4 className="font-medium md:text-[28px] text-[16px] text-[#213721] mb-2 font-mono">{name}</h4>
+      <div className="flex justify-between items-center">
+        <p className="md:text-[22px] text-[12px] text-[#213721] font-serif font-semibold">{price}</p>
+        <div className="text-xl text-green-950">★ ★ ★ ★ ☆</div>
       </div>
     </div>
+    <div className="px-6 pb-4 mt-auto"> {/* Added padding and margin */}
+      <button className="w-full bg-[#617C5F] text-white py-3 px-6 rounded-none hover:bg-[#4a6348] transition-colors duration-300">
+        Buy Now
+      </button>
+    </div>
   </div>
+</div>
 );

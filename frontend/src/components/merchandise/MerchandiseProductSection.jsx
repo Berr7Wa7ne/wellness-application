@@ -38,7 +38,7 @@ export const ProductCard = ({ name, price, image }) => (
     <div className="flex justify-center flex-grow">
       <img src={image} alt={name} className="object-contain" />
     </div>
-    <div className="p-4">
+    <div className="p-4 mx-3">
       <h4 className="font-medium text-[20px] text-[#213721] mb-2 font-mono">
         {name}
       </h4>
@@ -48,6 +48,11 @@ export const ProductCard = ({ name, price, image }) => (
         </p>
         <div className="text-lg text-green-950">★ ★ ★ ★ ☆</div>
       </div>
+    </div>
+        <div className="px-6 pb-4 mt-auto"> {/* Added padding and margin */}
+      <button className="w-full bg-[#617C5F] text-white py-3 px-6 rounded-none hover:bg-[#4a6348] transition-colors duration-300">
+        Buy Now
+      </button>
     </div>
   </div>
 );

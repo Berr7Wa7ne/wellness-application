@@ -1,9 +1,10 @@
 import React from 'react';
 import heroPic from "../../assets/hero-pic.png"
+import { Link } from "react-router-dom";
 
 export const HeroSection = ({ children }) => {
   return (
-    <section className="relative h-[80vh] md:h-screen w-full">
+    <section className="hero-section relative h-[80vh] md:h-screen w-full">
       {/* Background Image */}
       <img
         src={heroPic}
@@ -27,9 +28,14 @@ export const HeroSection = ({ children }) => {
           and healing. Learn how our brand can help you reconnect with your own clarity,
           purpose, and inner peace.
         </p>
-        <button className="mt-6 px-[40px] py-[20px] bg-[#F2F6EF] text-[#213721] font-semibold hover:bg-gray-200 md:text-[22px] font-mono">
+        {/* <button className="mt-6 px-[40px] py-[20px] bg-[#F2F6EF] text-[#213721] font-semibold hover:bg-gray-200 md:text-[22px] font-mono">
           Shop now →
-        </button>
+        </button> */}
+        <Link
+            to="/merchandise"
+            className="mt-6 px-[40px] py-[20px] bg-[#F2F6EF] text-[#213721] font-semibold hover:bg-gray-200 md:text-[22px] font-mono">
+            Shop now <span className='w-5'>→</span>
+        </Link>
       </div>
     </section>
   );
