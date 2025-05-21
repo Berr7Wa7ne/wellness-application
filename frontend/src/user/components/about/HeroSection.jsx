@@ -1,5 +1,5 @@
 import React from 'react';
-import heroPic from "../../assets/hero-pic.png"
+import heroPic from "../../../assets/hero-pic.png"
 import { Link } from "react-router-dom";
 
 export const HeroSection = ({ children }) => {

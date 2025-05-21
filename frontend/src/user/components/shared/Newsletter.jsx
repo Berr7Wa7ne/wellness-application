@@ -1,5 +1,5 @@
 import React from 'react'
-import rightArrow from '../../assets/right-arrow.png';
+import rightArrow from '../../../assets/right-arrow.png';
 
 export const Newsletter = () => {
   return (

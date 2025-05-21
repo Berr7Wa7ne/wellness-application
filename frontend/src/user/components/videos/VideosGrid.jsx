@@ -2,10 +2,10 @@ import React from 'react'
 import { VideosCard } from './VideosCard';
 
 // Sample image imports (replace with actual)
-import video1 from '../../assets/video1.png';
-import video2 from '../../assets/video2.png';
-import video3 from '../../assets/video3.png';
-import video4 from '../../assets/video4.png';
+import video1 from '../../../assets/video1.png';
+import video2 from '../../../assets/video2.png';
+import video3 from '../../../assets/video3.png';
+import video4 from '../../../assets/video4.png';
 
 const videos = [
   {

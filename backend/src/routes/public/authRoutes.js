@@ -7,10 +7,6 @@ const authController = require("../../controllers/authController");
 router.post("/register", authController.register);
 router.post("/login", authController.login);
 
-// Admin Routes
-router.post("/register-admin", authController.registerAdminController);
-router.post("/login-admin", authController.loginAdminController);
-
 // Forgot Password
 router.post("/forgot-password", authController.forgotPassword);
 

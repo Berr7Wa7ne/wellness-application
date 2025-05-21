@@ -1,6 +1,6 @@
 import React from 'react'
-import mission from '../../assets/mission.png';
-import vision from '../../assets/vision.png';
+import mission from '../../../assets/mission.png';
+import vision from '../../../assets/vision.png';
 
 export const MissionVision = () => {
   return (

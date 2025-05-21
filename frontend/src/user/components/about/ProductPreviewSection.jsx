@@ -1,14 +1,14 @@
 import React, { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import moonlightCalm from "../../assets/moonlight-calm.png";
-import manifestFire from "../../assets/manifest-fire.png";
-import heartOpening from "../../assets/heart-opening.png";
-import energyClearing from "../../assets/energy-clearing.png";
-import intuitionCrystal from "../../assets/intuition-crystal.png";
-import sacredRitual from "../../assets/sacred-ritual.png";
-import protectionCharm from "../../assets/protection-charm.png";
-import miniAltar from "../../assets/mini-altar.png";
-import licensePortal from "../../assets/license-portal.png";
+import moonlightCalm from "../../../assets/moonlight-calm.png";
+import manifestFire from "../../../assets/manifest-fire.png";
+import heartOpening from "../../../assets/heart-opening.png";
+import energyClearing from "../../../assets/energy-clearing.png";
+import intuitionCrystal from "../../../assets/intuition-crystal.png";
+import sacredRitual from "../../../assets/sacred-ritual.png";
+import protectionCharm from "../../../assets/protection-charm.png";
+import miniAltar from "../../../assets/mini-altar.png";
+import licensePortal from "../../../assets/license-portal.png";
 
 const productsByCategory = {
   "Ritual Essentials": [

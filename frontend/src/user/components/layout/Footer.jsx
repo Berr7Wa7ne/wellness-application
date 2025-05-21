@@ -1,7 +1,7 @@
 import React from 'react'
-import facebook from '../../assets/facebook.png';
-import instagram from '../../assets/instagram.png';
-import twitter from '../../assets/twitter.png';
+import facebook from '../../../assets/facebook.png';
+import instagram from '../../../assets/instagram.png';
+import twitter from '../../../assets/twitter.png';
 
 export const Footer = () => {
   return (

@@ -1,64 +1,57 @@
 // src/controllers/authController.js
-const { registerUser, loginUser, registerAdmin, loginAdmin, sendPasswordResetEmail, resetPassword } = require("../services/authServices");
+const { registerUser, loginUser, sendPasswordResetEmail, resetPassword } = require("../services/authServices");
 
 // Register a new user
 const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
-        const user = await registerUser(name, email, password);
+        const { name, email, password, role } = req.body;
+        console.log("This is the request body", req.body);
+
+        // Validate required fields
+        if (!name || !email || !password) {
+            return res.status(400).json({ 
+                message: "Missing required fields",
+                details: {
+                    name: !name ? "Name is required" : null,
+                    email: !email ? "Email is required" : null,
+                    password: !password ? "Password is required" : null
+                }
+            });
+        }
+
+        const user = await registerUser({ name, email, password, role });
+        console.log("This is the user", user);
+        
         res.status(201).json({
             message: "User registered successfully",
             user,
         });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error("Registration error:", error);
+        res.status(400).json({ 
+            message: error.message || "Registration failed",
+            error: error.message
+        });
     }
 };
 
 // Login an existing user
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const { user, token } = await loginUser(email, password);
+        const { email, password, role } = req.body;
+        console.log("This is the request body", req.body)
+        const { user, token } = await loginUser({ email, password, role });
+        console.log("This is the user", user, token)
         res.status(200).json({
             message: "Login successful",
             user,
             token,
         });
     } catch (error) {
+        console.error("Login error:", error);
         res.status(400).json({ error: error.message });
     }
 };
-
-// Register a new admin
-const registerAdminController = async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
-        const admin = await registerAdmin(name, email, password);
-        res.status(201).json({
-            message: "Admin registered successfully",
-            admin,
-        });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-// Login an existing admin
-const loginAdminController = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const { adminUser, token } = await loginAdmin(email, password);
-        res.status(200).json({
-            message: "Admin login successful",
-            adminUser,
-            token,
-        });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
 
 const forgotPassword = async (req, res) => {
     try {
@@ -84,4 +77,4 @@ const resetPasswordController  = async (req, res) => {
     }
 };
 
-module.exports = { register, login, registerAdminController, loginAdminController, resetPasswordController, forgotPassword };
+module.exports = { register, login, resetPasswordController, forgotPassword };

@@ -2,11 +2,11 @@ import React from 'react'
 import { ServiceCard } from './ServiceCard';
 
 // Sample image imports (replace with actual)
-import image1 from '../../assets/service1.png';
-import image2 from '../../assets/service2.png';
-import image3 from '../../assets/service3.png';
-import image4 from '../../assets/service4.png';
-import image5 from '../../assets/service5.png';
+import image1 from '../../../assets/service1.png';
+import image2 from '../../../assets/service2.png';
+import image3 from '../../../assets/service3.png';
+import image4 from '../../../assets/service4.png';
+import image5 from '../../../assets/service5.png';
 
 const services = [
   {

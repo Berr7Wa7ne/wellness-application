@@ -1,5 +1,5 @@
 import React from 'react'
-import goddess from '../../assets/goddess.png';
+import goddess from '../../../assets/goddess.png';
 
 export const AboutText = () => {
   return (

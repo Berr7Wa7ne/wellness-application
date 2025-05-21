@@ -1,5 +1,5 @@
 import React from 'react';
-import ctaPic from "../../assets/cta-pic.png";
+import ctaPic from "../../../assets/cta-pic.png";
 
 export const CTASection = () => {
   return (

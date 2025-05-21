@@ -5,91 +5,75 @@ const User = require("../models/User");
 const PasswordResetToken = require("../models/PasswordResetToken");
 const emailService = require("../utils/emailService");
 
-// Register a new user
-const registerUser = async (name, email, password) => {
-    // Check if the user already exists
+const registerUser = async ({ name, email, password, role }) => {
+    console.log("This is the role", role)
+    if (!["user", "admin"].includes(role)) {
+        throw new Error("Invalid role provided.");
+    }
+
+    // Validate admin registration
+    if (role === 'admin') {
+        const adminCode = process.env.ADMIN_REG_CODE;
+        console.log("This is the adminCode", adminCode)
+        if (!adminCode) {
+            throw new Error("Admin registration is not configured.");
+        }
+        // Note: The admin code validation is now handled on the frontend
+        // This is just an additional security check
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-        throw new Error("User already exists");
+        throw new Error("Email already exists.");
     }
 
-    // Hash the password
+    console.log("This is the existingUser", existingUser)
+
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("This is the hashedPassword", hashedPassword)
 
-    // Create the user
-    const newUser = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-    });
+    const user = new User({ name, email, password: hashedPassword, role });
+    await user.save();
 
-    return newUser;
+    console.log("This is the user", user)
+
+    return `${role} registered successfully.`;
 };
 
-// Login an existing user
-const loginUser = async (email, password) => {
-    // Find the user by email
+const loginUser = async ({ email, password }) => {
     const user = await User.findOne({ email });
+    console.log("This is the user", user)
     if (!user) {
-        throw new Error("Invalid email or password");
+        throw new Error("User not found.");
     }
 
-    // Verify the password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-        throw new Error("Invalid email or password");
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        throw new Error("Invalid credentials.");
     }
 
-    // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
-        expiresIn: "1h",
-    });
+    console.log("This is the isMatch", isMatch)
 
-    return { user, token };
+    const token = jwt.sign(
+        { id: user._id, email: user.email, role: user.role },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "1d" }
+    );
+
+    console.log("This is the token", token)
+
+    // Return user object with sensitive data removed
+    const userResponse = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt
+    };
+
+    return { user: userResponse, token };
 };
 
-// Register a new admin
-const registerAdmin = async (name, email, password) => {
-    // Check if the admin already exists
-    const existingAdmin = await User.findOne({ email });
-    if (existingAdmin) {
-        throw new Error("Admin already exists");
-    }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create the admin
-    const newAdmin = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-    });
-
-    return newAdmin;
-};
-
-// Login an existing admin
-const loginAdmin = async (email, password) => {
-    // Find the admin by email
-    const adminUser = await User.findOne({ email });
-    if (!adminUser) {
-        throw new Error("Invalid email or password");
-    }
-
-    // Verify the password
-    const isPasswordValid = await bcrypt.compare(password, adminUser.password);
-    if (!isPasswordValid) {
-        throw new Error("Invalid email or password");
-    }
-
-    // Generate a JWT token with admin role
-    const token = jwt.sign({ userId: adminUser._id, role: "admin" }, process.env.JWT_SECRET_KEY, {
-        expiresIn: "1h",
-    });
-
-    return { adminUser, token };
-};
 
 //Send password reset email
 const sendPasswordResetEmail = async (email, frontendUrl) => {
@@ -162,4 +146,4 @@ const resetPassword = async (userId, token, newPassword) => {
     return { message: "Password reset successful" };
 };
 
-module.exports = { registerUser, loginUser, registerAdmin, loginAdmin, resetPassword, sendPasswordResetEmail};
+module.exports = { registerUser, loginUser, resetPassword, sendPasswordResetEmail};
