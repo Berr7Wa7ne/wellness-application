@@ -1,9 +1,17 @@
 import React from 'react'
+import heroPic1 from "../../../assets/hero-pic1.jpg"
 
 export const VideosHero = ({ children }) => {
     return (
-        <section className="relative h-[80vh] md:h-screen w-full bg-[#899F87] text-white">
-          {/* Overlay (optional): tint or gradient */}
+        <section className="relative h-[80vh] md:h-screen w-full text-white">
+          {/* Background Image */}
+          <img
+            src={heroPic1}
+            alt="Videos hero background"
+            className="absolute inset-0 w-full h-full object-cover z-0"
+          />
+          
+          {/* Overlay */}
           <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
     
           {/* Inject Navbar or any other absolute top elements */}

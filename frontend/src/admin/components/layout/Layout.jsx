@@ -4,9 +4,9 @@ import Topbar from './Topbar';
 
 const Layout = () => {
   return (
-    <div className="flex min-h-screen">
+    <div>
       <Sidebar />
-      <div className="flex-1">
+      <div className="ml-64">
         <Topbar />
         <main className="p-6">
           <Outlet />

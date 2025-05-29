@@ -10,12 +10,13 @@ import ManageCategories from '../pages/ManageCategories';
 const AdminRoutes = () => (
   <Routes>
     <Route element={<Layout />}>
-      <Route path="" element={<Dashboard />} />
-      <Route path="videos" element={<ManageVideos />} />
-      <Route path="products" element={<ManageProducts />} />
-      <Route path="services" element={<ManageServices />} />
-      <Route path="tiers" element={<ManageTiers />} />
-      <Route path="categories" element={<ManageCategories />} />
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/videos" element={<ManageVideos />} />
+      <Route path="/products" element={<ManageProducts />} />
+      <Route path="/services" element={<ManageServices />} />
+      <Route path="/tiers" element={<ManageTiers />} />
+      <Route path="/categories" element={<ManageCategories />} />
     </Route>
   </Routes>
 );

@@ -1,10 +1,10 @@
 import React from 'react';
-import heroPic from "../../../assets/hero-pic.png"
+import heroPic from "../../../assets/hero-pic1.jpg"
 import { Link } from "react-router-dom";
 
 export const HeroSection = ({ children }) => {
   return (
-    <section className="hero-section relative h-[80vh] md:h-screen w-full">
+    <section className="relative h-[80vh] md:h-screen w-full">
       {/* Background Image */}
       <img
         src={heroPic}
@@ -19,11 +19,11 @@ export const HeroSection = ({ children }) => {
       {children}
 
       {/* Hero Text */}
-      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center text-white px-4">
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center text-[#C7D1C6] px-4">
         <h1 className="text-lg md:text-[108px] leading-tight">
           Get to know us better,<br /> about our brand
         </h1>
-        <p className="mt-4 max-w-xl text-sm md:text-[20px] text-[#C7D1C6] font-mono">
+        <p className="mt-4 max-w-xl text-sm md:text-[20px] text-[#ffffff] font-mono">
           We’re here to inspire a mindful journey through ancient knowledge, rituals,
           and healing. Learn how our brand can help you reconnect with your own clarity,
           purpose, and inner peace.
