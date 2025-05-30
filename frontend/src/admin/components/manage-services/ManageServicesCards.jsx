@@ -210,8 +210,8 @@ const ManageServicesCards = () => {
               ))}
             </div>
             <div className="mt-3 flex justify-between gap-2">
-              <button className="px-3 py-1 text-sm border rounded text-gray-700 hover:bg-gray-100">Preview</button>
-              <button className="px-3 py-1 text-sm border rounded bg-green-700 text-white hover:bg-green-800">Edit</button>
+              <button className="px-3 py-1 text-sm border rounded text-gray-700 hover:bg-gray-100 w-full">Preview</button>
+              <button className="px-3 py-1 text-sm border rounded bg-[#213721] text-white hover:bg-green-800 w-full">Edit</button>
             </div>
           </div>
         </div>

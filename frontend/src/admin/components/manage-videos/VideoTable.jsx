@@ -10,11 +10,12 @@ import Frame7 from '../../../assets/Frame 7.png';
 
 // Add at the top, after your imports
 const categoryColors = {
-    Meditation: "bg-blue-100 text-blue-600",
-    Yoga: "bg-green-100 text-green-600",
-    Mindfulness: "bg-purple-100 text-purple-600",
-    Wellness: "bg-yellow-100 text-yellow-700",
-    Nutrition: "bg-pink-100 text-pink-600",
+    'Magickal Oils': "bg-purple-100 text-purple-800",
+    'Meditation Videos': "bg-green-100 text-green-600",
+    'Licenses': "bg-rose-100 text-rose-600",
+    'Audio Guides': "bg-orange-100 text-orange-600",
+    'Healing Tools': "bg-blue-100 text-blue-600",
+    'Books & Journals': "bg-cyan-100 text-cyan-600",
   };
   
   const statusColors = {
@@ -27,7 +28,7 @@ const videos = [
   {
     id: 1,
     title: 'Morning Meditation for Beginners',
-    category: 'Meditation',
+    category: 'Meditation Videos',
     duration: '15:30',
     status: 'Published',
     publishedDate: 'May 25, 2025',
@@ -37,7 +38,7 @@ const videos = [
   {
     id: 2,
     title: 'Gentle Yoga Flow for Stress Relief',
-    category: 'Yoga',
+    category: 'Meditation Videos',
     duration: '25:15',
     status: 'Published',
     publishedDate: 'Jun 2, 2025',
@@ -47,7 +48,7 @@ const videos = [
   {
     id: 3,
     title: 'Mindfulness Techniques for Anxiety',
-    category: 'Mindfulness',
+    category: 'Audio Guides',
     duration: '10:45',
     status: 'Draft',
     publishedDate: 'Jun 5, 2025',
@@ -57,7 +58,7 @@ const videos = [
   {
     id: 4,
     title: 'Holistic Wellness Practices',
-    category: 'Wellness',
+    category: 'Healing Tools',
     duration: '20:00',
     status: 'Scheduled',
     publishedDate: 'Jun 8, 2025',
@@ -67,7 +68,7 @@ const videos = [
   {
     id: 5,
     title: 'Nutrition Basics: Foods for Energy',
-    category: 'Nutrition',
+    category: 'Books & Journals',
     duration: '18:30',
     status: 'Published',
     publishedDate: 'Jun 10, 2025',
@@ -77,7 +78,7 @@ const videos = [
   {
     id: 6,
     title: 'Deep Relaxation Meditation',
-    category: 'Meditation',
+    category: 'Meditation Videos',
     duration: '22:15',
     status: 'Published',
     publishedDate: 'Jun 12, 2025',
@@ -87,7 +88,7 @@ const videos = [
   {
     id: 7,
     title: 'Intermediate Yoga Flow',
-    category: 'Yoga',
+    category: 'Meditation Videos',
     duration: '30:00',
     status: 'Draft',
     publishedDate: 'Jun 15, 2025',
