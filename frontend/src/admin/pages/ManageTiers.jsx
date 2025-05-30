@@ -1,8 +1,12 @@
 import React from 'react'
-
+import ManageTiersHeader from '../components/manage-tiers/ManageTiersHeader'  
+import ManageTiersCards from '../components/manage-tiers/ManageTiersCards'
 const ManageTiers = () => {
   return (
-    <div>ManageTiers</div>
+    <div>
+        <ManageTiersHeader />
+        <ManageTiersCards />
+    </div>
   )
 }
 

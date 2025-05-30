@@ -12,6 +12,12 @@ import NatureSoundtrack from '../../../assets/Nature Soundtrack.jpg';
 import FocusPlanner from '../../../assets/Focus Planner.jpg';
 import ReikiEnergySet from '../../../assets/Reiki Energy Set.jpg';
 
+const tierColors = {
+    Basic: "bg-indigo-100 text-indigo-800 border border-indigo-200",
+    Premium: "bg-pink-100 text-pink-700 border border-pink-200",
+    Professional: "bg-orange-100 text-orange-700 border border-orange-200",
+  };
+
 const categoryColors = {
     Meditation: "bg-blue-100 text-blue-600",
     Yoga: "bg-green-100 text-green-600",
@@ -137,7 +143,7 @@ const products = [
               <h3 className="font-medium text-gray-800 text-sm">{product.name}</h3>
               <div className="flex justify-between items-center my-2">
               <p className="text-sm text-gray-600 mt-1">{product.price}</p>
-              <p className="text-sm text-[#213721] bg-gray-100 px-2 py-1 rounded-md mt-1">{product.tier}</p>
+              <p className={`text-sm ${tierColors[product.tier] || "bg-gray-100 text-[#213721]"} px-2 py-1 rounded-md mt-1`}>{product.tier}</p>
               </div>
               <p className="text-xs text-gray-400 mt-1">Stock: {product.stock}</p>
             </div>

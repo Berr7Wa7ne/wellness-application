@@ -1,8 +1,12 @@
 import React from 'react'
-
+import ManageServicesHeader from '../components/manage-services/ManageServicesHeader'
+import ManageServicesCards from '../components/manage-services/ManageServicesCards'
 const ManageServices = () => {
   return (
-    <div>ManageServices</div>
+    <div>
+        <ManageServicesHeader />
+        <ManageServicesCards />
+    </div>
   )
 }
 
