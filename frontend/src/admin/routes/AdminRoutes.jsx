@@ -6,6 +6,7 @@ import ManageProducts from '../pages/ManageProducts';
 import ManageServices from '../pages/ManageServices';
 import ManageTiers from '../pages/ManageTiers';
 import ManageCategories from '../pages/ManageCategories';
+import ProfileSetting from '../pages/ProfileSetting';
 
 const AdminRoutes = () => (
   <Routes>
@@ -17,6 +18,7 @@ const AdminRoutes = () => (
       <Route path="/services" element={<ManageServices />} />
       <Route path="/tiers" element={<ManageTiers />} />
       <Route path="/categories" element={<ManageCategories />} />
+      <Route path="/settings" element={<ProfileSetting />} />
     </Route>
   </Routes>
 );

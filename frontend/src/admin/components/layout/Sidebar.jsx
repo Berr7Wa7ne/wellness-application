@@ -1,6 +1,6 @@
 // Sidebar.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutGrid, 
   Video, 
@@ -20,18 +20,26 @@ const menuItems = [
 ];
 
 const Sidebar = () => {
+  const location = useLocation(); // Call the hook here
+
   return (
     <div className="fixed top-0 left-0 w-64 h-screen bg-[#213721] shadow-md flex flex-col justify-between z-20">
       {/* Top Section */}
       <div className='mx-2'>
         <div className="p-4 font-bold text-lg text-white">SoulScape</div>
         <ul>
-          {menuItems.map((item, idx) => (
+          {menuItems.map((item, idx) => {
+            // console.log(`Current Path: ${window.location.pathname}, Item Path: ${item.path}`); // Remove console.log
+            return (
             <li key={idx}>
               <Link to={item.path}>
                 <div
                   className={`mb-3 flex items-center justify-between px-4 py-2 cursor-pointer ${
-                    window.location.pathname === item.path
+                    item.path === '/admin/dashboard' 
+                      ? location.pathname === '/admin/dashboard'
+                      ? "bg-white text-[#213721] rounded-md"
+                      : "text-white hover:bg-gray-100 hover:rounded-md hover:text-green-700"
+                    : location.pathname.startsWith(item.path)
                       ? "bg-white text-[#213721] rounded-md"
                       : "text-white hover:bg-gray-100 hover:rounded-md hover:text-green-700"
                   }`}
@@ -48,7 +56,8 @@ const Sidebar = () => {
                 </div>
               </Link>
             </li>
-          ))}
+             );
+           })}
         </ul>
       </div>
 

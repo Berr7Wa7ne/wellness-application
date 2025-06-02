@@ -51,19 +51,21 @@ const ManageTiersCards = () => {
     <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {tiers.map((tier, index) => (
         <div key={index} className="bg-white rounded-lg shadow-md p-6 relative border border-gray-200">
-        <div className="absolute top-2 right-4 flex gap-2">
-        <button className="text-gray-500 hover:text-green-600 p-2" title="Edit">
-            <Pencil size={18} />
-        </button>
-        <button className="text-gray-500 hover:text-red-600 p-2" title="Delete">
-            <Trash2 size={18} />
-        </button>
-        </div>
-        <h3 className="text-lg font-semibold mb-2">
-        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${tierColors[tier.tier] || "bg-gray-100 text-gray-700"}`}>
-            {tier.tier}
-        </span>
-        </h3>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-lg font-semibold">
+              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${tierColors[tier.tier] || "bg-gray-100 text-gray-700"}`}>
+                {tier.tier}
+              </span>
+            </h3>
+            <div className="flex gap-2">
+              <button className="text-gray-500 hover:text-green-600 p-2" title="Edit">
+                  <Pencil size={18} />
+              </button>
+              <button className="text-gray-500 hover:text-red-600 p-2" title="Delete">
+                  <Trash2 size={18} />
+              </button>
+            </div>
+          </div>
           <p className="text-xl font-bold">{tier.price}<span className="text-sm font-normal text-gray-500">/{tier.period}</span></p>
           <ul className="mt-4 mb-4 space-y-2">
             {tier.features.map((feature, idx) => (

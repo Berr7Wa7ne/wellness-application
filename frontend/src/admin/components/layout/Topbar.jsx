@@ -7,6 +7,7 @@ import {
   Clock,
   Settings,
 } from 'lucide-react';
+import { Link } from 'react-router-dom'; // Import Link
 
 const Topbar = () => {
   return (
@@ -23,23 +24,31 @@ const Topbar = () => {
 
       {/* Icons */}
       <div className="flex items-center gap-3">
-        <button className="relative bg-gray-100 p-2 rounded-full hover:bg-gray-200">
+        {/* Filter Button (Functionality TBD) */}
+        <button className="relative bg-gray-100 p-2 rounded-full hover:bg-gray-200" title="Filter">
           <Filter size={16} className="text-gray-600" />
         </button>
 
-        <button className="relative bg-gray-100 p-2 rounded-full hover:bg-gray-200">
-          <Bell size={16} className="text-gray-600" />
-          {/* Red Notification Dot */}
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-        </button>
+        {/* Bell Icon (Link to Notifications) */}
+        <Link to="/admin/notifications" title="Notifications">
+          <button className="relative bg-gray-100 p-2 rounded-full hover:bg-gray-200">
+            <Bell size={16} className="text-gray-600" />
+            {/* Red Notification Dot */}
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+          </button>
+        </Link>
 
-        <button className="bg-gray-100 p-2 rounded-full hover:bg-gray-200">
+        {/* Clock Button (Functionality TBD) */}
+        <button className="bg-gray-100 p-2 rounded-full hover:bg-gray-200" title="Recent Activity">
           <Clock size={16} className="text-gray-600" />
         </button>
 
-        <button className="bg-gray-100 p-2 rounded-full hover:bg-gray-200">
-          <Settings size={16} className="text-gray-600" />
-        </button>
+        {/* Settings Icon (Link to Settings) */}
+        <Link to="/admin/settings" title="Settings">
+          <button className="bg-gray-100 p-2 rounded-full hover:bg-gray-200">
+            <Settings size={16} className="text-gray-600" />
+          </button>
+        </Link>
       </div>
     </div>
   );
