@@ -5,3 +5,13 @@
       font-family: 'DM Sans', sans-serif;
     }
   }
+
+    /* In your CSS file */
+    .modal-content-hide-scrollbar::-webkit-scrollbar {
+      display: none; /* For Chrome, Safari, and Opera */
+    }
+
+    .modal-content-hide-scrollbar {
+      -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+      scrollbar-width: none;  /* For Firefox */
+    }

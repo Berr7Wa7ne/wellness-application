@@ -20,7 +20,7 @@ export const HeroSection = ({ children }) => {
 
       {/* Hero Text */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center text-[#C7D1C6] px-4">
-        <h1 className="text-lg md:text-[108px] leading-tight">
+        <h1 className="text-lg md:text-[108px] leading-tight mt-10">
           Get to know us better,<br /> about our brand
         </h1>
         <p className="mt-4 max-w-xl text-sm md:text-[20px] text-[#ffffff] font-mono">

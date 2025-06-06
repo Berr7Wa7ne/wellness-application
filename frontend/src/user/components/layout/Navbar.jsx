@@ -1,7 +1,7 @@
 // src/layout/Navbar.jsx
 import React, { useState } from 'react';
 import { Menu } from "lucide-react";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import Sidebar from './Sidebar';
 
 const Navbar = () => {
@@ -19,11 +19,46 @@ const Navbar = () => {
             SoulScape
           </div>
           <nav className="hidden md:flex gap-6 text-xl font-medium font-mono uppercase text-white">
-            <Link to="/about" className="hover:text-emerald-300">About</Link>
-            <Link to="/services" className="hover:text-emerald-300">Services</Link>
-            <Link to="/videos" className="hover:text-emerald-300">Videos</Link>
-            <Link to="/merchandise" className="hover:text-emerald-300">Merchandise</Link>
-            <Link to="/contact" className="hover:text-emerald-300">Contact Us</Link>
+            <NavLink 
+              to="/about" 
+              className={({ isActive }) =>
+                isActive ? "text-emerald-300" : "hover:text-emerald-300"
+              }
+            >
+              About
+            </NavLink>
+            <NavLink 
+              to="/services" 
+              className={({ isActive }) =>
+                isActive ? "text-emerald-300" : "hover:text-emerald-300"
+              }
+            >
+              Services
+            </NavLink>
+            <NavLink 
+              to="/videos" 
+              className={({ isActive }) =>
+                isActive ? "text-emerald-300" : "hover:text-emerald-300"
+              }
+            >
+              Videos
+            </NavLink>
+            <NavLink 
+              to="/merchandise" 
+              className={({ isActive }) =>
+                isActive ? "text-emerald-300" : "hover:text-emerald-300"
+              }
+            >
+              Merchandise
+            </NavLink>
+            <NavLink 
+              to="/contact" 
+              className={({ isActive }) =>
+                isActive ? "text-emerald-300" : "hover:text-emerald-300"
+              }
+            >
+              Contact Us
+            </NavLink>
           </nav>
           <div className='hidden md:flex justify-between items-center space-x-4 my-6'>
             <Link

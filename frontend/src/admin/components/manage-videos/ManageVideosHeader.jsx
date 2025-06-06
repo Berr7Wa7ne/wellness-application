@@ -1,7 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Search, Filter } from 'lucide-react'
+import AddVideoForm from './AddVideoForm'
+import AdminModal from '../shared/AdminModal'
 
 const ManageVideosHeader = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
     return (
         <div className="p-6">
           {/* Header Area */}
@@ -10,7 +18,10 @@ const ManageVideosHeader = () => {
               <h2 className="text-xl font-semibold">Manage Videos</h2>
               <p className="text-sm text-gray-500">Upload, organize and control your video content</p>
             </div>
-            <button className="bg-[#213721] w-[135px] h-[40px] text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm font-semibold">
+            <button 
+              className="bg-[#213721] w-[135px] h-[40px] text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm font-semibold"
+              onClick={toggleModal}
+            >
               + Add Video
             </button>
           </div>
@@ -48,7 +59,12 @@ const ManageVideosHeader = () => {
               </div>
             </div>
           </div>
-    
+
+          {/* Add Video Modal */}
+          <AdminModal isOpen={isModalOpen} onClose={toggleModal}>
+            <AddVideoForm onClose={toggleModal} />
+          </AdminModal>
+
         </div>
       );
     };

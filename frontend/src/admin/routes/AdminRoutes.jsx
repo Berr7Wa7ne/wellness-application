@@ -7,6 +7,8 @@ import ManageServices from '../pages/ManageServices';
 import ManageTiers from '../pages/ManageTiers';
 import ManageCategories from '../pages/ManageCategories';
 import ProfileSetting from '../pages/ProfileSetting';
+import NotificationPreferences from '../pages/NotificationPreferences';
+
 
 const AdminRoutes = () => (
   <Routes>
@@ -19,6 +21,7 @@ const AdminRoutes = () => (
       <Route path="/tiers" element={<ManageTiers />} />
       <Route path="/categories" element={<ManageCategories />} />
       <Route path="/settings" element={<ProfileSetting />} />
+      <Route path="/notifications" element={<NotificationPreferences />} />
     </Route>
   </Routes>
 );
