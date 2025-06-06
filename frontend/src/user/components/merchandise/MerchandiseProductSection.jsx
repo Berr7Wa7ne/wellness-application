@@ -8,6 +8,7 @@ import sacredRitual from "../../../assets/sacred-ritual.png";
 import protectionCharm from "../../../assets/protection-charm.png";
 import miniAltar from "../../../assets/mini-altar.png";
 import licensePortal from "../../../assets/license-portal.png";
+import CategoryNavigation from "../shared/CategoryNavigation";
 
 const products = [
   { name: "Moonlight Calm", price: "$20", image: moonlightCalm },
@@ -23,13 +24,16 @@ const products = [
 
 export const MerchandiseProductSection = () => {
   return (
-    <section className="px-8 md:px-16 lg:px-24 xl:px-32 py-12 bg-white text-black">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {products.map((product, idx) => (
-          <ProductCard key={idx} {...product} />
-        ))}
-      </div>
-    </section>
+    <>
+      <CategoryNavigation />
+      <section className="px-8 md:px-16 lg:px-24 xl:px-32 py-12 bg-white text-black">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {products.map((product, idx) => (
+            <ProductCard key={idx} {...product} />
+          ))}
+        </div>
+      </section>
+    </>
   );
 };
 
