@@ -45,6 +45,14 @@ import chakraStonesSet from "../../../assets/Chakra Stones Set.jpg";
 import healingWand from "../../../assets/Healing Wand.jpg";
 import meditationCushion from "../../../assets/Meditation Cushion.jpg";
 import soundBowl from "../../../assets/Sound Bowl.jpg";
+import moonPhaseJournal from "../../../assets/Moon Phase Journal.jpg";
+import gratitudeJournal from "../../../assets/Gratitude Journal.jpg";
+import spellBook from "../../../assets/Spell Book.jpg";
+import meditationWorkbook from "../../../assets/Meditation Workbook.jpg";
+import chakraGuide from "../../../assets/Chakra Guide.jpg";
+import crystalHealingBook from "../../../assets/Crystal Healing Book.jpg";
+import herbalRemediesGuide from "../../../assets/Herbal Remedies Guide.jpg";
+import astrologyJournal from "../../../assets/Astrology Journal.jpg";
 import CategoryNavigation from "../shared/CategoryNavigation";
 
 const products = [
@@ -338,49 +346,49 @@ const products = [
   { 
     name: "Moon Phase Journal", 
     price: "$18", 
-    image: moonlightCalm, // placeholder
+    image: moonPhaseJournal,
     category: "Books & Journals"
   },
   { 
     name: "Gratitude Journal", 
     price: "$15", 
-    image: manifestFire, // placeholder
+    image: gratitudeJournal,
     category: "Books & Journals"
   },
   { 
     name: "Spell Book", 
     price: "$25", 
-    image: moonlightCalm, // placeholder
+    image: spellBook,
     category: "Books & Journals"
   },
   { 
     name: "Meditation Workbook", 
     price: "$20", 
-    image: manifestFire, // placeholder
+    image: meditationWorkbook,
     category: "Books & Journals"
   },
   { 
     name: "Chakra Guide", 
     price: "$22", 
-    image: moonlightCalm, // placeholder
+    image: chakraGuide,
     category: "Books & Journals"
   },
   { 
     name: "Crystal Healing Book", 
     price: "$24", 
-    image: manifestFire, // placeholder
+    image: crystalHealingBook,
     category: "Books & Journals"
   },
   { 
     name: "Herbal Remedies Guide", 
     price: "$23", 
-    image: moonlightCalm, // placeholder
+    image: herbalRemediesGuide,
     category: "Books & Journals"
   },
   { 
     name: "Astrology Journal", 
     price: "$21", 
-    image: manifestFire, // placeholder
+    image: astrologyJournal,
     category: "Books & Journals"
   }
 ];
