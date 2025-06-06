@@ -45,21 +45,23 @@ const CategoryNavigation = ({ selectedCategory, onCategorySelect }) => {
           <button
             key={idx}
             onClick={() => onCategorySelect(cat.category)}
-            className={`bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center transition-all duration-300 ${
+            className={`bg-white border rounded-xl p-4 flex flex-col items-center text-center transition-all duration-300 ${
               selectedCategory === cat.category 
-                ? 'shadow-md border-[#617C5F]' 
-                : 'hover:shadow-md'
+                ? 'border-[#617C5F] shadow-md' 
+                : 'border-gray-200 hover:shadow-md'
             }`}
           >
             <div className={`flex items-center justify-center h-10 w-10 rounded-lg p-2 ${
               selectedCategory === cat.category 
-                ? categoryColors[cat.category].split(' ')[0] 
-                : 'bg-gray-100'
+                ? 'bg-[#617C5F] text-white' 
+                : categoryColors[cat.category].split(' ')[0]
             }`}>
               {cat.icon}
             </div>
             <span className={`mt-2 px-2 py-0.5 text-sm font-medium rounded ${
-              categoryColors[cat.category] || "bg-gray-100 text-gray-600"
+              selectedCategory === cat.category 
+                ? 'bg-[#617C5F] text-white' 
+                : categoryColors[cat.category] || "bg-gray-100 text-gray-600"
             }`}>
               {cat.category}
             </span>
