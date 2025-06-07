@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./index.html",
@@ -6,7 +7,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        dmsans: ['DM Sans', 'sans-serif'],
+        'dmsans': ['DM Sans', 'system-ui', 'sans-serif'],
+        'sans': ['DM Sans', 'system-ui', 'sans-serif'],
       },
     },
   },

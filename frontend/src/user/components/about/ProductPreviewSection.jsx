@@ -47,8 +47,8 @@ const ScrollableRow = ({ products }) => {
   const containerRef = useRef(null);
   const isHoveredRef = useRef(false);
   const animationRef = useRef(null);
+  const singleListWidthRef = useRef(0);
 
-  // Duplicating products 3x for smoother loop
   const extendedProducts = [...products, ...products, ...products];
 
   const scroll = (direction) => {
@@ -61,16 +61,16 @@ const ScrollableRow = ({ products }) => {
   };
 
   const animateScroll = () => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     if (!isHoveredRef.current) {
-      containerRef.current.scrollLeft += 30;
-      // Reset when it reaches the second copy (first duplicate)
-      const scrollWidth = containerRef.current.scrollWidth;
-      const scrollLeft = containerRef.current.scrollLeft;
-      const singleListWidth = scrollWidth / 3;
-      if (scrollLeft >= singleListWidth * 2) {
-        containerRef.current.scrollLeft = singleListWidth;
+      container.scrollLeft += 1; // smoother step
+
+      // Reset if scroll reaches end of second set
+      const maxScroll = singleListWidthRef.current * 2;
+      if (container.scrollLeft >= maxScroll) {
+        container.scrollLeft = singleListWidthRef.current;
       }
     }
 
@@ -81,14 +81,17 @@ const ScrollableRow = ({ products }) => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Start at first duplicate to enable seamless loop
-    const singleListWidth = container.scrollWidth / 3;
+    const fullWidth = container.scrollWidth;
+    const singleListWidth = fullWidth / 3;
+    singleListWidthRef.current = singleListWidth;
+
     container.scrollLeft = singleListWidth;
 
     animationRef.current = requestAnimationFrame(animateScroll);
 
     return () => cancelAnimationFrame(animationRef.current);
   }, []);
+
 
   return (
     <div
