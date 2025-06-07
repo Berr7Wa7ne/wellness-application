@@ -1,63 +1,148 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import moonlightCalm from "../../../assets/moonlight-calm.png";
-import manifestFire from "../../../assets/manifest-fire.png";
-import heartOpening from "../../../assets/heart-opening.png";
-import energyClearing from "../../../assets/energy-clearing.png";
-import intuitionCrystal from "../../../assets/intuition-crystal.png";
-import sacredRitual from "../../../assets/sacred-ritual.png";
-import protectionCharm from "../../../assets/protection-charm.png";
-import miniAltar from "../../../assets/mini-altar.png";
-import licensePortal from "../../../assets/license-portal.png";
+import moonlightCalm from "../../../assets/Moonlight Calm.jpg";
+import manifestFire from "../../../assets/Manifest Fire.jpg";
+import heartOpening from "../../../assets/Heart Opening.jpg";
+import energyClearing from "../../../assets/Energy Clearing.jpg";
+import intuitionCrystal from "../../../assets/Intuition Crystal Kit.jpg";
+import sacredRitual from "../../../assets/Sacred Ritual Journal.jpg";
+import protectionCharm from "../../../assets/Protection Charm Bundle.jpg";
+import miniAltar from "../../../assets/Mini Altar Starter Kit.jpg";
+import licensePortal from "../../../assets/License to Portal.jpg";
+import chakraStonesSet from "../../../assets/Chakra Stones Set.jpg";
+import protectionBlend from "../../../assets/Protection Blend.jpg";
+import healingWand from "../../../assets/Healing Wand.jpg";
+import abundanceOil from "../../../assets/Abundance Oil.jpg";
+import manifestationPractice from "../../../assets/Manifestation Practice.jpg";
+import premiumAccess from "../../../assets/Premium Access License.jpg";
 
 const productsByCategory = {
   "Ritual Essentials": [
-    { name: "Moonlight Calm", price: "$20", image: moonlightCalm },
-    { name: "Manifest Fire", price: "$23", image: manifestFire },
-    { name: "Heart Opening", price: "$20", image: heartOpening },
+    { name: "Moonlight Calm", price: "$20", image: moonlightCalm, category: "Magickal Oils" },
+    { name: "Manifest Fire", price: "$23", image: manifestFire, category: "Magickal Oils" },
+    { name: "Heart Opening", price: "$20", image: heartOpening, category: "Magickal Oils" },
+    { name: "Chakra Stones Set", price: "$49.99", image: chakraStonesSet, category: "Healing Tools" },
+    { name: "Sacred Ritual Journal", price: "$24.99", image: sacredRitual, category: "Books & Journals" },
+    { name: "Healing Wand", price: "$39.99", image: healingWand, category: "Healing Tools" },
   ],
   "Spiritual Power & Protection": [
-    { name: "Energy Clearing Spray", price: "$20", image: energyClearing },
-    { name: "Intuition Crystal Kit", price: "$23", image: intuitionCrystal },
-    { name: "Sacred Ritual Journal", price: "$20", image: sacredRitual },
+    { name: "Energy Clearing Spray", price: "$20", image: energyClearing, category: "Healing Tools" },
+    { name: "Intuition Crystal Kit", price: "$23", image: intuitionCrystal, category: "Healing Tools" },
+    { name: "Sacred Ritual Journal", price: "$20", image: sacredRitual, category: "Books & Journals" },
+    { name: "Protection Blend", price: "$29.99", image: protectionBlend, category: "Magickal Oils" },
+    { name: "Protection Charm Bundle", price: "$39.99", image: protectionCharm, category: "Healing Tools" },
+    { name: "Mini Altar Starter Kit", price: "$49.99", image: miniAltar, category: "Healing Tools" },
   ],
   "Manifestation & Transformation": [
-    { name: "Protection Charm Bundle", price: "$20", image: protectionCharm },
-    { name: "Mini Altar Starter Kit", price: "$23", image: miniAltar },
-    { name: "License to Portal – Access Tiers", price: "$20", image: licensePortal },
+    { name: "Protection Charm Bundle", price: "$20", image: protectionCharm, category: "Healing Tools" },
+    { name: "Mini Altar Starter Kit", price: "$23", image: miniAltar, category: "Healing Tools" },
+    { name: "License to Portal – Access Tiers", price: "$20", image: licensePortal, category: "Licenses" },
+    { name: "Abundance Oil", price: "$27.99", image: abundanceOil, category: "Magickal Oils" },
+    { name: "Manifestation Practice", price: "$15", image: manifestationPractice, category: "Audio Guides" },
+    { name: "Premium Access License", price: "$50", image: premiumAccess, category: "Licenses" },
   ],
 };
 
 const ScrollableRow = ({ products }) => {
   const containerRef = useRef(null);
+  const scrollIntervalRef = useRef(null);
+  const isHoveredRef = useRef(false);
 
   const scroll = (direction) => {
     const { current } = containerRef;
     if (!current) return;
+    
+    // Pause marquee when using chevrons
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+    }
+    
     const scrollAmount = 300;
     direction === "left"
       ? (current.scrollLeft -= scrollAmount)
       : (current.scrollLeft += scrollAmount);
+      
+    // Resume marquee after a short delay if not hovered
+    setTimeout(() => {
+      if (!isHoveredRef.current) {
+        startMarquee();
+      }
+    }, 1000);
   };
+
+  const startMarquee = () => {
+    if (containerRef.current && !isHoveredRef.current) {
+      scrollIntervalRef.current = setInterval(() => {
+        if (containerRef.current) {
+          containerRef.current.scrollLeft += 4;
+          
+          if (containerRef.current.scrollLeft >= containerRef.current.scrollWidth / 2) {
+            containerRef.current.scrollLeft = 0;
+          }
+        }
+      }, 8);
+    }
+  };
+
+  // Start marquee effect
+  useEffect(() => {
+    startMarquee();
+
+    // Pause marquee on hover
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('mouseenter', () => {
+        isHoveredRef.current = true;
+        if (scrollIntervalRef.current) {
+          clearInterval(scrollIntervalRef.current);
+        }
+      });
+
+      container.addEventListener('mouseleave', () => {
+        isHoveredRef.current = false;
+        startMarquee();
+      });
+    }
+
+    return () => {
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+      }
+      if (container) {
+        container.removeEventListener('mouseenter', () => {});
+        container.removeEventListener('mouseleave', () => {});
+      }
+    };
+  }, []);
 
   return (
     <div className="relative">
       <button
         onClick={() => scroll("left")}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white border rounded-full p-2 shadow hover:bg-gray-100"
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white border rounded-full p-2 shadow hover:bg-[#617C5F] hover:text-white transition-transform hover:scale-105"
       >
         <ChevronLeft />
       </button>
 
       <div
         ref={containerRef}
-        className="overflow-x-auto scroll-smooth no-scrollbar px-8"
+        className="overflow-x-auto scroll-smooth px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
-        <div className="flex justify-center gap-8"> {/* Increased gap from gap-0 to gap-8 */}
+        <div className="flex justify-center gap-8">
+          {/* Original products */}
           {products.map((product, index) => (
             <div
-              key={index}
-              className="flex-shrink-0 w-[280px] px-4" 
+              key={`original-${index}`}
+              className="flex-shrink-0 w-[280px] px-4"
+            >
+              <ProductCard {...product} />
+            </div>
+          ))}
+          {/* Duplicated products for seamless loop */}
+          {products.map((product, index) => (
+            <div
+              key={`duplicate-${index}`}
+              className="flex-shrink-0 w-[280px] px-4"
             >
               <ProductCard {...product} />
             </div>
@@ -67,12 +152,21 @@ const ScrollableRow = ({ products }) => {
 
       <button
         onClick={() => scroll("right")}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white border rounded-full p-2 shadow hover:bg-gray-100"
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white border rounded-full p-2 shadow hover:bg-[#617C5F] hover:text-white transition-transform hover:scale-105"
       >
         <ChevronRight />
       </button>
     </div>
   );
+};
+
+const categoryColors = {
+  'Magickal Oils': "bg-purple-100 text-purple-800",
+  'Meditation Videos': "bg-green-100 text-green-600",
+  'Licenses': "bg-rose-100 text-rose-600",
+  'Audio Guides': "bg-orange-100 text-orange-600",
+  'Healing Tools': "bg-blue-100 text-blue-600",
+  'Books & Journals': "bg-cyan-100 text-cyan-600",
 };
 
 export const ProductPreviewSection = () => {
@@ -94,26 +188,33 @@ export const ProductPreviewSection = () => {
   );
 };
 
-export const ProductCard = ({ name, price, image }) => (
-<div className="h-full flex flex-col">
-  <div className="border-2 border-[#C8D8C0] flex-grow bg-white rounded-none overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col">
-    <img
-      src={image}
-      alt={name}
-      className="md:w-full md:h-[330px] object-cover"
-    />
-    <div className="p-6 flex-grow"> {/* Added flex-grow to push button down */}
-      <h4 className="font-medium md:text-[28px] text-[16px] text-[#213721] mb-2 font-mono">{name}</h4>
-      <div className="flex justify-between items-center">
-        <p className="md:text-[22px] text-[12px] text-[#213721] font-serif font-semibold">{price}</p>
-        <div className="text-xl text-green-950">★ ★ ★ ★ ☆</div>
+export const ProductCard = ({ name, price, image, category }) => (
+  <div className="h-full flex flex-col">
+    <div className="border-2 border-[#C8D8C0] flex-grow bg-white rounded-none overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col">
+      <div className="relative">
+        <img
+          src={image}
+          alt={name}
+          className="md:w-full md:h-[330px] object-cover"
+        />
+        <div className="absolute top-2 left-2">
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${categoryColors[category]}`}>
+            {category}
+          </span>
+        </div>
+      </div>
+      <div className="p-6 flex-grow">
+        <h4 className="font-medium md:text-[28px] text-[16px] text-[#213721] mb-2 font-mono">{name}</h4>
+        <div className="flex justify-between items-center">
+          <p className="md:text-[22px] text-[12px] text-[#213721] font-serif font-semibold">{price}</p>
+          <div className="text-xl text-green-950">★ ★ ★ ★ ☆</div>
+        </div>
+      </div>
+      <div className="px-6 pb-4 mt-auto">
+        <button className="w-full bg-[#617C5F] text-white py-3 px-6 rounded-none hover:bg-[#4a6348] transition-colors duration-300">
+          Buy Now
+        </button>
       </div>
     </div>
-    <div className="px-6 pb-4 mt-auto"> {/* Added padding and margin */}
-      <button className="w-full bg-[#617C5F] text-white py-3 px-6 rounded-none hover:bg-[#4a6348] transition-colors duration-300">
-        Buy Now
-      </button>
-    </div>
   </div>
-</div>
 );
