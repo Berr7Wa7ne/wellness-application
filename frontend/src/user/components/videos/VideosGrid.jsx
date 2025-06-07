@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { VideosCard } from './VideosCard';
 import CategoryNavigation from '../shared/CategoryNavigation';
+import Pagination from '../shared/Pagination';
 
 // Meditation Videos
 import morningMindfulness from '../../../assets/Morning Mindfulness.jpg';
@@ -122,11 +123,45 @@ const audioGuides = [
 
 export const VideoGrid = () => {
   const [selectedCategory, setSelectedCategory] = useState("Meditation Videos");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const gridRef = useRef(null);
 
-  const currentVideos = selectedCategory === "Meditation Videos" ? meditationVideos : audioGuides;
+  // Reset to first page when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
+
+  // Filter videos by category
+  const filteredVideos = selectedCategory === "Meditation Videos" ? meditationVideos : audioGuides;
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredVideos.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentVideos = filteredVideos.slice(startIndex, endIndex);
+
+  const scrollToGrid = () => {
+    if (gridRef.current) {
+      const headerOffset = 100; // Adjust this value based on your header height
+      const elementPosition = gridRef.current.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Use setTimeout to ensure the page change happens before scrolling
+    setTimeout(scrollToGrid, 100);
+  };
 
   return (
-    <section className="px-6 md:px-20 py-16">
+    <section className="px-6 md:px-20 py-16" ref={gridRef}>
       <div className="mb-8">
         <CategoryNavigation
           selectedCategory={selectedCategory}
@@ -149,6 +184,14 @@ export const VideoGrid = () => {
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </section>
   );
 };

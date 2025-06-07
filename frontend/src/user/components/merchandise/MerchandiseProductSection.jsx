@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import moonlightCalm from "../../../assets/Moonlight Calm.jpg";
 import manifestFire from "../../../assets/Manifest Fire.jpg";
 import heartOpening from "../../../assets/Heart Opening.jpg";
@@ -54,6 +54,7 @@ import crystalHealingBook from "../../../assets/Crystal Healing Book.jpg";
 import herbalRemediesGuide from "../../../assets/Herbal Remedies Guide.jpg";
 import astrologyJournal from "../../../assets/Astrology Journal.jpg";
 import CategoryNavigation from "../shared/CategoryNavigation";
+import Pagination from "../shared/Pagination";
 
 const products = [
   // Magickal Oils (9 products)
@@ -396,6 +397,14 @@ const products = [
 export const MerchandiseProductSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("Magickal Oils");
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const gridRef = useRef(null);
+
+  // Reset to first page when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
 
   const handleCategoryChange = (category) => {
     setIsTransitioning(true);
@@ -409,22 +418,55 @@ export const MerchandiseProductSection = () => {
     product => product.category === selectedCategory
   );
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+  const scrollToGrid = () => {
+    if (gridRef.current) {
+      const headerOffset = 200; // Increased from 100 to 200 to scroll higher up
+      const elementPosition = gridRef.current.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Use setTimeout to ensure the page change happens before scrolling
+    setTimeout(scrollToGrid, 100);
+  };
+
   return (
-    <>
+    <div className="py-16">
       <CategoryNavigation 
         selectedCategory={selectedCategory}
         onCategorySelect={handleCategoryChange}
       />
-      <section className="px-8 md:px-16 lg:px-24 xl:px-32 py-12 bg-white text-black">
+      <section className="px-8 md:px-16 lg:px-24 xl:px-32 py-12 bg-white text-black" ref={gridRef}>
         <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${
           isTransitioning ? 'opacity-0' : 'opacity-100'
         }`}>
-          {filteredProducts.slice(0, 9).map((product, idx) => (
+          {currentProducts.map((product, idx) => (
             <ProductCard key={idx} {...product} />
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
       </section>
-    </>
+    </div>
   );
 };
 
