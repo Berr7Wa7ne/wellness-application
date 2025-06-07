@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import moonlightCalm from "../../../assets/moonlight-calm.png";
-import manifestFire from "../../../assets/manifest-fire.png";
-import heartOpening from "../../../assets/heart-opening.png";
-import energyClearing from "../../../assets/energy-clearing.png";
-import intuitionCrystal from "../../../assets/intuition-crystal.png";
-import sacredRitual from "../../../assets/sacred-ritual.png";
-import protectionCharm from "../../../assets/protection-charm.png";
-import miniAltar from "../../../assets/mini-altar.png";
-import licensePortal from "../../../assets/license-portal.png";
+import moonlightCalm from "../../../assets/Moonlight Calm.jpg";
+import manifestFire from "../../../assets/Manifest Fire.jpg";
+import heartOpening from "../../../assets/Heart Opening.jpg";
+import energyClearing from "../../../assets/Energy Clearing Spray.jpg";
+import intuitionCrystal from "../../../assets/Intuition Crystal Kit.jpg";
+import sacredRitual from "../../../assets/Sacred Ritual Journal.jpg";
+import protectionCharm from "../../../assets/Protection Charm Bundle.jpg";
+import miniAltar from "../../../assets/Mini Altar Starter Kit.jpg";
+import licensePortal from "../../../assets/License to Portal.jpg";
 import lavenderDream from "../../../assets/Lavender Dream.jpg";
 import protectionBlend from "../../../assets/Protection Blend.jpg";
 import abundanceOil from "../../../assets/Abundance Oil.jpg";
@@ -59,55 +59,55 @@ const products = [
   // Magickal Oils (9 products)
   { 
     name: "Moonlight Calm", 
-    price: "$20", 
+    price: "$24.99", 
     image: moonlightCalm,
     category: "Magickal Oils"
   },
   { 
     name: "Manifest Fire", 
-    price: "$23", 
+    price: "$27.99", 
     image: manifestFire,
     category: "Magickal Oils"
   },
   { 
     name: "Lavender Dream", 
-    price: "$22", 
+    price: "$24.99", 
     image: lavenderDream,
     category: "Magickal Oils"
   },
   { 
     name: "Protection Blend", 
-    price: "$25", 
+    price: "$29.99", 
     image: protectionBlend,
     category: "Magickal Oils"
   },
   { 
     name: "Abundance Oil", 
-    price: "$24", 
+    price: "$27.99", 
     image: abundanceOil,
     category: "Magickal Oils"
   },
   { 
     name: "Healing Harmony", 
-    price: "$21", 
+    price: "$26.99", 
     image: healingHarmony,
     category: "Magickal Oils"
   },
   { 
     name: "Spiritual Clarity", 
-    price: "$23", 
+    price: "$28.99", 
     image: spiritualClarity,
     category: "Magickal Oils"
   },
   { 
     name: "Love Attraction", 
-    price: "$22", 
+    price: "$25.99", 
     image: loveAttraction,
     category: "Magickal Oils"
   },
   { 
     name: "Grounding Essence", 
-    price: "$20", 
+    price: "$23.99", 
     image: groundingEssence,
     category: "Magickal Oils"
   },
@@ -171,7 +171,7 @@ const products = [
   // Licenses (9 products)
   { 
     name: "License to Portal – Access Tiers", 
-    price: "$20", 
+    price: "$99.99", 
     image: licensePortal,
     category: "Licenses"
   },
@@ -281,65 +281,65 @@ const products = [
   },
 
   // Healing Tools (9 products)
-  { 
-    name: "Heart Opening", 
-    price: "$20", 
-    image: heartOpening,
-    category: "Healing Tools"
-  },
-  { 
-    name: "Energy Clearing Spray", 
-    price: "$20", 
-    image: energyClearing,
-    category: "Healing Tools"
-  },
-  { 
-    name: "Intuition Crystal Kit", 
-    price: "$23", 
-    image: intuitionCrystal,
-    category: "Healing Tools"
-  },
-  { 
-    name: "Protection Charm Bundle", 
-    price: "$20", 
-    image: protectionCharm,
-    category: "Healing Tools"
-  },
-  { 
-    name: "Mini Altar Starter Kit", 
-    price: "$23", 
-    image: miniAltar,
-    category: "Healing Tools"
-  },
-  { 
-    name: "Chakra Stones Set", 
-    price: "$25", 
+  {
+    name: "Chakra Stones Set",
+    price: "$49.99",
     image: chakraStonesSet,
-    category: "Healing Tools"
+    category: "Healing Tools",
   },
-  { 
-    name: "Healing Wand", 
-    price: "$30", 
+  {
+    name: "Healing Wand",
+    price: "$39.99",
     image: healingWand,
-    category: "Healing Tools"
+    category: "Healing Tools",
   },
-  { 
-    name: "Meditation Cushion", 
-    price: "$35", 
+  {
+    name: "Meditation Cushion",
+    price: "$34.99",
     image: meditationCushion,
-    category: "Healing Tools"
+    category: "Healing Tools",
   },
-  { 
-    name: "Sound Bowl", 
-    price: "$45", 
+  {
+    name: "Sound Bowl",
+    price: "$89.99",
     image: soundBowl,
-    category: "Healing Tools"
+    category: "Healing Tools",
+  },
+  {
+    name: "Heart Opening",
+    price: "$44.99",
+    image: heartOpening,
+    category: "Healing Tools",
+  },
+  {
+    name: "Energy Clearing Spray",
+    price: "$29.99",
+    image: energyClearing,
+    category: "Healing Tools",
+  },
+  {
+    name: "Intuition Crystal Kit",
+    price: "$54.99",
+    image: intuitionCrystal,
+    category: "Healing Tools",
+  },
+  {
+    name: "Protection Charm Bundle",
+    price: "$39.99",
+    image: protectionCharm,
+    category: "Healing Tools",
+  },
+  {
+    name: "Mini Altar Starter Kit",
+    price: "$49.99",
+    image: miniAltar,
+    category: "Healing Tools",
   },
 
   // Books & Journals (9 products)
   { 
     name: "Sacred Ritual Journal", 
-    price: "$20", 
+    price: "$24.99", 
     image: sacredRitual,
     category: "Books & Journals"
   },
@@ -430,15 +430,8 @@ export const MerchandiseProductSection = () => {
 
 export const ProductCard = ({ name, price, image }) => (
   <div className="border-2 border-[#C8D8C0] bg-white hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-    <div className="flex justify-center items-center flex-grow p-4">
-      <div className="w-full aspect-square relative">
-        <img 
-          src={image} 
-          alt={name} 
-          className="absolute inset-0 w-full h-full object-contain"
-          style={{ maxHeight: '200px' }}
-        />
-      </div>
+    <div className="flex justify-center flex-grow">
+      <img src={image} alt={name} className="object-contain" />
     </div>
     <div className="p-4 mx-3">
       <h4 className="font-medium text-[20px] text-[#213721] mb-2 font-mono">
