@@ -429,7 +429,7 @@ export const MerchandiseProductSection = () => {
 };
 
 export const ProductCard = ({ name, price, image }) => (
-  <div className="border-2 border-[#C8D8C0] bg-white hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+  <div className="border-2 border-[#C8D8C0] rounded-lg bg-white hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
     <div className="flex justify-center flex-grow">
       <img src={image} alt={name} className="object-contain" />
     </div>
