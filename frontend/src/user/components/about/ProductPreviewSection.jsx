@@ -45,78 +45,58 @@ const productsByCategory = {
 
 const ScrollableRow = ({ products }) => {
   const containerRef = useRef(null);
-  const scrollIntervalRef = useRef(null);
   const isHoveredRef = useRef(false);
+  const animationRef = useRef(null);
+
+  // Duplicating products 3x for smoother loop
+  const extendedProducts = [...products, ...products, ...products];
 
   const scroll = (direction) => {
     const { current } = containerRef;
     if (!current) return;
-    
-    // Pause marquee when using chevrons
-    if (scrollIntervalRef.current) {
-      clearInterval(scrollIntervalRef.current);
-    }
-    
     const scrollAmount = 300;
     direction === "left"
       ? (current.scrollLeft -= scrollAmount)
       : (current.scrollLeft += scrollAmount);
-      
-    // Resume marquee after a short delay if not hovered
-    setTimeout(() => {
-      if (!isHoveredRef.current) {
-        startMarquee();
+  };
+
+  const animateScroll = () => {
+    if (!containerRef.current) return;
+
+    if (!isHoveredRef.current) {
+      containerRef.current.scrollLeft += 30;
+      // Reset when it reaches the second copy (first duplicate)
+      const scrollWidth = containerRef.current.scrollWidth;
+      const scrollLeft = containerRef.current.scrollLeft;
+      const singleListWidth = scrollWidth / 3;
+      if (scrollLeft >= singleListWidth * 2) {
+        containerRef.current.scrollLeft = singleListWidth;
       }
-    }, 1000);
-  };
-
-  const startMarquee = () => {
-    if (containerRef.current && !isHoveredRef.current) {
-      scrollIntervalRef.current = setInterval(() => {
-        if (containerRef.current) {
-          containerRef.current.scrollLeft += 4;
-          
-          if (containerRef.current.scrollLeft >= containerRef.current.scrollWidth / 2) {
-            containerRef.current.scrollLeft = 0;
-          }
-        }
-      }, 8);
     }
+
+    animationRef.current = requestAnimationFrame(animateScroll);
   };
 
-  // Start marquee effect
   useEffect(() => {
-    startMarquee();
-
-    // Pause marquee on hover
     const container = containerRef.current;
-    if (container) {
-      container.addEventListener('mouseenter', () => {
-        isHoveredRef.current = true;
-        if (scrollIntervalRef.current) {
-          clearInterval(scrollIntervalRef.current);
-        }
-      });
+    if (!container) return;
 
-      container.addEventListener('mouseleave', () => {
-        isHoveredRef.current = false;
-        startMarquee();
-      });
-    }
+    // Start at first duplicate to enable seamless loop
+    const singleListWidth = container.scrollWidth / 3;
+    container.scrollLeft = singleListWidth;
 
-    return () => {
-      if (scrollIntervalRef.current) {
-        clearInterval(scrollIntervalRef.current);
-      }
-      if (container) {
-        container.removeEventListener('mouseenter', () => {});
-        container.removeEventListener('mouseleave', () => {});
-      }
-    };
+    animationRef.current = requestAnimationFrame(animateScroll);
+
+    return () => cancelAnimationFrame(animationRef.current);
   }, []);
 
   return (
-    <div className="relative">
+    <div
+      className="relative group"
+      onMouseEnter={() => (isHoveredRef.current = true)}
+      onMouseLeave={() => (isHoveredRef.current = false)}
+    >
+      {/* Chevron Buttons */}
       <button
         onClick={() => scroll("left")}
         className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white border rounded-full p-2 shadow hover:bg-[#617C5F] hover:text-white transition-transform hover:scale-105"
@@ -124,26 +104,14 @@ const ScrollableRow = ({ products }) => {
         <ChevronLeft />
       </button>
 
+      {/* Scroll Container */}
       <div
         ref={containerRef}
         className="overflow-x-auto scroll-smooth px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
-        <div className="flex justify-center gap-8">
-          {/* Original products */}
-          {products.map((product, index) => (
-            <div
-              key={`original-${index}`}
-              className="flex-shrink-0 w-[280px] px-4"
-            >
-              <ProductCard {...product} />
-            </div>
-          ))}
-          {/* Duplicated products for seamless loop */}
-          {products.map((product, index) => (
-            <div
-              key={`duplicate-${index}`}
-              className="flex-shrink-0 w-[280px] px-4"
-            >
+        <div className="flex gap-8">
+          {extendedProducts.map((product, index) => (
+            <div key={index} className="flex-shrink-0 w-[280px] px-4">
               <ProductCard {...product} />
             </div>
           ))}
