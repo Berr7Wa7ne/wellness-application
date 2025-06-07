@@ -13,7 +13,9 @@ export const Newsletter = () => {
             placeholder="Drop your email here"
             className="px-4 py-2 w-full outline-none text-sm"
           />
-          <button className="px-4 py-2 hover:bg-[#899F87] transition">
+          <button 
+            className="px-4 py-2 transition-all duration-300 ease-in-out hover:translate-x-2 active:translate-x-4"
+          >
             <img
               src={rightArrow}
               alt="Right Arrow"
