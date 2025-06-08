@@ -132,9 +132,9 @@ const ScrollableRow = ({ products }) => {
 };
 
 const categoryColors = {
-  'Magickal Oils': "bg-purple-100 text-purple-800",
+  'Magickal Oils': "bg-rose-100 text-rose-800",
   'Meditation Videos': "bg-green-100 text-green-600",
-  'Licenses': "bg-rose-100 text-rose-600",
+  'Licenses': "bg-purple-100 text-purple-600",
   'Audio Guides': "bg-orange-100 text-orange-600",
   'Healing Tools': "bg-blue-100 text-blue-600",
   'Books & Journals': "bg-cyan-100 text-cyan-600",
