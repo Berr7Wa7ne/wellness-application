@@ -55,6 +55,8 @@ import herbalRemediesGuide from "../../../assets/Herbal Remedies Guide.jpg";
 import astrologyJournal from "../../../assets/Astrology Journal.jpg";
 import CategoryNavigation from "../shared/CategoryNavigation";
 import Pagination from "../shared/Pagination";
+import PaymentModal from "../shared/PaymentModal";
+import PaymentForm from "../shared/PaymentForm";
 
 const products = [
   // Magickal Oils (9 products)
@@ -398,6 +400,8 @@ export const MerchandiseProductSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("Magickal Oils");
   const [currentPage, setCurrentPage] = useState(1);
   const [isActive, setIsActive] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const itemsPerPage = 6;
   const gridRef = useRef(null);
 
@@ -432,6 +436,16 @@ export const MerchandiseProductSection = () => {
     setTimeout(scrollToGrid, 100);
   };
 
+  const handleBuyNowClick = (product) => {
+    setSelectedProduct(product);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleClosePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setSelectedProduct(null);
+  };
+
   const filteredProducts = products.filter(
     product => product.category === selectedCategory
   );
@@ -455,7 +469,7 @@ export const MerchandiseProductSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentProducts.map((product, idx) => (
             <div key={idx}>
-              <ProductCard {...product} />
+              <ProductCard {...product} onBuyNowClick={handleBuyNowClick} />
             </div>
           ))}
         </div>
@@ -470,11 +484,19 @@ export const MerchandiseProductSection = () => {
           </div>
         )}
       </section>
+
+      <PaymentModal isOpen={isPaymentModalOpen} onClose={handleClosePaymentModal}>
+        {selectedProduct && (
+          <div>
+            <PaymentForm onClose={handleClosePaymentModal} />
+          </div>
+        )}
+      </PaymentModal>
     </div>
   );
 };
 
-export const ProductCard = ({ name, price, image }) => (
+export const ProductCard = ({ name, price, image, onBuyNowClick }) => (
   <div className="border-2 border-[#C8D8C0] rounded-lg bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col group">
     <div className="relative w-full pt-[50%]">
       <div className="absolute inset-0">
@@ -497,7 +519,10 @@ export const ProductCard = ({ name, price, image }) => (
       </div>
     </div>
     <div className="px-6 pb-4 mt-auto">
-      <button className="w-full bg-[#213721] text-white py-3 px-6 rounded-none hover:bg-green-800 transition-all duration-300 transform hover:scale-[1.02]">
+      <button
+        className="w-full bg-[#213721] text-white py-3 px-6 rounded-none hover:bg-green-800 transition-all duration-300 transform hover:scale-[1.02]"
+        onClick={() => onBuyNowClick({ name, price, image })}
+      >
         Buy Now
       </button>
     </div>

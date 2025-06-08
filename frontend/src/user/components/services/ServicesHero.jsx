@@ -5,8 +5,10 @@ import { ChevronDown } from 'lucide-react';
 
 export const ServicesHero = ({ children }) => {
   const [scrollY, setScrollY] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    setIsVisible(true);
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
@@ -35,7 +37,7 @@ export const ServicesHero = ({ children }) => {
       {children}
 
       {/* Hero Content */}
-      <div className="absolute inset-0 z-20 flex flex-col justify-center items-start px-6 md:px-12">
+      <div className={`absolute inset-0 z-20 flex flex-col justify-center items-start px-6 md:px-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="flex items-center gap-3 mb-4 font-mono">
           {/* Animated Horizontal line with dot */}
           <div className="relative w-32 h-px bg-white overflow-hidden">

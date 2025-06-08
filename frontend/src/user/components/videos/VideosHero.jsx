@@ -1,7 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import heroPic1 from "../../../assets/hero-pic1.jpg"
 
 export const VideosHero = ({ children }) => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        setIsVisible(true);
+    }, []);
+
     return (
         <section className="relative h-[80vh] md:h-screen w-full text-white">
           {/* Background Image */}
@@ -18,7 +24,7 @@ export const VideosHero = ({ children }) => {
           {children}
     
           {/* Hero Content */}
-          <div className="absolute inset-0 z-20 flex flex-col justify-center items-start px-6 md:px-12">
+          <div className={`absolute inset-0 z-20 flex flex-col justify-center items-start px-6 md:px-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="flex items-center gap-3 mb-4 font-mono">
             {/* Horizontal line with dot at the end */}
             <div className="relative w-32 h-px bg-white">
