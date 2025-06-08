@@ -126,11 +126,36 @@ export const VideoGrid = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   const gridRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   // Reset to first page when category changes
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedCategory]);
+
+  // Intersection Observer for fade-in animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (gridRef.current) {
+      observer.observe(gridRef.current);
+    }
+
+    return () => {
+      if (gridRef.current) {
+        observer.unobserve(gridRef.current);
+      }
+    };
+  }, []);
 
   // Filter videos by category
   const filteredVideos = selectedCategory === "Meditation Videos" ? meditationVideos : audioGuides;
@@ -143,7 +168,7 @@ export const VideoGrid = () => {
 
   const scrollToGrid = () => {
     if (gridRef.current) {
-      const headerOffset = 100; // Adjust this value based on your header height
+      const headerOffset = 100;
       const elementPosition = gridRef.current.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -156,13 +181,15 @@ export const VideoGrid = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // Use setTimeout to ensure the page change happens before scrolling
     setTimeout(scrollToGrid, 100);
   };
 
   return (
-    <section className="px-6 md:px-20 py-16" ref={gridRef}>
-      <div className="mb-8">
+    <section 
+      className={`px-6 md:px-20 py-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} 
+      ref={gridRef}
+    >
+      <div className="mb-8 animate-fade-in-up">
         <CategoryNavigation
           selectedCategory={selectedCategory}
           onCategorySelect={setSelectedCategory}
@@ -174,10 +201,9 @@ export const VideoGrid = () => {
         {currentVideos.map((video, index) => (
           <div
             key={index}
-            className="transition-all duration-500 ease-in-out transform"
+            className="transition-all duration-500 ease-in-out transform animate-fade-in-up"
             style={{
-              opacity: 1,
-              transform: 'translateY(0)',
+              animationDelay: `${index * 100}ms`,
             }}
           >
             <VideosCard {...video} />
@@ -186,11 +212,13 @@ export const VideoGrid = () => {
       </div>
 
       {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        <div className="animate-fade-in-up animation-delay-500">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       )}
     </section>
   );

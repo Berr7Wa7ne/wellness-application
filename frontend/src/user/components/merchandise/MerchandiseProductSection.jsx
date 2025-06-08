@@ -396,10 +396,14 @@ const products = [
 
 export const MerchandiseProductSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("Magickal Oils");
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isActive, setIsActive] = useState(false);
   const itemsPerPage = 6;
   const gridRef = useRef(null);
+
+  useEffect(() => {
+    setIsActive(true);
+  }, []);
 
   // Reset to first page when category changes
   useEffect(() => {
@@ -407,26 +411,12 @@ export const MerchandiseProductSection = () => {
   }, [selectedCategory]);
 
   const handleCategoryChange = (category) => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setSelectedCategory(category);
-      setIsTransitioning(false);
-    }, 300);
+    setSelectedCategory(category);
   };
-
-  const filteredProducts = products.filter(
-    product => product.category === selectedCategory
-  );
-
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
   const scrollToGrid = () => {
     if (gridRef.current) {
-      const headerOffset = 200; // Increased from 100 to 200 to scroll higher up
+      const headerOffset = 100;
       const elementPosition = gridRef.current.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -439,31 +429,45 @@ export const MerchandiseProductSection = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // Use setTimeout to ensure the page change happens before scrolling
     setTimeout(scrollToGrid, 100);
   };
 
+  const filteredProducts = products.filter(
+    product => product.category === selectedCategory
+  );
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
   return (
     <div className="py-16">
-      <CategoryNavigation 
+      <CategoryNavigation
         selectedCategory={selectedCategory}
         onCategorySelect={handleCategoryChange}
       />
-      <section className="px-8 md:px-16 lg:px-24 xl:px-32 py-12 bg-white text-black" ref={gridRef}>
-        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${
-          isTransitioning ? 'opacity-0' : 'opacity-100'
-        }`}>
+      <section 
+        className={`px-8 md:px-16 lg:px-24 xl:px-32 py-12 bg-white text-black transition-all duration-1000 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} 
+        ref={gridRef}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentProducts.map((product, idx) => (
-            <ProductCard key={idx} {...product} />
+            <div key={idx}>
+              <ProductCard {...product} />
+            </div>
           ))}
         </div>
 
         {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          <div className="mt-8">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
         )}
       </section>
     </div>
@@ -471,29 +475,29 @@ export const MerchandiseProductSection = () => {
 };
 
 export const ProductCard = ({ name, price, image }) => (
-  <div className="border-2 border-[#C8D8C0] rounded-lg bg-white hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+  <div className="border-2 border-[#C8D8C0] rounded-lg bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col group">
     <div className="relative w-full pt-[50%]">
       <div className="absolute inset-0">
-        <img 
-          src={image} 
-          alt={name} 
-          className="w-full h-full object-cover rounded-t-lg"
+        <img
+          src={image}
+          alt={name}
+          className="w-full h-full object-cover rounded-t-lg transition-transform duration-500 group-hover:scale-105"
         />
       </div>
     </div>
     <div className="p-4 mx-3">
-      <h4 className="font-medium text-[20px] text-[#213721] mb-2 font-mono">
+      <h4 className="font-medium text-[20px] text-[#213721] mb-2 font-mono group-hover:text-[#617C5F] transition-colors duration-300">
         {name}
       </h4>
       <div className="flex justify-between items-center">
-        <p className="text-[16px] text-[#213721] font-serif font-semibold">
+        <p className="text-[16px] text-[#213721] font-serif font-semibold group-hover:text-[#617C5F] transition-colors duration-300">
           {price}
         </p>
         <div className="text-lg text-green-950">★ ★ ★ ★ ☆</div>
       </div>
     </div>
     <div className="px-6 pb-4 mt-auto">
-      <button className="w-full bg-[#617C5F] text-white py-3 px-6 rounded-none hover:bg-[#4a6348] transition-colors duration-300">
+      <button className="w-full bg-[#213721] text-white py-3 px-6 rounded-none hover:bg-green-800 transition-all duration-300 transform hover:scale-[1.02]">
         Buy Now
       </button>
     </div>

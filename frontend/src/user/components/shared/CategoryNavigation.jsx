@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AudioLines, BookOpenCheck, Video, FlaskConical, ShieldCheck, HeartHandshake } from 'lucide-react';
 
 const categoryColors = {
@@ -11,6 +11,12 @@ const categoryColors = {
 };
 
 const CategoryNavigation = ({ selectedCategory, onCategorySelect, filteredCategories = null }) => {
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    setIsActive(true);
+  }, []);
+
   const allCategories = [
     {
       category: 'Magickal Oils',
@@ -43,7 +49,7 @@ const CategoryNavigation = ({ selectedCategory, onCategorySelect, filteredCatego
     : allCategories;
 
   return (
-    <div className="px-8 md:px-16 lg:px-24 xl:px-32 py-8">
+    <div className={`px-8 md:px-16 lg:px-24 xl:px-32 py-8 transition-all duration-1000 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {displayCategories.map((cat, idx) => (
           <button
