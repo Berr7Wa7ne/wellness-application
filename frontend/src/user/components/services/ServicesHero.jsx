@@ -17,6 +17,13 @@ export const ServicesHero = ({ children }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToServices = () => {
+    const servicesSection = document.querySelector('section.px-6.md\\:px-20.py-16');
+    if (servicesSection) {
+      servicesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative h-[80vh] md:h-screen w-full text-white overflow-hidden">
       {/* Background Image with Parallax */}
@@ -55,7 +62,10 @@ export const ServicesHero = ({ children }) => {
         </h1>
         
         {/* CTA Button */}
-        <button className="mt-8 px-8 py-3 bg-white text-[#4D664A] hover:bg-[#4D664A] hover:text-white transition-all duration-300 transform hover:scale-105">
+        <button 
+          onClick={scrollToServices}
+          className="mt-8 px-8 py-3 bg-white text-[#4D664A] hover:bg-[#4D664A] hover:text-white transition-all duration-300 transform hover:scale-105"
+        >
           Explore Our Services
         </button>
       </div>

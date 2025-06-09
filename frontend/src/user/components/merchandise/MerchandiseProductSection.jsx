@@ -57,6 +57,7 @@ import CategoryNavigation from "../shared/CategoryNavigation";
 import Pagination from "../shared/Pagination";
 import PaymentModal from "../shared/PaymentModal";
 import PaymentForm from "../shared/PaymentForm";
+import { useSearchParams } from 'react-router-dom';
 
 const products = [
   // Magickal Oils (9 products)
@@ -404,10 +405,32 @@ export const MerchandiseProductSection = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const itemsPerPage = 6;
   const gridRef = useRef(null);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     setIsActive(true);
   }, []);
+
+  // Handle URL parameters
+  useEffect(() => {
+    const category = searchParams.get('category');
+    const productName = searchParams.get('product');
+
+    if (category) {
+      setSelectedCategory(category);
+    }
+
+    if (productName) {
+      const product = products.find(p => p.name === productName);
+      if (product) {
+        setSelectedProduct(product);
+        setIsPaymentModalOpen(true);
+        setTimeout(() => {
+          scrollToGrid();
+        }, 100);
+      }
+    }
+  }, [searchParams]);
 
   // Reset to first page when category changes
   useEffect(() => {
@@ -439,6 +462,7 @@ export const MerchandiseProductSection = () => {
   const handleBuyNowClick = (product) => {
     setSelectedProduct(product);
     setIsPaymentModalOpen(true);
+    setTimeout(scrollToGrid, 100);
   };
 
   const handleClosePaymentModal = () => {
