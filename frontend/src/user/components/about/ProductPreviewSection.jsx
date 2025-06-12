@@ -27,7 +27,7 @@ const productsByCategory = {
   "Ritual Essentials": [
     { name: "Moonlight Calm", price: "$24.99", image: moonlightCalm, category: "Magickal Oils" },
     { name: "Morning Mindfulness", price: "$15", image: morningMindfulness, category: "Meditation Videos" },
-    { name: "License to Portal", price: "$99.99", image: licensePortal, category: "Licenses" },
+    { name: "License to Portal – Access Tiers", price: "$99.99", image: licensePortal, category: "Licenses" },
     { name: "Meditation Music", price: "$12", image: meditationMusic, category: "Audio Guides" },
     { name: "Chakra Stones Set", price: "$49.99", image: chakraStonesSet, category: "Healing Tools" },
     { name: "Moon Phase Journal", price: "$18", image: moonPhaseJournal, category: "Books & Journals" },
@@ -35,7 +35,7 @@ const productsByCategory = {
   "Spiritual Power & Protection": [
     { name: "Protection Blend", price: "$29.99", image: protectionBlend, category: "Magickal Oils" },
     { name: "Deep Sleep Journey", price: "$15", image: deepSleepJourney, category: "Meditation Videos" },
-    { name: "Premium Access License", price: "$50", image: premiumAccess, category: "Licenses" },
+    { name: "License to Portal – Access Tiers", price: "$99.99", image: licensePortal, category: "Licenses" },
     { name: "Chakra Balancing", price: "$12", image: chakraBalancing, category: "Audio Guides" },
     { name: "Healing Wand", price: "$39.99", image: healingWand, category: "Healing Tools" },
     { name: "Gratitude Journal", price: "$15", image: gratitudeJournal, category: "Books & Journals" },
@@ -43,7 +43,7 @@ const productsByCategory = {
   "Manifestation & Transformation": [
     { name: "Manifest Fire", price: "$27.99", image: manifestFire, category: "Magickal Oils" },
     { name: "Chakra Balancing", price: "$15", image: chakraBalancing, category: "Meditation Videos" },
-    { name: "Professional License", price: "$100", image: premiumAccess, category: "Licenses" },
+    { name: "License to Portal – Access Tiers", price: "$99.99", image: licensePortal, category: "Licenses" },
     { name: "Manifestation Practice", price: "$12", image: manifestationPractice, category: "Audio Guides" },
     { name: "Intuition Crystal Kit", price: "$54.99", image: intuitionCrystal, category: "Healing Tools" },
     { name: "Sacred Ritual Journal", price: "$24.99", image: sacredRitual, category: "Books & Journals" },
@@ -171,7 +171,7 @@ export const ProductCard = ({ name, price, image, category }) => {
 
   const handleBuyNowClick = () => {
     // Navigate to merchandise page with category and product name as query parameters
-    navigate(`/merchandise?category=${encodeURIComponent(category)}&product=${encodeURIComponent(name)}`);
+    navigate(`/product-preview/${encodeURIComponent(name.replace(/\s/g, '-'))}`);
   };
 
   return (

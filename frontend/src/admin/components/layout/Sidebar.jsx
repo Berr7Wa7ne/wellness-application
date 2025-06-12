@@ -1,13 +1,14 @@
 // Sidebar.jsx
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutGrid, 
   Video, 
   Box, 
   Server, 
   Layers, 
-  Table 
+  Table,
+  LogOut
 } from 'lucide-react'; // Using lucide-react for icons
 
 const menuItems = [
@@ -20,7 +21,14 @@ const menuItems = [
 ];
 
 const Sidebar = () => {
-  const location = useLocation(); // Call the hook here
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // TODO: Implement logout logic (clear tokens, etc.)
+    // For now, just redirect to login page
+    navigate('/login');
+  };
 
   return (
     <div className="fixed top-0 left-0 w-64 h-screen bg-[#213721] shadow-md flex flex-col justify-between z-20">
@@ -62,9 +70,18 @@ const Sidebar = () => {
       </div>
 
       {/* Bottom User Section */}
-      <div className="px-4 py-4 border-t text-sm text-white">
-        <div className="font-medium">Admin User</div>
-        <div className="text-xs">admin@example.com</div>
+      <div className="px-4 py-4 border-t border-gray-700">
+        <div className="text-sm text-white mb-2">
+          <div className="font-medium">Admin User</div>
+          <div className="text-xs text-gray-300">admin@example.com</div>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-white hover:bg-gray-100 hover:text-green-700 rounded-md transition-colors"
+        >
+          <LogOut size={16} />
+          <span>Logout</span>
+        </button>
       </div>
     </div>
   );

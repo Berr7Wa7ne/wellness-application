@@ -57,7 +57,7 @@ import CategoryNavigation from "../shared/CategoryNavigation";
 import Pagination from "../shared/Pagination";
 import PaymentModal from "../shared/PaymentModal";
 import PaymentForm from "../shared/PaymentForm";
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const products = [
   // Magickal Oils (9 products)
@@ -493,7 +493,7 @@ export const MerchandiseProductSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentProducts.map((product, idx) => (
             <div key={idx}>
-              <ProductCard {...product} onBuyNowClick={handleBuyNowClick} />
+              <ProductCard {...product} />
             </div>
           ))}
         </div>
@@ -520,35 +520,40 @@ export const MerchandiseProductSection = () => {
   );
 };
 
-export const ProductCard = ({ name, price, image, onBuyNowClick }) => (
-  <div className="border-2 border-[#C8D8C0] rounded-lg bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col group">
-    <div className="relative w-full pt-[50%]">
-      <div className="absolute inset-0">
-        <img
-          src={image}
-          alt={name}
-          className="w-full h-full object-cover rounded-t-lg transition-transform duration-500 group-hover:scale-105"
-        />
+export const ProductCard = ({ name, price, image }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/product-preview/${name.replace(/\s/g, '-')}`);
+  };
+
+  return (
+    <div 
+      className="border-2 border-[#C8D8C0] rounded-lg bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col group cursor-pointer"
+      onClick={handleClick}
+    >
+      <div className="relative w-full pt-[50%]">
+        <div className="absolute inset-0">
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-cover rounded-t-lg transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+      </div>
+      <div className="p-4 mx-3">
+        <h4 className="font-medium text-[20px] text-[#213721] mb-2 font-mono group-hover:text-[#617C5F] transition-colors duration-300">
+          {name}
+        </h4>
+        <div className="flex justify-between items-center">
+          <p className="text-[16px] text-[#213721] font-serif font-semibold group-hover:text-[#617C5F] transition-colors duration-300">
+            {price}
+          </p>
+          <div className="text-lg text-green-950">★ ★ ★ ★ ☆</div>
+        </div>
+      </div>
+      <div className="px-6 pb-4 mt-auto">
       </div>
     </div>
-    <div className="p-4 mx-3">
-      <h4 className="font-medium text-[20px] text-[#213721] mb-2 font-mono group-hover:text-[#617C5F] transition-colors duration-300">
-        {name}
-      </h4>
-      <div className="flex justify-between items-center">
-        <p className="text-[16px] text-[#213721] font-serif font-semibold group-hover:text-[#617C5F] transition-colors duration-300">
-          {price}
-        </p>
-        <div className="text-lg text-green-950">★ ★ ★ ★ ☆</div>
-      </div>
-    </div>
-    <div className="px-6 pb-4 mt-auto">
-      <button
-        className="w-full bg-[#213721] text-white py-3 px-6 rounded-none hover:bg-green-800 transition-all duration-300 transform hover:scale-[1.02]"
-        onClick={() => onBuyNowClick({ name, price, image })}
-      >
-        Buy Now
-      </button>
-    </div>
-  </div>
-);
+  );
+};

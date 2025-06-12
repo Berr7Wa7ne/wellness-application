@@ -5,6 +5,7 @@ import { ContactForm } from '../components/contact/ContactForm'
 import { Newsletter } from '../components/shared/Newsletter'
 import { Footer } from '../components/layout/Footer'
 
+
 const Contact = () => {
   return (
     <div>

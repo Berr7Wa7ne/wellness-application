@@ -1,11 +1,16 @@
 // src/layout/Layout.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 
 const Layout = () => {
   const location = useLocation();
   const isHeroPage = ["/", "/sign-up", "/about", "/services", "/videos", "/merchandise", "/contact"].includes(location.pathname); // Adjust as needed
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div className="relative min-h-screen">
