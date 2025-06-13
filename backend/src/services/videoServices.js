@@ -1,59 +1,40 @@
 const Video = require('../models/Video');
+const { AppError, catchAsyncService } = require('../utils/errorHandler');
 
 // Create a new video (Admin only)
-async function createVideo({ title, description, category, url }) {
-    try {
-        const newVideo = new Video({ title, description, category, url });
-        await newVideo.save();
-        return newVideo;
-    } catch (error) {
-        throw new Error('Error creating video: ' + error.message);
-    }
-}
+const createVideo = catchAsyncService(async ({ title, description, category, url }) => {
+    const newVideo = new Video({ title, description, category, url });
+    await newVideo.save();
+    return newVideo;
+});
 
 // Get all videos (Public)
-async function getAllVideos(category) {
-    try {
-        const filter = category ? { category } : {};
-        const videos = await Video.find(filter);
-        return videos;
-    } catch (error) {
-        throw new Error('Error fetching videos: ' + error.message);
-    }
-}
+const getAllVideos = catchAsyncService(async (category) => {
+    const filter = category ? { category } : {};
+    const videos = await Video.find(filter);
+    return videos;
+});
 
 // Get a single video by ID (Public)
-async function getVideoById(videoId) {
-    try {
-        const video = await Video.findById(videoId);
-        if (!video) throw new Error('Video not found');
-        return video;
-    } catch (error) {
-        throw new Error('Error fetching video: ' + error.message);
-    }
-}
+const getVideoById = catchAsyncService(async (videoId) => {
+    const video = await Video.findById(videoId);
+    if (!video) throw new AppError('Video not found', 404);
+    return video;
+});
 
 // Update video details (Admin only)
-async function updateVideo(videoId, updates) {
-    try {
-        const updatedVideo = await Video.findByIdAndUpdate(videoId, updates, { new: true });
-        if (!updatedVideo) throw new Error('Video not found');
-        return updatedVideo;
-    } catch (error) {
-        throw new Error('Error updating video: ' + error.message);
-    }
-}
+const updateVideo = catchAsyncService(async (videoId, updates) => {
+    const updatedVideo = await Video.findByIdAndUpdate(videoId, updates, { new: true });
+    if (!updatedVideo) throw new AppError('Video not found', 404);
+    return updatedVideo;
+});
 
 // Delete a video (Admin only)
-async function deleteVideo(videoId) {
-    try {
-        const deletedVideo = await Video.findByIdAndDelete(videoId);
-        if (!deletedVideo) throw new Error('Video not found');
-        return deletedVideo;
-    } catch (error) {
-        throw new Error('Error deleting video: ' + error.message);
-    }
-}
+const deleteVideo = catchAsyncService(async (videoId) => {
+    const deletedVideo = await Video.findByIdAndDelete(videoId);
+    if (!deletedVideo) throw new AppError('Video not found', 404);
+    return deletedVideo;
+});
 
 module.exports = {
     createVideo,

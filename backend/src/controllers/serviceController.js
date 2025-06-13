@@ -1,64 +1,67 @@
 // src/controllers/serviceController.js
 const serviceService = require("../services/serviceServices");
+const { catchAsync, AppError } = require("../utils/errorHandler");
 
 // Create a new service (Admin Only)
-async function createService(req, res) {
-    try {
-        const service = await serviceService.createService(req.body);
-        res.status(201).json({ message: "Service created successfully", service });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+const createService = catchAsync(async (req, res) => {
+    const service = await serviceService.createService(req.body);
+    res.status(201).json({
+        success: true,
+        data: service
+    });
+});
 
 // Get all services (Public)
-async function getAllServices(req, res) {
-    try {
-        const services = await serviceService.getAllServices();
-        res.status(200).json({ services });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+const getAllServices = catchAsync(async (req, res) => {
+    const services = await serviceService.getAllServices();
+    res.json({
+        success: true,
+        data: services
+    });
+});
 
 // Get a single service by ID (Public)
-async function getServiceById(req, res) {
-    try {
-        const { serviceId } = req.params;
-        const service = await serviceService.getServiceById(serviceId);
-        res.status(200).json({ service });
-    } catch (error) {
-        res.status(404).json({ message: error.message });
+const getService = catchAsync(async (req, res) => {
+    const service = await serviceService.getService(req.params.id);
+    if (!service) {
+        throw new AppError('Service not found', 404);
     }
-}
+    res.json({
+        success: true,
+        data: service
+    });
+});
 
 // Update a service (Admin Only)
-async function updateService(req, res) {
-    try {
-        const { serviceId } = req.params;
-        const updates = req.body;
-        const updatedService = await serviceService.updateService(serviceId, updates);
-        res.status(200).json({ message: "Service updated successfully", updatedService });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+const updateService = catchAsync(async (req, res) => {
+    const service = await serviceService.updateService(req.params.id, req.body);
+    if (!service) {
+        throw new AppError('Service not found', 404);
     }
-}
+    res.json({
+        success: true,
+        data: service
+    });
+});
 
 // Delete a service (Admin Only)
-async function deleteService(req, res) {
-    try {
-        const { serviceId } = req.params;
-        const deletedService = await serviceService.deleteService(serviceId);
-        res.status(200).json({ message: "Service deleted successfully", deletedService });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+const deleteService = catchAsync(async (req, res) => {
+    const service = await serviceService.deleteService(req.params.id);
+    if (!service) {
+        throw new AppError('Service not found', 404);
     }
-}
+    res.json({
+        success: true,
+        message: 'Service deleted successfully'
+    });
+});
 
-module.exports = {
+const serviceController = {
     createService,
     getAllServices,
-    getServiceById,
+    getService,
     updateService,
     deleteService,
 };
+
+module.exports = serviceController;

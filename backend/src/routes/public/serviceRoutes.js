@@ -5,6 +5,6 @@ const serviceController = require("../../controllers/serviceController");
 
 // Public Routes
 router.get("/services", serviceController.getAllServices); // Get all services
-router.get("/services/:serviceId", serviceController.getServiceById); // Get single service by ID
+router.get("/services/:id", serviceController.getService); // Get single service by ID
 
 module.exports = router;

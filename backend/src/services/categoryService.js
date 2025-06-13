@@ -1,47 +1,48 @@
 const Category = require("../models/Category");
+const { AppError, catchAsyncService } = require('../utils/errorHandler');
 
 // Create a new category
-async function createCategory(name, description) {
+const createCategory = catchAsyncService(async (name, description) => {
     if (!name || !description) {
-        throw new Error("Name and description are required.");
+        throw new AppError("Name and description are required.", 400);
     }
 
     // Check for duplicate category name
     const existingCategory = await Category.findOne({ name });
     if (existingCategory) {
-        throw new Error("Category name already exists.");
+        throw new AppError("Category name already exists.", 409);
     }
 
     const category = new Category({ name, description });
     return category.save();
-}
+});
 
 // Fetch all categories
-async function getAllCategories() {
-    return Category.find({});
-}
+const getAllCategories = catchAsyncService(async () => {
+    return await Category.find({});
+});
 
 // Get a single category by ID
-async function getCategoryById(id) {
+const getCategoryById = catchAsyncService(async (id) => {
     const category = await Category.findById(id);
     if (!category) {
-        throw new Error("Category not found.");
+        throw new AppError("Category not found.", 404);
     }
     return category;
-}
+});
 
 // Update a category
-async function updateCategory(id, name, description) {
+const updateCategory = catchAsyncService(async (id, name, description) => {
     const category = await Category.findById(id);
     if (!category) {
-        throw new Error("Category not found.");
+        throw new AppError("Category not found.", 404);
     }
 
     // Check for duplicate name if the name is being updated
     if (name && name !== category.name) {
         const existingCategory = await Category.findOne({ name });
         if (existingCategory) {
-            throw new Error("Category name already exists.");
+            throw new AppError("Category name already exists.", 409);
         }
         category.name = name;
     }
@@ -50,16 +51,16 @@ async function updateCategory(id, name, description) {
     category.updatedAt = Date.now();
 
     return category.save();
-}
+});
 
 // Delete a category
-async function deleteCategory(id) {
+const deleteCategory = catchAsyncService(async (id) => {
     const category = await Category.findByIdAndDelete(id);
     if (!category) {
-        throw new Error("Category not found.");
+        throw new AppError("Category not found.", 404);
     }
     return category;
-}
+});
 
 module.exports = {
     createCategory,

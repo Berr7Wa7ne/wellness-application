@@ -11,6 +11,9 @@ const productRoutes = require('./src/routes/public/productRoutes');
 const productAdminRoutes = require("./src/routes/admin/productAdminRoutes");
 const categoryAdminRoutes = require('./src/routes/admin/categoryAdminRoutes');
 const tierAdminRoutes = require('./src/routes/admin/tierAdminRoutes');
+const tierRoutes =  require('./src/routes/public/tierRoutes');
+const cartRoutes = require('./src/routes/public/cartRoutes');
+const { AppError } = require('./src/utils/errorHandler');
 
 
 
@@ -40,6 +43,38 @@ app.use('/admin', serviceAdminRoutes);
 app.use('/public', productRoutes);
 app.use('/admin', productAdminRoutes);
 app.use('/admin', categoryAdminRoutes);
-app.use('/admin', tierAdminRoutes); 
+app.use('/admin', tierAdminRoutes);
+app.use('/public', tierRoutes);
+app.use('/public', cartRoutes); 
+
+// Global error handler
+app.use((err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || 'error';
+
+  if (process.env.NODE_ENV === 'development') {
+    res.status(err.statusCode).json({
+      success: false,
+      error: err,
+      message: err.message,
+      stack: err.stack
+    });
+  } else {
+    // Production mode
+    if (err.isOperational) {
+      res.status(err.statusCode).json({
+        success: false,
+        message: err.message
+      });
+    } else {
+      // Programming or unknown errors
+      console.error('ERROR 💥', err);
+      res.status(500).json({
+        success: false,
+        message: 'Something went wrong'
+      });
+    }
+  }
+});
 
 module.exports = app;

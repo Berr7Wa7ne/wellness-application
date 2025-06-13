@@ -4,7 +4,7 @@ const videoController = require('../../controllers/videoController');
 
 // Public Routes
 router.get('/videos', videoController.getAllVideos); // Get all videos
-router.get('/videos/:videoId', videoController.getVideoById); // Get single video by ID
+router.get('/videos/:id', videoController.getVideo); // Get single video by ID
 
 
 module.exports = router;

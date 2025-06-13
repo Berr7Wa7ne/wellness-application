@@ -1,51 +1,52 @@
 // src/services/serviceService.js
 const Service = require("../models/Service");
+const { AppError, catchAsyncService } = require('../utils/errorHandler');
 
 // Create a new service (Admin Only)
-async function createService(data) {
+const createService = catchAsyncService(async (data) => {
     const { title, description, videoUrl } = data;
     
     // Ensure title is provided
     if (!title) {
-        throw new Error("Title is required");
+        throw new AppError("Title is required", 400);
     }
 
     const service = await Service.create({ title, description, videoUrl });
     return service;
-}
+});
 
 // Get all services (Public)
-async function getAllServices() {
+const getAllServices = catchAsyncService(async () => {
     const services = await Service.find({});
     return services;
-}
+});
 
 // Get a single service by ID (Public)
-async function getServiceById(serviceId) {
+const getServiceById = catchAsyncService(async (serviceId) => {
     const service = await Service.findById(serviceId);
     if (!service) {
-        throw new Error("Service not found");
+        throw new AppError("Service not found", 404);
     }
     return service;
-}
+});
 
 // Update a service (Admin Only)
-async function updateService(serviceId, updates) {
+const updateService = catchAsyncService(async (serviceId, updates) => {
     const service = await Service.findByIdAndUpdate(serviceId, updates, { new: true });
     if (!service) {
-        throw new Error("Service not found");
+        throw new AppError("Service not found", 404);
     }
     return service;
-}
+});
 
 // Delete a service (Admin Only)
-async function deleteService(serviceId) {
+const deleteService = catchAsyncService(async (serviceId) => {
     const service = await Service.findByIdAndDelete(serviceId);
     if (!service) {
-        throw new Error("Service not found");
+        throw new AppError("Service not found", 404);
     }
     return service;
-}
+});
 
 module.exports = {
     createService,

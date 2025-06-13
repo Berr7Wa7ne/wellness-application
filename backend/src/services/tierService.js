@@ -1,47 +1,48 @@
 const Tier = require("../models/Tier");
+const { AppError, catchAsyncService } = require('../utils/errorHandler');
 
 // Create a new tier
-async function createTier(name, description, price, videoUrl) {
+const createTier = catchAsyncService(async (name, description, price, videoUrl) => {
     if (!name || !description || !price) {
-        throw new Error("Name, description, and price are required.");
+        throw new AppError("Name, description, and price are required.", 400);
     }
 
     // Check for duplicate tier name
     const existingTier = await Tier.findOne({ name });
     if (existingTier) {
-        throw new Error("Tier name already exists.");
+        throw new AppError("Tier name already exists.", 409);
     }
 
     const tier = new Tier({ name, description, price, videoUrl });
     return tier.save();
-}
+});
 
 // Fetch all tiers
-async function getAllTiers() {
-    return Tier.find({});
-}
+const getAllTiers = catchAsyncService(async () => {
+    return await Tier.find({});
+});
 
 // Get a single tier by ID
-async function getTierById(id) {
+const getTier = catchAsyncService(async (id) => {
     const tier = await Tier.findById(id);
     if (!tier) {
-        throw new Error("Tier not found.");
+        throw new AppError("Tier not found.", 404);
     }
     return tier;
-}
+});
 
 // Update a tier
-async function updateTier(id, name, description, price, videoUrl) {
+const updateTier = catchAsyncService(async (id, name, description, price, videoUrl) => {
     const tier = await Tier.findById(id);
     if (!tier) {
-        throw new Error("Tier not found.");
+        throw new AppError("Tier not found.", 404);
     }
 
     // Check for duplicate name if the name is being updated
     if (name && name !== tier.name) {
         const existingTier = await Tier.findOne({ name });
         if (existingTier) {
-            throw new Error("Tier name already exists.");
+            throw new AppError("Tier name already exists.", 409);
         }
         tier.name = name;
     }
@@ -52,21 +53,21 @@ async function updateTier(id, name, description, price, videoUrl) {
     tier.updatedAt = Date.now();
 
     return tier.save();
-}
+});
 
 // Delete a tier
-async function deleteTier(id) {
+const deleteTier = catchAsyncService(async (id) => {
     const tier = await Tier.findByIdAndDelete(id);
     if (!tier) {
-        throw new Error("Tier not found.");
+        throw new AppError("Tier not found.", 404);
     }
     return tier;
-}
+});
 
 module.exports = {
     createTier,
     getAllTiers,
-    getTierById,
+    getTier,
     updateTier,
     deleteTier
 };

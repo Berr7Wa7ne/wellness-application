@@ -1,46 +1,47 @@
 // src/services/productService.js
 const Product = require("../models/Product");
+const { AppError, catchAsyncService } = require('../utils/errorHandler');
 
 // Create a new product (Admin)
-async function createProduct(data) {
+const createProduct = catchAsyncService(async (data) => {
     return await Product.create(data);
-}
+});
 
 // Get all products (Public)
-async function getAllProducts() {
+const getAllProducts = catchAsyncService(async () => {
     return await Product.find();
-}
+});
 
 // Get product by ID (Public)
-async function getProductById(productId) {
+const getProductById = catchAsyncService(async (productId) => {
     const product = await Product.findById(productId);
-    if (!product) throw new Error("Product not found");
+    if (!product) throw new AppError("Product not found", 404);
     return product;
-}
+});
 
 // Update a product (Admin)
-async function updateProduct(productId, updates) {
+const updateProduct = catchAsyncService(async (productId, updates) => {
     const updatedProduct = await Product.findByIdAndUpdate(productId, updates, { new: true });
-    if (!updatedProduct) throw new Error("Product not found");
+    if (!updatedProduct) throw new AppError("Product not found", 404);
     return updatedProduct;
-}
+});
 
 // Delete a product (Admin)
-async function deleteProduct(productId) {
+const deleteProduct = catchAsyncService(async (productId) => {
     const deletedProduct = await Product.findByIdAndDelete(productId);
-    if (!deletedProduct) throw new Error("Product not found");
+    if (!deletedProduct) throw new AppError("Product not found", 404);
     return deletedProduct;
-}
+});
 
 // Tier management (Admin)
-async function updateProductTier(productId, tier) {
+const updateProductTier = catchAsyncService(async (productId, tier) => {
     if (!["Basic", "Pro", "Premium"].includes(tier)) {
-        throw new Error("Invalid tier value");
+        throw new AppError("Invalid tier value", 400);
     }
     const product = await Product.findByIdAndUpdate(productId, { tier }, { new: true });
-    if (!product) throw new Error("Product not found");
+    if (!product) throw new AppError("Product not found", 404);
     return product;
-}
+});
 
 module.exports = {
     createProduct,
