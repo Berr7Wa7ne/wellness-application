@@ -40,11 +40,11 @@ export const SignIn = () => {
             console.log("Login response:", response);
 
             // 4. Handle the response
-            if (!response.data || !response.data.token) {
+            if (!response.data || !response.data.data || !response.data.data.token) {
                 throw new Error("Invalid response structure from server");
             }
 
-            const { token, user, message } = response.data;
+            const { token, user } = response.data.data;
             const userRole = user?.role;
 
             // 5. Validate required fields

@@ -63,10 +63,15 @@ export const SignUp = () => {
 
             console.log('Registration successful:', response.data);
             
+            if (!response.data || !response.data.success) {
+                throw new Error("Invalid response structure from server");
+            }
+
             // Redirect to login page after successful registration
             navigate('/', { 
                 state: { 
                     registrationSuccess: true,
+                    message: response.data.message,
                     email: email 
                 } 
             });
@@ -91,6 +96,8 @@ export const SignUp = () => {
                 setError(err.response.data.message);
             } else if (err.message === 'Network Error') {
                 setError('Unable to connect to the server. Please check your internet connection.');
+            } else if (err.message === 'Invalid response structure from server') {
+                setError('Server response was invalid. Please try again.');
             } else {
                 setError('Registration failed. Please try again.');
             }

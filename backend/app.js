@@ -15,6 +15,9 @@ const tierRoutes =  require('./src/routes/public/tierRoutes');
 const cartRoutes = require('./src/routes/public/cartRoutes');
 const profileRoutes = require('./src/routes/public/profileRoutes');
 const dashboardRoutes = require('./src/routes/admin/dashboardRoutes');
+const adminProfileRoutes = require('./src/routes/admin/profileRoutes');
+const notificationRoutes = require('./src/routes/admin/notificationRoutes');
+
 const { AppError } = require('./src/utils/errorHandler');
 
 
@@ -49,7 +52,9 @@ app.use('/admin', tierAdminRoutes);
 app.use('/public', tierRoutes);
 app.use('/public', cartRoutes);
 app.use('/public', profileRoutes);
-app.use('/admin', dashboardRoutes);  
+app.use('/admin', dashboardRoutes);
+app.use('/admin', adminProfileRoutes);  
+app.use('/admin', notificationRoutes);    
 
 // Global error handler
 app.use((err, req, res, next) => {
