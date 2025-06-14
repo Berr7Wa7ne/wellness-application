@@ -20,6 +20,7 @@ const validateCreateTier = [
     .isLength({ min: 10, max: 1000 })
     .withMessage('Description must be between 10 and 1000 characters'),
   body('price')
+    .optional()
     .isFloat({ min: 0 })
     .withMessage('Price must be a positive number'),
   body('videoUrl')
