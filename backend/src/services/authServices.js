@@ -1,13 +1,16 @@
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const User = require("../models/user");
 const PasswordResetToken = require("../models/PasswordResetToken");
 const emailService = require("../utils/emailService");
 const { AppError, catchAsyncService } = require("../utils/errorHandler");
 
 const registerUser = catchAsyncService(async ({ name, email, password, role }) => {
+    console.log('Register service called for:', { email, role });
+    
     if (!["user", "admin"].includes(role)) {
+        console.log('Invalid role provided:', role);
         throw new AppError("Invalid role provided.", 400);
     }
 
@@ -15,12 +18,14 @@ const registerUser = catchAsyncService(async ({ name, email, password, role }) =
     if (role === 'admin') {
         const adminCode = process.env.ADMIN_REG_CODE;
         if (!adminCode) {
+            console.log('Admin registration not configured');
             throw new AppError("Admin registration is not configured.", 500);
         }
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+        console.log('Email already exists:', email);
         throw new AppError("Email already exists.", 400);
     }
 
@@ -28,17 +33,36 @@ const registerUser = catchAsyncService(async ({ name, email, password, role }) =
     const user = new User({ name, email, password: hashedPassword, role });
     await user.save();
 
-    return `${role} registered successfully.`;
+    // Get the user without password
+    const userWithoutPassword = await User.findOne({ email }).select('-password');
+    
+    // Generate token
+    const token = jwt.sign(
+        { userId: userWithoutPassword._id, role: userWithoutPassword.role },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: '24h' }
+    );
+
+    console.log('User registered successfully:', { email, role });
+    return {
+        message: `${role} registered successfully.`,
+        user: userWithoutPassword,
+        token
+    };
 });
 
 const loginUser = catchAsyncService(async ({ email, password }) => {
+    console.log('Login service called for:', { email });
+    
     const user = await User.findOne({ email });
     if (!user) {
+        console.log('User not found:', { email });
         throw new AppError("User not found.", 404);
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+        console.log('Invalid password for user:', { email });
         throw new AppError("Invalid credentials.", 401);
     }
 
@@ -57,6 +81,7 @@ const loginUser = catchAsyncService(async ({ email, password }) => {
         createdAt: user.createdAt
     };
 
+    console.log('Login successful for user:', { userId: user._id, role: user.role });
     return { user: userResponse, token };
 });
 

@@ -1,21 +1,38 @@
 // src/controllers/authController.js
 const { registerUser, loginUser, sendPasswordResetEmail, resetPassword: resetPasswordService } = require("../services/authServices");
 const { catchAsync } = require('../utils/errorHandler');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 // Register a new user
 const register = catchAsync(async (req, res) => {
+    console.log('Registration attempt:', { 
+        email: req.body.email,
+        role: req.body.role,
+        name: req.body.name
+    });
+    
     const { name, email, password, role } = req.body;
-    const message = await registerUser({ name, email, password, role });
+    const { message, user, token } = await registerUser({ name, email, password, role });
+    
+    console.log('Registration successful:', { email, role });
+    
     res.status(201).json({
         success: true,
-        message
+        message,
+        data: {
+            user,
+            token
+        }
     });
 });
 
 // Login user
 const login = catchAsync(async (req, res) => {
+    console.log('Login attempt:', { email: req.body.email });
     const { email, password, role } = req.body;
     const { user, token } = await loginUser({ email, password, role });
+    console.log('Login successful:', { userId: user.id, role: user.role });
     res.json({
         success: true,
         data: { user, token }

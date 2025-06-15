@@ -1,177 +1,142 @@
-import React from 'react';
-import { useState } from 'react';
-import heroPic from "../../../assets/hero-pic.png";
-import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
+import { Link } from 'react-router-dom';
+import { Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import heroPic from '../../../assets/hero-pic.png';
 
-export const SignIn = () => {
-    const navigate = useNavigate(); 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
+const SignIn = () => {
+    const navigate = useNavigate();
+    const { login } = useAuth();
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
-    const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
-    const handleLogin = async (e) => {
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setError("");
-
+        setError('');
+        
         try {
-            // 1. Debug the request payload
-            console.log("Login request payload:", { email, password });
-
-            // 2. Make the API call
-            const response = await axios({
-                method: 'post',
-                url: `${API_BASE_URL}/auth/login`,
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify({
-                    email,
-                    password
-                })
-            });
-
-            // 3. Debug the full response
-            console.log("Login response:", response);
-
-            // 4. Handle the response
-            if (!response.data || !response.data.data || !response.data.data.token) {
-                throw new Error("Invalid response structure from server");
+            const user = await login(formData.email, formData.password);
+            // Navigate based on user role
+            if (user.role === 'admin') {
+                navigate('/admin/dashboard');
+            } else {
+                navigate('/about');
             }
-
-            const { token, user } = response.data.data;
-            const userRole = user?.role;
-
-            // 5. Validate required fields
-            if (!token || !user || !userRole) {
-                throw new Error("Missing required authentication data");
-            }
-
-            // 6. Store auth data
-            localStorage.setItem("token", token);
-            localStorage.setItem("role", userRole);
-            localStorage.setItem("user", JSON.stringify(user));
-
-            // 7. Navigate based on role
-            setTimeout(() => {
-                console.log("Before navigation");
-                // Navigate to different routes based on role
-                if (userRole === 'admin') {
-                    navigate("/admin/dashboard", { replace: true });
-                } else {
-                    navigate("/about", { replace: true });
-                }
-                console.log("After navigation");
-            }, 0);
-
         } catch (err) {
-            // 8. Enhanced error handling
-            const serverError = err.response?.data;
-            console.error("Full error details:", {
-                status: err.response?.status,
-                error: serverError,
-                request: err.config?.data,
-                fullError: err
-            });
-
-            // 9. User-friendly error messages
-            let errorMessage = "Login failed. Please try again.";
-            if (serverError?.message) {
-                errorMessage = serverError.message;
-            } else if (err.message.includes("401")) {
-                errorMessage = "Invalid email or password";
-            } else if (err.message.includes("network")) {
-                errorMessage = "Network error. Please check your connection";
-            }
-
-            setError(errorMessage);
-        } finally {
-            setLoading(false);
+            setError(err.response?.data?.message || 'Failed to sign in');
         }
     };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-
     return (
-        <div 
-            className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center" 
-            style={{ backgroundImage: `url(${heroPic})` }}
-        >
-            <div className="bg-white bg-opacity-80 p-8 shadow-lg max-w-md w-full">
-                <h2 className="text-3xl font-bold mb-6 text-center text-gray-700">Sign In</h2>
+        <div className="min-h-screen flex items-center justify-center relative">
+            {/* Background Image */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src={heroPic}
+                    alt="Background"
+                    className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/50" />
+            </div>
+
+            <div className="max-w-md w-full space-y-8 p-8 bg-white/90 backdrop-blur-sm rounded-lg shadow-xl relative z-10">
+                <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                        Sign In
+                    </h2>
+                </div>
                 {error && (
-                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                        {error}
-                    </div>
-                )}
-                <form onSubmit={handleLogin}>
-                    <div className="mb-4">
-                        <label className="block text-gray-600 text-sm font-medium mb-2">Email</label>
-                        <input 
-                            type="email" 
-                            value={email} 
-                            onChange={(e) => setEmail(e.target.value)} 
-                            className="w-full p-3 border border-gray-300 rounded-lg" 
-                            placeholder="Enter your email" 
-                            required 
-                        />
-                    </div>
-                    <div className="mb-6 relative">
-                        <label className="block text-gray-600 text-sm font-medium mb-2">Password</label>
-                        <div className="relative">
-                            <input 
-                                type={showPassword ? "text" : "password"} 
-                                value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
-                                className="w-full p-3 border border-gray-300 rounded-lg pr-10" 
-                                placeholder="Enter your password" 
-                                required 
-                            />
-                            <button
-                                type="button"
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                                onClick={togglePasswordVisibility}
-                            >
-                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </button>
+                    <div className="bg-red-50 border-l-4 border-red-400 p-4">
+                        <div className="flex">
+                            <div className="flex-shrink-0">
+                                <AlertCircle className="h-5 w-5 text-red-400" />
+                            </div>
+                            <div className="ml-3">
+                                <p className="text-sm text-red-700">{error}</p>
+                            </div>
                         </div>
                     </div>
-                    <article className="inline-flex w-full gap-3 mb-4">
-                        <p className="text-sm font-light text-[#7B8499]">
-                            Can&apos;t remember your password?{" "}
-                            <Link
-                                to="/forgot-password"
-                                className="font-medium text-[#f1bf60] underline"
-                            >
-                                Forget Password
-                            </Link>
-                        </p>
-                    </article>
-                    <button 
-                        type="submit" 
-                        className="w-full py-3 bg-[#213721] text-white font-semibold shadow-md hover:bg-green-600 transition duration-300"
-                        disabled={loading}
-                    >
-                        {loading ? "Signing in..." : "Sign In"}
-                    </button>
-                    <p className="pt-4 text-center text-sm text-[#7B8499] lg:text-end">
-                        New to SoulScape?{" "}
-                        <Link
-                            to="/sign-up"
-                            className="font-medium text-[#f1bf60] underline"
+                )}
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <div className="rounded-md shadow-sm -space-y-px">
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Mail className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                placeholder="Email address"
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Lock className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                id="password"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                autoComplete="current-password"
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                placeholder="Password"
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center z-20">
+                                <button
+                                    type="button"
+                                    className="cursor-pointer hover:bg-gray-100 rounded-md p-1"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{ pointerEvents: 'auto' }}
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                                    ) : (
+                                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button
+                            type="submit"
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#213721] hover:bg-[#617C5F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#213721]"
                         >
-                            Sign Up
+                            Sign In
+                        </button>
+                    </div>
+
+                    <div className="text-center">
+                        <Link to="/sign-up" className="font-medium text-[#213721] hover:text-[#617C5F]">
+                            Don't have an account? Sign Up
                         </Link>
-                    </p>
+                    </div>
                 </form>
             </div>
         </div>
     );
 };
+
+export default SignIn;

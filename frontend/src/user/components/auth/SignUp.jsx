@@ -1,270 +1,249 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import heroPic from "../../../assets/hero-pic.png";
-import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from '../../../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { Mail, Lock, User, AlertCircle, Shield, Eye, EyeOff } from 'lucide-react';
+import heroPic from '../../../assets/hero-pic.png';
 
-export const SignUp = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+const SignUp = () => {
+    const navigate = useNavigate();
+    const { register } = useAuth();
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        isAdmin: false,
+        adminCode: ''
+    });
+    const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showAdminCode, setShowAdminCode] = useState(false);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [adminCode, setAdminCode] = useState('');
-    const [showAdminFields, setShowAdminFields] = useState(false);
-    const navigate = useNavigate();
-    const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
-    const ADMIN_CODE = import.meta.env.VITE_ADMIN_REG_CODE;
+
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         setError('');
 
-        // Basic validation
-        if (password !== confirmPassword) {
-            setError("Passwords don't match");
-            setLoading(false);
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match');
             return;
         }
 
         try {
             const userData = {
-                name,
-                email,
-                password,
-                role: showAdminFields ? 'admin' : 'user'
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                role: formData.isAdmin ? 'admin' : 'user'
             };
 
-            // If admin registration, verify the admin code
-            if (showAdminFields) {
-                if (!ADMIN_CODE || adminCode !== ADMIN_CODE) {
-                    setError('Invalid admin registration code');
-                    setLoading(false);
-                    return;
-                }
+            if (formData.isAdmin) {
+                userData.adminCode = formData.adminCode;
             }
 
-            console.log('Sending registration data:', userData);
-
-            const response = await axios({
-                method: 'post',
-                url: `${API_BASE_URL}/auth/register`,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: userData
-            });
-
-            console.log('Registration successful:', response.data);
-            
-            if (!response.data || !response.data.success) {
-                throw new Error("Invalid response structure from server");
-            }
-
-            // Redirect to login page after successful registration
-            navigate('/', { 
-                state: { 
-                    registrationSuccess: true,
-                    message: response.data.message,
-                    email: email 
-                } 
-            });
-
+            const user = await register(userData);
+            navigate('/');
         } catch (err) {
-            console.error('Registration error details:', {
-                message: err.message,
-                response: err.response?.data,
-                status: err.response?.status
-            });
-
-            // Handle different types of errors
-            if (err.response?.data?.details) {
-                // Handle validation errors with details
-                const errorDetails = err.response.data.details;
-                const errorMessages = Object.values(errorDetails)
-                    .filter(msg => msg !== null)
-                    .join(', ');
-                setError(errorMessages);
-            } else if (err.response?.data?.message) {
-                // Handle server error messages
-                setError(err.response.data.message);
-            } else if (err.message === 'Network Error') {
-                setError('Unable to connect to the server. Please check your internet connection.');
-            } else if (err.message === 'Invalid response structure from server') {
-                setError('Server response was invalid. Please try again.');
-            } else {
-                setError('Registration failed. Please try again.');
-            }
-        } finally {
-            setLoading(false);
+            setError(err.response?.data?.message || 'Failed to register');
         }
     };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const toggleConfirmPasswordVisibility = () => {
-        setShowConfirmPassword(!showConfirmPassword);
-    };
-
-    const toggleAdminCodeVisibility = () => {
-        setShowAdminCode(!showAdminCode);
-    };
-
     return (
-        <div className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center" style={{ backgroundImage: `url(${heroPic})` }}>
-            <div className="bg-white bg-opacity-80 p-8 shadow-lg max-w-md w-full my-10">
-                <h2 className="text-3xl font-bold mb-6 text-center text-gray-700">Sign Up</h2>
+        <div className="min-h-screen flex items-center justify-center relative">
+            {/* Background Image */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src={heroPic}
+                    alt="Background"
+                    className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/50" />
+            </div>
+
+            <div className="max-w-md w-full space-y-8 p-8 bg-white/90 backdrop-blur-sm rounded-lg shadow-xl relative z-10">
+                <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                        Create your account
+                    </h2>
+                </div>
                 {error && (
-                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                        {error}
+                    <div className="bg-red-50 border-l-4 border-red-400 p-4">
+                        <div className="flex">
+                            <div className="flex-shrink-0">
+                                <AlertCircle className="h-5 w-5 text-red-400" />
+                            </div>
+                            <div className="ml-3">
+                                <p className="text-sm text-red-700">{error}</p>
+                            </div>
+                        </div>
                     </div>
                 )}
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-gray-600 text-sm font-medium mb-2">Full Name</label>
-                        <input 
-                            type="text" 
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)} 
-                            className="w-full p-3 border border-gray-300 rounded-lg" 
-                            placeholder="Enter your full name" 
-                            required 
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-600 text-sm font-medium mb-2">Email</label>
-                        <input 
-                            type="email" 
-                            value={email} 
-                            onChange={(e) => setEmail(e.target.value)} 
-                            className="w-full p-3 border border-gray-300 rounded-lg" 
-                            placeholder="Enter your email" 
-                            required 
-                        />
-                    </div>
-                    <div className="mb-4 relative">
-                        <label className="block text-gray-600 text-sm font-medium mb-2">Password</label>
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <div className="rounded-md shadow-sm -space-y-px">
                         <div className="relative">
-                            <input 
-                                type={showPassword ? "text" : "password"} 
-                                value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
-                                className="w-full p-3 border border-gray-300 rounded-lg pr-10" 
-                                placeholder="Create a password" 
-                                required 
-                            />
-                            <button
-                                type="button"
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                                onClick={togglePasswordVisibility}
-                            >
-                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </button>
-                        </div>
-                    </div>
-                    <div className="mb-6 relative">
-                        <label className="block text-gray-600 text-sm font-medium mb-2">Confirm Password</label>
-                        <div className="relative">
-                            <input 
-                                type={showConfirmPassword ? "text" : "password"} 
-                                value={confirmPassword} 
-                                onChange={(e) => setConfirmPassword(e.target.value)} 
-                                className="w-full p-3 border border-gray-300 rounded-lg pr-10" 
-                                placeholder="Confirm password" 
-                                required 
-                            />
-                            <button
-                                type="button"
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                                onClick={toggleConfirmPasswordVisibility}
-                            >
-                                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Admin Registration Section */}
-                    <div className="mb-4">
-                        <div className="flex items-center justify-between mb-2">
-                            <label className="text-gray-600 text-sm font-medium">Admin Registration</label>
-                            <button
-                                type="button"
-                                onClick={() => setShowAdminFields(!showAdminFields)}
-                                className="text-sm text-[#f1bf60] hover:underline"
-                            >
-                                {showAdminFields ? 'Hide Admin Fields' : 'Show Admin Fields'}
-                            </button>
-                        </div>
-                        {showAdminFields && (
-                            <div className="mt-2">
-                                <div className="relative">
-                                    <input 
-                                        type={showAdminCode ? "text" : "password"} 
-                                        value={adminCode} 
-                                        onChange={(e) => setAdminCode(e.target.value)} 
-                                        className="w-full p-3 border border-gray-300 rounded-lg pr-10" 
-                                        placeholder="Enter admin registration code" 
-                                    />
-                                    <button
-                                        type="button"
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                                        onClick={toggleAdminCodeVisibility}
-                                    >
-                                        {showAdminCode ? <EyeOff size={20} /> : <Eye size={20} />}
-                                    </button>
-                                </div>
-                                <p className="text-xs text-gray-500 mt-1">
-                                    Only use this if you have an admin registration code
-                                </p>
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <User className="h-5 w-5 text-gray-400" />
                             </div>
-                        )}
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                placeholder="Full name"
+                                value={formData.name}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Mail className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                placeholder="Email address"
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Lock className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                id="password"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                placeholder="Password"
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center z-20">
+                                <button
+                                    type="button"
+                                    className="cursor-pointer hover:bg-gray-100 rounded-md p-1"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{ pointerEvents: 'auto' }}
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                                    ) : (
+                                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Lock className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type={showConfirmPassword ? "text" : "password"}
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                placeholder="Confirm password"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                            />
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center z-20">
+                                <button
+                                    type="button"
+                                    className="cursor-pointer hover:bg-gray-100 rounded-md p-1"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    style={{ pointerEvents: 'auto' }}
+                                >
+                                    {showConfirmPassword ? (
+                                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                                    ) : (
+                                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                                    )}
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-                    <article className="inline-flex gap-3 mb-4">
-                        <p className="text-sm font-light text-[#7B8499]">
-                            By continuing you agree to the SoulScape{" "}
-                            <Link
-                                to="/terms"
-                                className="font-medium text-[#f1bf60] underline"
-                            >
-                                terms of service{" "}
-                            </Link>{" "}
-                            and{" "}
-                            <Link
-                                to="/privacy"
-                                className="font-medium text-[#f1bf60] underline"
-                            >
-                                privacy policy
-                            </Link>
-                            .
-                        </p>
-                    </article>
-                    <button 
-                        type="submit" 
-                        className="w-full py-3 bg-[#213721] text-white font-semibold shadow-md hover:bg-green-600 transition duration-300"
-                        disabled={loading}
-                    >
-                        {loading ? 'Creating account...' : 'Sign Up'}
-                    </button>
-                    <p className="pt-4 text-center text-sm text-[#7B8499] lg:text-end">
-                        Already registered?{" "}
-                        <Link
-                            to="/"
-                            className="font-medium text-[#f1bf60] underline"
+                    <div className="flex items-center">
+                        <input
+                            id="isAdmin"
+                            name="isAdmin"
+                            type="checkbox"
+                            className="h-4 w-4 text-[#213721] focus:ring-[#213721] border-gray-300 rounded"
+                            checked={formData.isAdmin}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor="isAdmin" className="ml-2 block text-sm text-gray-900">
+                            Register as Admin
+                        </label>
+                    </div>
+
+                    {formData.isAdmin && (
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Shield className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                id="adminCode"
+                                name="adminCode"
+                                type={showAdminCode ? "text" : "password"}
+                                required
+                                className="appearance-none rounded relative block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                placeholder="Admin registration code"
+                                value={formData.adminCode}
+                                onChange={handleChange}
+                            />
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center z-20">
+                                <button
+                                    type="button"
+                                    className="cursor-pointer hover:bg-gray-100 rounded-md p-1"
+                                    onClick={() => setShowAdminCode(!showAdminCode)}
+                                    style={{ pointerEvents: 'auto' }}
+                                >
+                                    {showAdminCode ? (
+                                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                                    ) : (
+                                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div>
+                        <button
+                            type="submit"
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#213721] hover:bg-[#617C5F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#213721]"
                         >
-                            Sign In
+                            Sign Up
+                        </button>
+                    </div>
+
+                    <div className="text-center">
+                        <Link to="/" className="font-medium text-[#213721] hover:text-[#617C5F]">
+                            Already have an account? Sign In
                         </Link>
-                    </p>
+                    </div>
                 </form>
             </div>
         </div>
     );
 };
+
+export default SignUp;
