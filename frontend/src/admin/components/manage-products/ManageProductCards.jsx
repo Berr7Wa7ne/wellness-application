@@ -18,13 +18,14 @@ const tierColors = {
     Professional: "bg-orange-100 text-orange-700 border border-orange-200",
   };
 
-const categoryColors = {
-    Meditation: "bg-blue-100 text-blue-600",
-    Yoga: "bg-green-100 text-green-600",
-    Mindfulness: "bg-purple-100 text-purple-600",
-    Wellness: "bg-yellow-100 text-yellow-700",
-    Nutrition: "bg-pink-100 text-pink-600",
-  };
+  const categoryColors = {
+    'Magickal Oils': "bg-[#FFE4E1] text-[#FF6B6B]",
+    'Meditation Videos': "bg-[#E0F2F1] text-[#26A69A]",
+    'Licenses': "bg-[#E8F5E9] text-[#66BB6A]",
+    'Audio Guides': "bg-[#FFF3E0] text-[#FFA726]",
+    'Healing Tools': "bg-[#E3F2FD] text-[#42A5F5]",
+    'Books & Journals': "bg-[#F3E5F5] text-[#AB47BC]",
+};
 
 const products = [
     {
@@ -32,7 +33,7 @@ const products = [
       tier: 'Premium',
       price: '$12.99',
       stock: '8 units',
-      category: 'Wellness',
+      category: 'Magickal Oils',
       image: LavenderEssentialOil,
     },
     {
@@ -40,7 +41,7 @@ const products = [
       tier: 'Premium',
       price: '$29.99',
       stock: '12 units',
-      category: 'Meditation',
+      category: 'Meditation Videos',
       image: MeditationLicensePro,
     },
     {
@@ -48,7 +49,7 @@ const products = [
       tier: 'Basic',
       price: '$19.99',
       stock: '12 units',
-      category: 'Wellness',
+      category: 'Licenses',
       image: WellnessJournal,
     },
     {
@@ -56,7 +57,7 @@ const products = [
       tier: 'Premium',
       price: '$49.99',
       stock: '6 units',
-      category: 'Wellness',
+      category: 'Audio Guides',
       image: CrystalHealingKit,
     },
     {
@@ -64,7 +65,7 @@ const products = [
       tier: 'Professional',
       price: '$22.99',
       stock: '10 units',
-      category: 'Wellness',
+      category: 'Healing Tools',
       image: AromatherapyKit,
     },
     {
@@ -72,7 +73,7 @@ const products = [
       tier: 'Premium',
       price: '$9.99',
       stock: '20 units',
-      category: 'Yoga',
+      category: 'Books & Journals',
       image: YogaEbook,
     },
     {
@@ -80,7 +81,7 @@ const products = [
       tier: 'Basic',
       price: '$15.99',
       stock: '5 units',
-      category: 'Mindfulness',
+      category: 'Books & Journals',
       image: MindfulnessPoster,
     },
     {
@@ -88,7 +89,7 @@ const products = [
       tier: 'Professional',
       price: '$39.99',
       stock: '4 units',
-      category: 'Wellness',
+      category: 'Healing Tools',
       image: HealingStoneSet,
     },
     {
@@ -96,7 +97,7 @@ const products = [
       tier: 'Basic',
       price: '$17.50',
       stock: '15 units',
-      category: 'Wellness',
+      category: 'Healing Tools',
       image: ScentedCandleSet,
     },
     {
@@ -104,7 +105,7 @@ const products = [
       tier: 'Professional',
       price: '$11.99',
       stock: '30 units',
-      category: 'Mindfulness',
+      category: 'Audio Guides',
       image: NatureSoundtrack,
     },
     {
@@ -112,7 +113,7 @@ const products = [
       tier: 'Basic',
       price: '$14.99',
       stock: '9 units',
-      category: 'Mindfulness',
+      category: 'Books & Journals',
       image: FocusPlanner,
     },
     {
@@ -120,7 +121,7 @@ const products = [
       tier: 'Premium',
       price: '$59.99',
       stock: '2 units',
-      category: 'Wellness',
+      category: 'Healing Tools',
       image: ReikiEnergySet,
     },
   ];

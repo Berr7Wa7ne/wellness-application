@@ -2,9 +2,9 @@ const Category = require("../models/Category");
 const { AppError, catchAsyncService } = require('../utils/errorHandler');
 
 // Create a new category
-const createCategory = catchAsyncService(async (name, description) => {
-    if (!name || !description) {
-        throw new AppError("Name and description are required.", 400);
+const createCategory = catchAsyncService(async (name, description, type, backgroundColor, textColor) => {
+    if (!name || !description || !backgroundColor || !textColor) {
+        throw new AppError("Name, description, and colors are required.", 400);
     }
 
     // Check for duplicate category name
@@ -13,7 +13,13 @@ const createCategory = catchAsyncService(async (name, description) => {
         throw new AppError("Category name already exists.", 409);
     }
 
-    const category = new Category({ name, description });
+    const category = new Category({ 
+        name, 
+        description, 
+        type, 
+        backgroundColor, 
+        textColor 
+    });
     return category.save();
 });
 
@@ -32,7 +38,7 @@ const getCategoryById = catchAsyncService(async (id) => {
 });
 
 // Update a category
-const updateCategory = catchAsyncService(async (id, name, description) => {
+const updateCategory = catchAsyncService(async (id, name, description, type, backgroundColor, textColor) => {
     const category = await Category.findById(id);
     if (!category) {
         throw new AppError("Category not found.", 404);
@@ -48,6 +54,9 @@ const updateCategory = catchAsyncService(async (id, name, description) => {
     }
 
     if (description) category.description = description;
+    if (type) category.type = type;
+    if (backgroundColor) category.backgroundColor = backgroundColor;
+    if (textColor) category.textColor = textColor;
     category.updatedAt = Date.now();
 
     return category.save();

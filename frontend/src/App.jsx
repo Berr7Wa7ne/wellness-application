@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import React, { useState } from 'react';
-import AdminRoutes from './admin/routes/AdminRoutes';
+import AdminRoot from './admin/AdminRoot';
 import UserRoutes from './user/routes/UserRoutes';
 
 function App() {
@@ -29,7 +29,7 @@ function App() {
   return (
     <Routes>
       {/* Admin Panel Routes */}
-      <Route path="/admin/*" element={<AdminRoutes />} />
+      <Route path="/admin/*" element={<AdminRoot />} />
 
       {/* User (Customer) Site Routes */}
       <Route path="/*" element={<UserRoutes cartItems={cartItems} handleAddToCart={handleAddToCart} />} />

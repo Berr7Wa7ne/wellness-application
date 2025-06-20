@@ -4,14 +4,92 @@ const { AppError, catchAsyncService } = require('../utils/errorHandler');
 
 // Create a new service (Admin Only)
 const createService = catchAsyncService(async (data) => {
-    const { title, description, videoUrl } = data;
+    console.log('Service creation started with data:', {
+        ...data,
+        image: data.image ? 'Present' : 'Not present'
+    });
+
+    const errors = {};
     
-    // Ensure title is provided
-    if (!title) {
-        throw new AppError("Title is required", 400);
+    // String validations with trimming
+    if (!data.title || typeof data.title !== 'string' || !data.title.trim()) {
+        errors.title = 'Title is required';
+    }
+    if (!data.description || typeof data.description !== 'string' || !data.description.trim()) {
+        errors.description = 'Description is required';
+    }
+    if (!data.tier || typeof data.tier !== 'string' || !data.tier.trim()) {
+        errors.tier = 'Tier is required';
+    }
+    if (!data.audience || typeof data.audience !== 'string' || !data.audience.trim()) {
+        errors.audience = 'Audience is required';
     }
 
-    const service = await Service.create({ title, description, videoUrl });
+    // Number validations
+    const price = typeof data.price === 'number' ? data.price : parseFloat(data.price);
+    const duration = typeof data.duration === 'number' ? data.duration : parseInt(data.duration);
+
+    if (isNaN(price) || price <= 0) {
+        errors.price = 'Price must be a valid number greater than 0';
+    }
+    if (isNaN(duration) || duration <= 0) {
+        errors.duration = 'Duration must be a valid number greater than 0';
+    }
+
+    // Image validation
+    if (!data.image || !data.image.filename || !data.image.path || !data.image.mimetype) {
+        errors.image = 'Valid image file is required';
+    }
+
+    // Boolean validation
+    const isVideoAvailable = typeof data.isVideoAvailable === 'boolean' 
+        ? data.isVideoAvailable 
+        : data.isVideoAvailable === 'true';
+
+    if (Object.keys(errors).length > 0) {
+        console.error('Validation errors:', errors);
+        throw new AppError('Validation failed', 400, { errors });
+    }
+
+    // Log processed data
+    console.log('Creating service with validated data:', {
+        title: data.title,
+        description: data.description,
+        price,
+        duration,
+        tier: data.tier,
+        audience: data.audience,
+        isVideoAvailable,
+        image: data.image ? {
+            filename: data.image.filename,
+            type: data.image.mimetype
+        } : null
+    });
+
+    // Create service with properly typed data
+    const service = await Service.create({
+        title: data.title.trim(),
+        description: data.description.trim(),
+        duration: duration,
+        tier: data.tier.trim(),
+        price: price,
+        audience: data.audience.trim(),
+        isVideoAvailable: isVideoAvailable,
+        image: {
+            filename: data.image.filename,
+            path: data.image.path,
+            mimetype: data.image.mimetype
+        }
+    });
+
+    console.log('Service created successfully:', { 
+        id: service._id,
+        title: service.title,
+        price: service.price,
+        duration: service.duration,
+        image: service.image ? 'Present' : 'Not present'
+    });
+
     return service;
 });
 

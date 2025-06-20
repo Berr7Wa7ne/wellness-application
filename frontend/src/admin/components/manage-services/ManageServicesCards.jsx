@@ -1,223 +1,257 @@
-import React from 'react'
-import { Video, Clock, Users, Trash2, Pencil } from 'lucide-react';
-import GuidedMeditationSessions from '../../../assets/Guided Meditation Sessions.jpg';
-import GroupYogaClasses from '../../../assets/Group Yoga Classes.jpg';
-import WellnessConsultation from '../../../assets/Wellness Consultation.jpg';
-import CrystalBowlSoundBath from '../../../assets/Crystal Bowl Sound Bath.jpg';
-import ReikiEnergySession from '../../../assets/Reiki Energy Session.jpg';
-import ChakraAlignmentTherapy from '../../../assets/Chakra Alignment Therapy.jpg';
-import AromatherapyMassage from '../../../assets/Aromatherapy Massage.jpg';
-import GuidedBreathworkSession from '../../../assets/Guided Breathwork Session.jpg';
-import CrystalTherapySession from '../../../assets/Crystal Therapy Session.jpg';
-import AyurvedicLifestyleConsultation from '../../../assets/Ayurvedic Lifestyle Consultation.jpg';
-import IntuitiveTarotCardReading from '../../../assets/Intuitive Tarot Card Reading.jpg';
-import QiGongEnergyPractice from '../../../assets/Qi Gong Energy Practice.jpg';
+import React, { useEffect, useState } from 'react'
+import { Video, Clock, Users, Trash2, Pencil, Image } from 'lucide-react';
+import { useAdminService } from '../../../context/admin/service/AdminServiceContext';
+import AdminModal from '../shared/AdminModal';
+import EditServiceForm from './EditServiceForm';
 
 const tierColors = {
     Basic: "bg-indigo-100 text-indigo-800 border border-indigo-200",
     Premium: "bg-pink-100 text-pink-700 border border-pink-200",
     Professional: "bg-orange-100 text-orange-700 border border-orange-200",
-  };
+};
 
-const services = [
-  {
-    name: 'Guided Meditation Sessions',
-    image: GuidedMeditationSessions,
-    description: 'Personalized meditation sessions guided by certified instructors to help you achieve mental clarity and emotional balance.',
-    duration: '60 minutes',
-    audience: '1-on-1',
-    tieredPricing: [
-      { tier: 'Basic', price: '$10' },
-      { tier: 'Premium', price: '$50' },
-      { tier: 'Professional', price: '$75' },
-    ],
-    isVideoAvailable: true,
-  },
-  {
-    name: 'Group Yoga Classes',
-    image: GroupYogaClasses,
-    description: 'Join our community yoga classes led by expert instructors. Suitable for all levels from beginners to advanced practitioners.',
-    duration: '45 minutes',
-    audience: 'Up to 20 people',
-    tieredPricing: [
-      { tier: 'Basic', price: '$20' },
-      { tier: 'Premium', price: '$60' },
-    ],
-    isVideoAvailable: true,
-  },
-  {
-    name: 'Wellness Consultation',
-    image: WellnessConsultation,
-    description: 'One-on-one consultation with our wellness experts to create a personalized health and wellness plan tailored to your needs.',
-    duration: '50 minutes',
-    audience: '1-on-1',
-    tieredPricing: [
-      { tier: 'Premium', price: '$60' },
-      { tier: 'Professional', price: '$120' },
-    ],
-    isVideoAvailable: true,
-  },
-  {
-    name: 'Crystal Bowl Sound Bath',
-    image: CrystalBowlSoundBath,
-    description: 'Experience deep relaxation and energetic cleansing through the healing vibrations of crystal singing bowls and gongs.',
-    duration: '40 minutes',
-    audience: 'Group',
-    tieredPricing: [
-      { tier: 'Professional', price: '$80' }
-    ],
-    isVideoAvailable: true,
-  },
-  {
-    name: 'Reiki Energy Session',
-    image: ReikiEnergySession,
-    description: 'A gentle hands-on healing technique to balance your energy and promote holistic well-being.',
-    duration: '60 minutes',
-    audience: '1-on-1',
-    tieredPricing: [
-      { tier: 'Basic', price: '$45' }
-    ],
-    isVideoAvailable: false,
-  },
-  {
-    name: 'Chakra Alignment Therapy',
-    image: ChakraAlignmentTherapy,
-    description: 'Restore harmony to your mind and body with a chakra balancing session using crystals and guided meditation.',
-    duration: '50 minutes',
-    audience: '1-on-1',
-    tieredPricing: [
-      { tier: 'Basic', price: '$40' },
-      { tier: 'Professional', price: '$90' }
-    ],
-    isVideoAvailable: true,
-  },
-  {
-    name: 'Aromatherapy Massage',
-    image: AromatherapyMassage,
-    description: 'Relax and rejuvenate with a massage using therapeutic essential oils tailored to your needs.',
-    duration: '60 minutes',
-    audience: '1-on-1',
-    tieredPricing: [
-      { tier: 'Premium', price: '$55' }
-    ],
-    isVideoAvailable: false,
-  },
-  {
-    name: 'Guided Breathwork Session',
-    image: GuidedBreathworkSession,
-    description: 'Learn conscious breathing techniques to reduce stress, increase energy, and improve mental clarity.',
-    duration: '35 minutes',
-    audience: 'Group',
-    tieredPricing: [
-      { tier: 'Basic', price: '$20' },
-      { tier: 'Premium', price: '$50' },
-      { tier: 'Professional', price: '$70' }
-    ],
-    isVideoAvailable: true,
-  },
-  {
-    name: 'Crystal Therapy Session',
-    image: CrystalTherapySession,
-    description: 'Harness the power of crystals to balance your energy and support emotional healing.',
-    duration: '45 minutes',
-    audience: '1-on-1',
-    tieredPricing: [
-      { tier: 'Basic', price: '$35' },
-      { tier: 'Premium', price: '$65' }
-    ],
-    isVideoAvailable: false,
-  },
-  {
-    name: 'Ayurvedic Lifestyle Consultation',
-    image: AyurvedicLifestyleConsultation,
-    description: 'Receive personalized guidance on diet, lifestyle, and self-care based on Ayurvedic principles.',
-    duration: '60 minutes',
-    audience: '1-on-1',
-    tieredPricing: [
-      { tier: 'Professional', price: '$100' }
-    ],
-    isVideoAvailable: true,
-  },
-  {
-    name: 'Intuitive Tarot Card Reading',
-    image: IntuitiveTarotCardReading,
-    description: 'Gain insight and clarity on your life path with a personalized tarot card reading session.',
-    duration: '30 minutes',
-    audience: '1-on-1',
-    tieredPricing: [
-      { tier: 'Basic', price: '$25' },
-      { tier: 'Professional', price: '$60' }
-    ],
-    isVideoAvailable: false,
-  },
-  {
-    name: 'Qi Gong Energy Practice',
-    image: QiGongEnergyPractice,
-    description: 'Cultivate your life force energy and improve your health with gentle Qi Gong movements and breathwork.',
-    duration: '50 minutes',
-    audience: 'Group',
-    tieredPricing: [
-      { tier: 'Basic', price: '$30' },
-      { tier: 'Premium', price: '$60' },
-      { tier: 'Professional', price: '$90' }
-    ],
-    isVideoAvailable: true,
-  },
-];
+// Default service image
+const defaultServiceImage = '/images/service-placeholder.png';
 
 const ManageServicesCards = () => {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-      {services.map((service, index) => (
-        <div key={index} className="rounded-xl overflow-hidden shadow border border-gray-200 bg-white">
-          <div className="relative h-28">
-            <img
-              src={service.image}
-              alt={service.name}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/30" />
-            {service.isVideoAvailable && (
-              <div className="absolute top-2 left-4 flex items-center gap-1 text-xs text-white bg-gray-700 px-2 py-1 rounded">
-                <Video size={14} className="text-white" />
-                Video Available
-              </div>
-            )}
-            <div className="absolute top-2 right-4 flex gap-2">
-              <button className="text-gray-500 hover:text-red-600 bg-gray-100 rounded-md p-2" title="Delete">
-                <Trash2 size={18} />
-              </button>
-              <button className="text-gray-500 hover:text-green-700 bg-gray-100 rounded-md p-2" title="Edit">
-                <Pencil size={18} />
-              </button>
-            </div>
-          </div>
-          <div className="p-4">
-            <h3 className="font-medium text-gray-800 text-sm">{service.name}</h3>
-            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{service.description}</p>
-            <div className="flex items-center justify-between text-xs text-gray-500 mt-3">
-              <span className="flex items-center gap-1"><Clock size={14} /> {service.duration}</span>
-              <span className="flex items-center gap-1"><Users size={14} /> {service.audience}</span>
-            </div>
-            <div className="text-xs mt-3 space-y-1">
-              {service.tieredPricing.map((tier, idx) => (
-                <div key={idx} className="flex justify-between items-center">
-                  <span className={`font-medium px-2 py-0.5 rounded text-xs ${tierColors[tier.tier] || "bg-gray-100 text-gray-700"}`}>
-                    {tier.tier}
-                  </span>
-                  <span>{tier.price}</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-3 flex justify-between gap-2">
-              <button className="px-3 py-1 text-sm border rounded text-gray-700 hover:bg-gray-100 w-full">Preview</button>
-              <button className="px-3 py-1 text-sm border rounded bg-[#213721] text-white hover:bg-green-800 w-full">Edit</button>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+  const { 
+    services, 
+    servicesLoading, 
+    servicesError,
+    fetchServices,
+    deleteService 
+  } = useAdminService();
 
-export default ManageServicesCards
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  const [imageErrors, setImageErrors] = useState({});
+  const [editingService, setEditingService] = useState(null);
+  const [serviceImages, setServiceImages] = useState([]);
+
+  useEffect(() => {
+    console.log('=== ManageServicesCards Mount ===');
+    console.log('Initial services:', services);
+    fetchServices().catch(error => {
+      console.error('Error fetching services:', error);
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log('🎯 [1] Services Update Triggered');
+    console.log('Number of services:', services.length);
+    
+    const processedServices = services.map(service => {
+      const imageData = {
+        id: service._id,
+        imageUrl: null,
+        image: service.image,
+        hasImageUrl: false,
+        hasImageObject: false
+      };
+
+      // Check for direct imageUrl
+      if (service.imageUrl) {
+        imageData.imageUrl = service.imageUrl;
+        imageData.hasImageUrl = true;
+      }
+
+      // Check for image object
+      if (service.image?.path) {
+        imageData.hasImageObject = true;
+        if (!imageData.hasImageUrl) {
+          imageData.imageUrl = `${import.meta.env.VITE_BACKEND_URL}/${service.image.path.replace(/\\/g, '/')}`;
+        }
+      }
+
+      console.log('🎯 [2] Service Image Processing:', {
+        id: imageData.id,
+        hasImageUrl: imageData.hasImageUrl,
+        hasImageObject: imageData.hasImageObject,
+        finalUrl: imageData.imageUrl
+      });
+
+      return imageData;
+    });
+
+    setServiceImages(processedServices);
+  }, [services]);
+
+  const handleDelete = async (id) => {
+    console.log('🗑️ [UI-1] Delete Initiated');
+    console.log('Service ID to delete:', id);
+    
+    if (window.confirm('Are you sure you want to delete this service?')) {
+      console.log('🗑️ [UI-2] Delete Confirmed');
+      setIsDeleting(true);
+      setDeleteError(null);
+      
+      try {
+        console.log('🗑️ [UI-3] Calling Delete Service');
+        await deleteService(id);
+        console.log('🗑️ [UI-4] Delete Service Completed');
+      } catch (error) {
+        console.error('❌ Delete Error:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
+        setDeleteError('Failed to delete service');
+      } finally {
+        console.log('🗑️ [UI-5] Delete Operation Finished');
+        setIsDeleting(false);
+      }
+    } else {
+      console.log('🗑️ [UI-X] Delete Cancelled');
+    }
+  };
+
+  const handleEdit = (service) => {
+    setEditingService(service);
+  };
+
+  const handleCloseEdit = () => {
+    setEditingService(null);
+  };
+
+  const handleImageError = (serviceId) => {
+    console.log('🎯 [3] Image Load Error:', {
+      serviceId,
+      currentUrl: serviceImages.find(img => img.id === serviceId)?.imageUrl
+    });
+    setServiceImages(prev => 
+      prev.map(img => 
+        img.id === serviceId 
+          ? { ...img, imageUrl: '/images/service-placeholder.png' }
+          : img
+      )
+    );
+  };
+
+  if (servicesLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#213721]"></div>
+      </div>
+    );
+  }
+
+  if (servicesError) {
+    return (
+      <div className="p-6 text-center text-red-600">
+        Error loading services: {servicesError}
+      </div>
+    );
+  }
+
+  const servicesArray = Array.isArray(services) ? services : [];
+  
+  if (servicesArray.length === 0) {
+    return (
+      <div className="p-6 text-center text-gray-500">
+        No services found. Add your first service to get started.
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+        {servicesArray.map((service) => {
+          console.log('🎯 [4] Rendering Service:', {
+            id: service._id,
+            hasImageData: !!serviceImages.find(img => img.id === service._id),
+            imageUrl: serviceImages.find(img => img.id === service._id)?.imageUrl
+          });
+
+          if (!service || (!service.id && !service._id)) {
+            console.warn('Invalid service object:', service);
+            return null;
+          }
+
+          const serviceId = service.id || service._id;
+          // Use the service's imageUrl if available, otherwise use default
+          const imageUrl = serviceImages.find(img => img.id === serviceId)?.imageUrl || defaultServiceImage;
+          
+          console.log('Service details:', {
+            id: serviceId,
+            title: service.title,
+            imageUrl: imageUrl,
+            hasImage: !!imageUrl
+          });
+          
+          return (
+            <div key={serviceId} className="rounded-xl overflow-hidden shadow border border-gray-200 bg-white">
+              <div className="relative h-28">
+                {imageErrors[serviceId] ? (
+                  <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+                    <Image size={24} className="text-gray-400" />
+                  </div>
+                ) : (
+                  <img
+                    src={imageUrl}
+                    alt={service.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={() => handleImageError(serviceId)}
+                  />
+                )}
+                <div className="absolute inset-0 bg-black/30" />
+                {service.isVideoAvailable && (
+                  <div className="absolute top-2 left-4 flex items-center gap-1 text-xs text-white bg-gray-700 px-2 py-1 rounded">
+                    <Video size={14} className="text-white" />
+                    Video Available
+                  </div>
+                )}
+                <div className="absolute top-2 right-4 flex items-center gap-2">
+                  <button
+                    onClick={() => handleDelete(serviceId)}
+                    className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors"
+                    disabled={isDeleting}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                  <button 
+                    onClick={() => handleEdit(service)}
+                    className="p-1.5 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors"
+                  >
+                    <Pencil size={14} />
+                  </button>
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-1">{service.title}</h3>
+                <p className="text-sm text-gray-500 mb-3 line-clamp-2">{service.description}</p>
+                <div className="flex items-center gap-3 text-sm text-gray-600 mb-3">
+                  <div className="flex items-center gap-1">
+                    <Clock size={14} />
+                    {service.duration} mins
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Users size={14} />
+                    {service.audience}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className={`px-2 py-1 rounded-full text-xs ${tierColors[service.tier] || 'bg-gray-100 text-gray-800'}`}>
+                    {service.tier}
+                  </span>
+                  <span className="font-semibold text-gray-900">${service.price}</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <AdminModal isOpen={!!editingService} onClose={handleCloseEdit}>
+        {editingService && (
+          <EditServiceForm
+            service={editingService}
+            onClose={handleCloseEdit}
+          />
+        )}
+      </AdminModal>
+    </>
+  );
+};
+
+export default ManageServicesCards;

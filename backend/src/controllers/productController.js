@@ -74,5 +74,5 @@ const productController = {
     deleteProduct,
     updateProductTier
 };
-
 module.exports = productController;
+

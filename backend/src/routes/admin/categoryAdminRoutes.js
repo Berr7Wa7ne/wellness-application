@@ -7,8 +7,8 @@ const { validateCreateCategory, validateUpdateCategory } = require("../../middle
 // Category Routes (Admin Only)
 router.post("/categories", authMiddleware.verifyAdmin, validateCreateCategory, categoryController.createCategory);
 router.get("/categories", authMiddleware.verifyAdmin, categoryController.getAllCategories);
-router.get("/categories/:id", authMiddleware.verifyAdmin, categoryController.getCategory);
-router.put("/categories/:id", authMiddleware.verifyAdmin, validateUpdateCategory, categoryController.updateCategory);
-router.delete("/categories/:id", authMiddleware.verifyAdmin, categoryController.deleteCategory);
+router.get("/categories/:categoryId", authMiddleware.verifyAdmin, categoryController.getCategory);
+router.put("/categories/:categoryId", authMiddleware.verifyAdmin, validateUpdateCategory, categoryController.updateCategory);
+router.delete("/categories/:categoryId", authMiddleware.verifyAdmin, categoryController.deleteCategory);
 
 module.exports = router;

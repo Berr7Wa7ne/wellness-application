@@ -1,11 +1,18 @@
 class AppError extends Error {
-  constructor(message, statusCode) {
+  constructor(message, statusCode, details = null) {
     super(message);
+    
     this.statusCode = statusCode;
     this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
     this.isOperational = true;
-
+    this.details = details; // For validation errors or additional context
+    
     Error.captureStackTrace(this, this.constructor);
+  }
+
+  // Optional: Add a static method for validation errors
+  static validationError(errors) {
+    return new AppError('Validation failed', 400, { errors });
   }
 }
 

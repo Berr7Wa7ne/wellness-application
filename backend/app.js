@@ -2,6 +2,7 @@ const express = require('express');
 const connectDB = require("./src/utils/db");
 const cors = require('cors');
 require('dotenv').config();
+const path = require('path');
 const authRoutes = require('./src/routes/public/authRoutes');
 const videoRoutes = require('./src/routes/public/videoRoutes');
 const videoAdminRoutes = require('./src/routes/admin/videoAdminRoutes')
@@ -20,11 +21,9 @@ const notificationRoutes = require('./src/routes/admin/notificationRoutes');
 
 const { AppError } = require('./src/utils/errorHandler');
 
-
-
 const app = express();
 
-  app.use(cors({
+app.use(cors({
     origin: [
         "http://localhost:5173",
         "https://wellness-application.vercel.app"
@@ -36,6 +35,9 @@ const app = express();
 
 app.options('*', cors());
 app.use(express.json());
+
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 connectDB();
 

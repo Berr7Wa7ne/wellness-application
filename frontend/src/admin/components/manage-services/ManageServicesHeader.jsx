@@ -1,7 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Search, Filter } from 'lucide-react'
+import AddServiceForm from './AddServiceForm'
+import AdminModal from '../shared/AdminModal'
 
 const ManageServicesHeader = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const toggleModal = () => {
+      setIsModalOpen(!isModalOpen);
+    };
+
     return (
         <div className="p-6">
           {/* Header Area */}
@@ -10,7 +18,10 @@ const ManageServicesHeader = () => {
               <h2 className="text-xl font-semibold">Manage Services</h2>
               <p className="text-sm text-gray-500">Configure and manage your service offerings</p>
             </div>
-            <button className="bg-[#213721] w-[135px] h-[40px] text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm font-semibold">
+            <button 
+              onClick={toggleModal}
+              className="bg-[#213721] w-[135px] h-[40px] text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm font-semibold"
+            >
               + Add Service
             </button>
           </div>
@@ -48,7 +59,11 @@ const ManageServicesHeader = () => {
               </div>
             </div>
           </div>
-    
+
+          {/* Add Service Modal */}
+          <AdminModal isOpen={isModalOpen} onClose={toggleModal}>
+            <AddServiceForm onClose={toggleModal} />
+          </AdminModal>
         </div>
       );
     };

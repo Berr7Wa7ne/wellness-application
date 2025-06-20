@@ -7,12 +7,12 @@ const validateServiceId = [
 ];
 
 const validateCreateService = [
-  body('name')
+  body('title')
     .trim()
     .notEmpty()
-    .withMessage('Service name is required')
+    .withMessage('Service title is required')
     .isLength({ min: 2, max: 100 })
-    .withMessage('Service name must be between 2 and 100 characters'),
+    .withMessage('Service title must be between 2 and 100 characters'),
   body('description')
     .trim()
     .notEmpty()
@@ -20,12 +20,23 @@ const validateCreateService = [
     .isLength({ min: 10, max: 1000 })
     .withMessage('Description must be between 10 and 1000 characters'),
   body('duration')
+    .notEmpty()
+    .withMessage('Duration is required')
     .isInt({ min: 1 })
     .withMessage('Duration must be a positive number in minutes'),
-  body('tieredPricing')
-    .optional()
-    .isArray()
-    .withMessage('Tiered pricing must be an array if provided'),
+  body('tier')
+    .notEmpty()
+    .withMessage('Tier is required')
+    .isIn(['Basic', 'Premium', 'Professional'])
+    .withMessage('Invalid tier value'),
+  body('price')
+    .notEmpty()
+    .withMessage('Price is required')
+    .isFloat({ min: 0 })
+    .withMessage('Price must be a positive number'),
+  body('audience')
+    .notEmpty()
+    .withMessage('Audience is required'),
   body('isVideoAvailable')
     .isBoolean()
     .withMessage('Video availability must be a boolean'),
@@ -33,13 +44,13 @@ const validateCreateService = [
 ];
 
 const validateUpdateService = [
-  body('name')
+  body('title')
     .optional()
     .isString()
-    .withMessage('Name must be a string')
+    .withMessage('Title must be a string')
     .trim()
     .isLength({ min: 2, max: 100 })
-    .withMessage('Service name must be between 2 and 100 characters'),
+    .withMessage('Service title must be between 2 and 100 characters'),
   body('description')
     .optional()
     .isString()
@@ -51,10 +62,18 @@ const validateUpdateService = [
     .optional()
     .isInt({ min: 1 })
     .withMessage('Duration must be a positive number in minutes'),
-  body('tieredPricing')
+  body('tier')
     .optional()
-    .isArray()
-    .withMessage('Tiered pricing must be an array if provided'),
+    .isIn(['Basic', 'Premium', 'Professional'])
+    .withMessage('Invalid tier value'),
+  body('price')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('Price must be a positive number'),
+  body('audience')
+    .optional()
+    .isString()
+    .withMessage('Audience must be a string'),
   body('isVideoAvailable')
     .optional()
     .isBoolean()

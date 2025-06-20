@@ -36,9 +36,13 @@ const registerUser = catchAsyncService(async ({ name, email, password, role }) =
     // Get the user without password
     const userWithoutPassword = await User.findOne({ email }).select('-password');
     
-    // Generate token
+    // Generate token with consistent payload
     const token = jwt.sign(
-        { userId: userWithoutPassword._id, role: userWithoutPassword.role },
+        { 
+            userId: userWithoutPassword._id,
+            email: userWithoutPassword.email,
+            role: userWithoutPassword.role 
+        },
         process.env.JWT_SECRET_KEY,
         { expiresIn: '24h' }
     );
@@ -66,10 +70,15 @@ const loginUser = catchAsyncService(async ({ email, password }) => {
         throw new AppError("Invalid credentials.", 401);
     }
 
+    // Generate token with consistent payload
     const token = jwt.sign(
-        { id: user._id, email: user.email, role: user.role },
+        { 
+            userId: user._id,
+            email: user.email,
+            role: user.role 
+        },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "1d" }
+        { expiresIn: "24h" }
     );
 
     // Return user object with sensitive data removed
