@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
 const TierSchema = new mongoose.Schema({
-    name: { type: String, required: true, unique: true },
-    description: { type: String, required: true },
+    name: { type: String, required: true, unique: true }, // tierName in form
     price: { type: Number, required: true },
-    videoUrl: { type: String },
+    period: { type: String, enum: ['month', 'year'], required: true },
+    features: { type: [String], required: true },
+    isActive: { type: Boolean, default: true, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });

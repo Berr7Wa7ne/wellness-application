@@ -5,7 +5,7 @@ const ManageTiers = () => {
   return (
     <div>
         <ManageTiersHeader />
-        <ManageTiersCards />
+        {/* <ManageTiersCards /> */}
     </div>
   )
 }

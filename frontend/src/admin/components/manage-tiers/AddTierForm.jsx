@@ -1,17 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 
-const AddTierForm = ({ onClose }) => {
+const AddTierForm = ({ onClose, editingTier }) => {
   // State for form fields
-  const [tierName, setTierName] = useState('');
-  const [price, setPrice] = useState('');
-  const [period, setPeriod] = useState('month');
-  const [features, setFeatures] = useState(['']);
-  const [isActive, setIsActive] = useState(true);
+  const [tierName, setTierName] = useState(editingTier?.name || '');
+  const [price, setPrice] = useState(editingTier?.price || '');
+  const [period, setPeriod] = useState(editingTier?.period || 'month');
+  const [features, setFeatures] = useState(editingTier?.features || ['']);
+  const [isActive, setIsActive] = useState(
+    editingTier?.isActive !== undefined ? editingTier.isActive : true
+  );
 
-  const handleSubmit = (e) => {
+  const { createTier, updateTier, tiersLoading, tiersError } = useAdminTier();
+  const [localError, setLocalError] = useState(null);
+
+  useEffect(() => {
+    if (editingTier) {
+      setTierName(editingTier.name || '');
+      setPrice(editingTier.price || '');
+      setPeriod(editingTier.period || 'month');
+      setFeatures(editingTier.features || ['']);
+      setIsActive(editingTier.isActive !== undefined ? editingTier.isActive : true);
+    } else {
+      setTierName('');
+      setPrice('');
+      setPeriod('month');
+      setFeatures(['']);
+      setIsActive(true);
+    }
+  }, [editingTier]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Gather form data
+    setLocalError(null);
     const formData = {
       tierName,
       price,
@@ -19,11 +41,16 @@ const AddTierForm = ({ onClose }) => {
       features: features.filter(feature => feature.trim() !== ''),
       isActive
     };
-    console.log('Tier Data:', formData);
-    // TODO: Implement API call to add tier
-    
-    // Close the modal after submission (or based on API response)
-    // onClose();
+    try {
+      if (editingTier && editingTier._id) {
+        await updateTier(editingTier._id, formData);
+      } else {
+        await createTier(formData);
+      }
+      onClose();
+    } catch (err) {
+      setLocalError(err?.message || 'Failed to save tier');
+    }
   };
 
   const addFeature = () => {
@@ -44,9 +71,14 @@ const AddTierForm = ({ onClose }) => {
     <form onSubmit={handleSubmit} className="space-y-4 text-sm text-gray-700">
       {/* Modal Header */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Add New Tier</h2>
+        <h2 className="text-xl font-semibold">{editingTier ? 'Edit Tier' : 'Add New Tier'}</h2>
         <X size={24} onClick={onClose} className='text-red-500 cursor-pointer'/>
       </div>
+
+      {/* Error Message */}
+      {(localError || tiersError) && (
+        <div className="text-red-500 text-sm mb-2">{localError || tiersError}</div>
+      )}
 
       {/* Tier Name */}
       <div>
@@ -148,8 +180,9 @@ const AddTierForm = ({ onClose }) => {
         <button
           type="submit"
           className="px-4 py-2 text-sm font-medium text-white bg-[#213721] rounded-md hover:bg-green-800"
+          disabled={tiersLoading}
         >
-          Create Tier
+          {tiersLoading ? (editingTier ? 'Updating...' : 'Creating...') : (editingTier ? 'Update Tier' : 'Create Tier')}
         </button>
       </div>
     </form>

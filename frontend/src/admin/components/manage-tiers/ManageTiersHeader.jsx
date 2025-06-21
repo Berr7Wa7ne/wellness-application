@@ -1,12 +1,25 @@
 import React, { useState } from 'react'
 import AdminModal from '../shared/AdminModal'
 import AddTierForm from './AddTierForm'
+import ManageTiersCards from './ManageTiersCards'
 
 const ManageTiersHeader = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingTier, setEditingTier] = useState(null);
 
-    const toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
+    const openAddModal = () => {
+        setEditingTier(null);
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (tier) => {
+        setEditingTier(tier);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingTier(null);
     };
 
     return (
@@ -18,16 +31,18 @@ const ManageTiersHeader = () => {
               <p className="text-sm text-gray-500">Configure subscription tiers and pricing options</p>
             </div>
             <button 
-              onClick={toggleModal}
+              onClick={openAddModal}
               className="bg-[#213721] w-[135px] h-[40px] text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm font-semibold"
             >
               + Add Tier
             </button>
           </div>
 
-          {/* Add Tier Modal */}
-          <AdminModal isOpen={isModalOpen} onClose={toggleModal}>
-            <AddTierForm onClose={toggleModal} />
+          <ManageTiersCards onEdit={openEditModal} />
+
+          {/* Add/Edit Tier Modal */}
+          <AdminModal isOpen={isModalOpen} onClose={closeModal}>
+            <AddTierForm onClose={closeModal} editingTier={editingTier} />
           </AdminModal>
         </div>
     )

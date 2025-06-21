@@ -13,20 +13,27 @@ const validateCreateTier = [
     .withMessage('Name is required')
     .isLength({ min: 2, max: 100 })
     .withMessage('Name must be between 2 and 100 characters'),
-  body('description')
-    .trim()
-    .notEmpty()
-    .withMessage('Description is required')
-    .isLength({ min: 10, max: 1000 })
-    .withMessage('Description must be between 10 and 1000 characters'),
   body('price')
-    .optional()
+    .notEmpty()
+    .withMessage('Price is required')
     .isFloat({ min: 0 })
     .withMessage('Price must be a positive number'),
-  body('videoUrl')
+  body('period')
+    .notEmpty()
+    .withMessage('Period is required')
+    .isIn(['month', 'year'])
+    .withMessage('Period must be either "month" or "year"'),
+  body('features')
+    .isArray({ min: 1 })
+    .withMessage('Features must be a non-empty array'),
+  body('features.*')
+    .trim()
+    .notEmpty()
+    .withMessage('Feature cannot be empty'),
+  body('isActive')
     .optional()
-    .isURL()
-    .withMessage('Video URL must be a valid URL'),
+    .isBoolean()
+    .withMessage('isActive must be a boolean'),
   validateRequest
 ];
 
@@ -37,19 +44,27 @@ const validateUpdateTier = [
     .trim()
     .isLength({ min: 2, max: 100 })
     .withMessage('Name must be between 2 and 100 characters'),
-  body('description')
-    .optional()
-    .trim()
-    .isLength({ min: 10, max: 1000 })
-    .withMessage('Description must be between 10 and 1000 characters'),
   body('price')
     .optional()
     .isFloat({ min: 0 })
     .withMessage('Price must be a positive number'),
-  body('videoUrl')
+  body('period')
     .optional()
-    .isURL()
-    .withMessage('Video URL must be a valid URL'),
+    .isIn(['month', 'year'])
+    .withMessage('Period must be either "month" or "year"'),
+  body('features')
+    .optional()
+    .isArray({ min: 1 })
+    .withMessage('Features must be a non-empty array'),
+  body('features.*')
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('Feature cannot be empty'),
+  body('isActive')
+    .optional()
+    .isBoolean()
+    .withMessage('isActive must be a boolean'),
   validateRequest
 ];
 

@@ -2,9 +2,9 @@ const Tier = require("../models/Tier");
 const { AppError, catchAsyncService } = require('../utils/errorHandler');
 
 // Create a new tier
-const createTier = catchAsyncService(async (name, description, price, videoUrl) => {
-    if (!name || !description || !price) {
-        throw new AppError("Name, description, and price are required.", 400);
+const createTier = catchAsyncService(async (name, price, period, features, isActive = true) => {
+    if (!name || !price || !period || !features || !Array.isArray(features) || features.length === 0) {
+        throw new AppError("Name, price, period, and features are required.", 400);
     }
 
     // Check for duplicate tier name
@@ -13,7 +13,7 @@ const createTier = catchAsyncService(async (name, description, price, videoUrl) 
         throw new AppError("Tier name already exists.", 409);
     }
 
-    const tier = new Tier({ name, description, price, videoUrl });
+    const tier = new Tier({ name, price, period, features, isActive });
     return tier.save();
 });
 
@@ -32,7 +32,7 @@ const getTier = catchAsyncService(async (id) => {
 });
 
 // Update a tier
-const updateTier = catchAsyncService(async (id, name, description, price, videoUrl) => {
+const updateTier = catchAsyncService(async (id, name, price, period, features, isActive) => {
     const tier = await Tier.findById(id);
     if (!tier) {
         throw new AppError("Tier not found.", 404);
@@ -47,9 +47,10 @@ const updateTier = catchAsyncService(async (id, name, description, price, videoU
         tier.name = name;
     }
 
-    if (description) tier.description = description;
-    if (price) tier.price = price;
-    if (videoUrl) tier.videoUrl = videoUrl;
+    if (price !== undefined) tier.price = price;
+    if (period) tier.period = period;
+    if (features && Array.isArray(features) && features.length > 0) tier.features = features;
+    if (isActive !== undefined) tier.isActive = isActive;
     tier.updatedAt = Date.now();
 
     return tier.save();
