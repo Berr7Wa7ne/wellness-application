@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require("./src/utils/db");
 const cors = require('cors');
+const multer = require('multer');
 require('dotenv').config();
 const path = require('path');
 const authRoutes = require('./src/routes/public/authRoutes');
@@ -22,6 +23,23 @@ const notificationRoutes = require('./src/routes/admin/notificationRoutes');
 const { AppError } = require('./src/utils/errorHandler');
 
 const app = express();
+
+// Configure multer for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept images only
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
 
 app.use(cors({
     origin: [

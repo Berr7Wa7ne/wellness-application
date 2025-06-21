@@ -1,14 +1,14 @@
 import React from 'react';
 import ManageProductHeader from '../components/manage-products/ManageProductHeader'
-import ManageProductCards from '../components/manage-products/ManageProductCards'
+import ManageProductsCards from '../components/manage-products/ManageProductsCards'
 
 const ManageProducts = () => {
 
 
   return (
-    <div className="p-6">
+    <div>
       <ManageProductHeader />
-      <ManageProductCards />
+      <ManageProductsCards />
     </div>
   )
 }

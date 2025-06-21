@@ -4,7 +4,21 @@ const { catchAsync, AppError } = require('../utils/errorHandler');
 
 // Create a new product (Admin only)
 const createProduct = catchAsync(async (req, res) => {
-    const product = await productService.createProduct(req.body);
+    const productData = {
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        category: req.body.category,
+        tier: req.body.tier,
+        stock: req.body.stock,
+        backgroundColor: req.body.backgroundColor,
+        textColor: req.body.textColor
+    };
+
+    // Handle file upload
+    const imageFile = req.file;
+
+    const product = await productService.createProduct(productData, imageFile);
     res.status(201).json({
         success: true,
         data: product
@@ -22,10 +36,7 @@ const getAllProducts = catchAsync(async (req, res) => {
 
 // Get a product by ID (Public)
 const getProduct = catchAsync(async (req, res) => {
-    const product = await productService.getProduct(req.params.id);
-    if (!product) {
-        throw new AppError('Product not found', 404);
-    }
+    const product = await productService.getProductById(req.params.id);
     res.json({
         success: true,
         data: product
@@ -34,22 +45,49 @@ const getProduct = catchAsync(async (req, res) => {
 
 // Update a product (Admin only)
 const updateProduct = catchAsync(async (req, res) => {
-    const product = await productService.updateProduct(req.params.id, req.body);
-    if (!product) {
-        throw new AppError('Product not found', 404);
+    console.log('=== Product Update Request Started ===');
+    console.log('Request params:', req.params);
+    if (!req.params.productId) {
+        console.error('No productId in request params!');
+        return res.status(400).json({ message: 'Product ID is required in the URL.' });
     }
-    res.json({
-        success: true,
-        data: product
-    });
+    console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
+
+    const productData = {
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        category: req.body.category,
+        tier: req.body.tier,
+        stock: req.body.stock,
+    };
+
+    // Handle file upload
+    const imageFile = req.file;
+
+    try {
+        const product = await productService.updateProduct(req.params.productId, productData, imageFile);
+        console.log('=== Product Update Success ===');
+        console.log('Updated product:', product);
+        res.json({
+            success: true,
+            data: product
+        });
+    } catch (error) {
+        console.error('=== Product Update Error ===');
+        console.error('Error details:', {
+            message: error.message,
+            status: error.statusCode,
+            stack: error.stack
+        });
+        throw error;
+    }
 });
 
 // Delete a product (Admin only)
 const deleteProduct = catchAsync(async (req, res) => {
-    const product = await productService.deleteProduct(req.params.id);
-    if (!product) {
-        throw new AppError('Product not found', 404);
-    }
+    await productService.deleteProduct(req.params.productId);
     res.json({
         success: true,
         message: 'Product deleted successfully'
@@ -74,5 +112,6 @@ const productController = {
     deleteProduct,
     updateProductTier
 };
+
 module.exports = productController;
 

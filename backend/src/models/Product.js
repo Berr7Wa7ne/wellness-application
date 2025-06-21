@@ -1,54 +1,39 @@
 // src/models/Product.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const fs = require('fs');
+const path = require('path');
 
 const ProductSchema = new Schema({
     name: { 
         type: String, 
-        required: [true, 'Product name is required'],
-        trim: true,
-        minlength: [2, 'Product name must be at least 2 characters long'],
-        maxlength: [100, 'Product name cannot exceed 100 characters']
+        required: true,
+        trim: true
     },
     description: { 
         type: String, 
-        required: [true, 'Product description is required'],
-        minlength: [10, 'Description must be at least 10 characters long']
+        required: true
     },
     price: { 
         type: Number, 
-        required: [true, 'Price is required'],
-        min: [0, 'Price cannot be negative']
+        required: true
     },
     category: {
         type: String,
-        required: [true, 'Category is required'],
-        enum: {
-            values: ['Magickal Oils', 'Meditation Videos', 'Licenses', 'Audio Guides', 'Healing Tools', 'Books & Journals'],
-            message: '{VALUE} is not a valid category'
-        }
+        required: true
     },
     tier: { 
         type: String, 
-        enum: {
-            values: ['Basic', 'Pro', 'Premium'],
-            message: '{VALUE} is not a valid tier'
-        },
-        required: [true, 'Tier is required']
+        required: true
     },
     stock: { 
         type: Number,
-        default: 0,
-        min: [0, 'Stock cannot be negative']
+        default: 0
     },
     image: {
         filename: String,
         path: String,
         contentType: String
-    },
-    imageUrl: {
-        type: String,
-        required: [true, 'Product image is required']
     },
     createdAt: { 
         type: Date, 
@@ -58,6 +43,52 @@ const ProductSchema = new Schema({
         type: Date,
         default: Date.now
     }
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+// Add virtual field for image URL
+ProductSchema.virtual('imageUrl').get(function() {
+    if (this.image && this.image.path) {
+        // Convert Windows path separators to forward slashes for URLs
+        const normalizedPath = this.image.path.replace(/\\/g, '/');
+        
+        console.log('=== Product Image URL Generation ===');
+        console.log('Original path:', this.image.path);
+        console.log('Normalized path:', normalizedPath);
+
+        // If the path already starts with http(s), return it as is
+        if (normalizedPath.startsWith('http')) {
+            console.log('Using full URL from path:', normalizedPath);
+            return normalizedPath;
+        }
+
+        // Try to check if file exists locally
+        const absolutePath = path.join(__dirname, '../../', normalizedPath);
+        const fileExistsLocally = fs.existsSync(absolutePath);
+        console.log('Checking local file:', absolutePath);
+        console.log('File exists locally:', fileExistsLocally);
+
+        // Use local URL if file exists, otherwise use deployed URL
+        const baseUrl = fileExistsLocally 
+            ? 'http://localhost:5000'
+            : (process.env.BACKEND_URL || 'https://wellness-application.onrender.com');
+
+        console.log('Selected base URL:', baseUrl);
+        
+        // Remove any trailing slash from backend URL
+        const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+        
+        // Remove any leading slash from path
+        const cleanPath = normalizedPath.startsWith('/') ? normalizedPath.slice(1) : normalizedPath;
+        
+        const fullUrl = `${cleanBaseUrl}/${cleanPath}`;
+        console.log('Generated full URL:', fullUrl);
+        
+        return fullUrl;
+    }
+    return null;
 });
 
 // Update timestamp on save

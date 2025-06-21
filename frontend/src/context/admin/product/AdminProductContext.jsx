@@ -14,8 +14,8 @@ export const AdminProductProvider = ({ children }) => {
         setProductsLoading(true);
         setProductsError(null);
         try {
-            const response = await api.get('/admin/products');
-            setProducts(response.data);
+            const response = await api.get('/public/products');
+            setProducts(Array.isArray(response.data.data) ? response.data.data : []);
         } catch (err) {
             setProductsError(err.response?.data?.message || 'Failed to fetch products');
             throw err;
@@ -89,26 +89,27 @@ export const AdminProductProvider = ({ children }) => {
         }
     };
 
-    const updateProduct = async (id, productData) => {
+    const updateProduct = async (productId, productData) => {
         try {
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             };
-
-            const response = await api.put(`/admin/products/${id}`, productData, config);
+    
+            const response = await api.put(`/admin/products/${productId}`, productData, config);
             
             setProducts(prevProducts => 
                 prevProducts.map(product => 
-                    product._id === id ? response.data : product
+                    product._id === productId ? response.data : product
                 )
             );
             
-            if (currentProduct?._id === id) {
+            if (currentProduct?._id === productId) {
                 setCurrentProduct(response.data);
             }
-            
+            // Fetch all products again to ensure UI is up to date
+            await fetchProducts();
             return response.data;
         } catch (err) {
             setProductsError(err.response?.data?.message || 'Failed to update product');
@@ -116,11 +117,11 @@ export const AdminProductProvider = ({ children }) => {
         }
     };
 
-    const deleteProduct = async (id) => {
+    const deleteProduct = async (productId) => {
         try {
-            await api.delete(`/admin/products/${id}`);
-            setProducts(prevProducts => prevProducts.filter(product => product._id !== id));
-            if (currentProduct?._id === id) {
+            await api.delete(`/admin/products/${productId}`);
+            setProducts(prevProducts => prevProducts.filter(product => product._id !== productId));
+            if (currentProduct?._id === productId) {
                 setCurrentProduct(null);
             }
         } catch (err) {
