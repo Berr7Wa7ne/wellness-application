@@ -24,8 +24,8 @@ const getTier = catchAsync(async (req, res) => {
 
 // Create a new tier
 const createTier = catchAsync(async (req, res) => {
-    const { name, price, period, features, isActive } = req.body;
-    const tier = await tierService.createTier(name, price, period, features, isActive);
+    const { name, backgroundColor, textColor, price, period, features, isActive } = req.body;
+    const tier = await tierService.createTier(name, backgroundColor, textColor, price, period, features, isActive);
     res.status(201).json({
         success: true,
         data: tier
@@ -34,8 +34,8 @@ const createTier = catchAsync(async (req, res) => {
 
 // Update a tier
 const updateTier = catchAsync(async (req, res) => {
-    const { name, price, period, features, isActive } = req.body;
-    const tier = await tierService.updateTier(req.params.id, name, price, period, features, isActive);
+    const { name, backgroundColor, textColor, price, period, features, isActive } = req.body;
+    const tier = await tierService.updateTier(req.params.id, name, backgroundColor, textColor, price, period, features, isActive);
     if (!tier) {
         throw new AppError('Tier not found', 404);
     }

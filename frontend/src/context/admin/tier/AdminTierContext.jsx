@@ -58,6 +58,8 @@ export const AdminTierProvider = ({ children }) => {
             // Map frontend field names to backend
             const payload = {
                 name: formData.tierName,
+                backgroundColor: formData.backgroundColor,
+                textColor: formData.textColor,
                 price: parseFloat(formData.price),
                 period: formData.period,
                 features: formData.features,
@@ -80,6 +82,8 @@ export const AdminTierProvider = ({ children }) => {
         try {
             const payload = {
                 name: formData.tierName,
+                backgroundColor: formData.backgroundColor,
+                textColor: formData.textColor,
                 price: parseFloat(formData.price),
                 period: formData.period,
                 features: formData.features,

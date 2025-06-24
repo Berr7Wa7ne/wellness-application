@@ -13,6 +13,16 @@ const validateCreateTier = [
     .withMessage('Name is required')
     .isLength({ min: 2, max: 100 })
     .withMessage('Name must be between 2 and 100 characters'),
+  body('backgroundColor')
+    .notEmpty()
+    .withMessage('Background color is required')
+    .isString()
+    .withMessage('Background color must be a string'),
+  body('textColor')
+    .notEmpty()
+    .withMessage('Text color is required')
+    .isString()
+    .withMessage('Text color must be a string'),
   body('price')
     .notEmpty()
     .withMessage('Price is required')
@@ -44,6 +54,14 @@ const validateUpdateTier = [
     .trim()
     .isLength({ min: 2, max: 100 })
     .withMessage('Name must be between 2 and 100 characters'),
+  body('backgroundColor')
+    .optional()
+    .isString()
+    .withMessage('Background color must be a string'),
+  body('textColor')
+    .optional()
+    .isString()
+    .withMessage('Text color must be a string'),
   body('price')
     .optional()
     .isFloat({ min: 0 })

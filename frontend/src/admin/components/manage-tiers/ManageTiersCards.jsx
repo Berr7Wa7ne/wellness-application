@@ -41,9 +41,15 @@ const ManageTiersCards = ({ onEdit }) => {
         <div key={tier._id} className="bg-white rounded-lg shadow-md p-6 relative border border-gray-200">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-semibold">
-              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${tierColors[tier.name] || "bg-gray-100 text-gray-700"}`}>
-                {tier.name}
-              </span>
+            <span
+  className="px-3 py-1 rounded-full text-sm font-semibold"
+  style={{
+    backgroundColor: tier.backgroundColor,
+    color: tier.textColor
+  }}
+>
+  {tier.name}
+</span>
             </h3>
             <div className="flex gap-2">
               <button className="text-gray-500 hover:text-green-600 p-2" title="Edit" onClick={() => onEdit(tier)}>

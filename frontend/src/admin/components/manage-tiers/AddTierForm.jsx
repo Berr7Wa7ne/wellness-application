@@ -3,6 +3,18 @@ import { X } from 'lucide-react';
 import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 
 const AddTierForm = ({ onClose, editingTier }) => {
+  // Predefined badge colors
+  const predefinedColors = [
+    { bg: '#FFE4E1', text: '#FF6B6B', name: 'Soft Red' },
+    { bg: '#E0F2F1', text: '#26A69A', name: 'Teal' },
+    { bg: '#E8F5E9', text: '#66BB6A', name: 'Green' },
+    { bg: '#FFF3E0', text: '#FFA726', name: 'Orange' },
+    { bg: '#E3F2FD', text: '#42A5F5', name: 'Blue' },
+    { bg: '#F3E5F5', text: '#AB47BC', name: 'Purple' },
+    { bg: '#FAFAFA', text: '#9E9E9E', name: 'Gray' },
+    { bg: '#FFF8E1', text: '#FFA000', name: 'Amber' },
+  ];
+
   // State for form fields
   const [tierName, setTierName] = useState(editingTier?.name || '');
   const [price, setPrice] = useState(editingTier?.price || '');
@@ -10,6 +22,9 @@ const AddTierForm = ({ onClose, editingTier }) => {
   const [features, setFeatures] = useState(editingTier?.features || ['']);
   const [isActive, setIsActive] = useState(
     editingTier?.isActive !== undefined ? editingTier.isActive : true
+  );
+  const [selectedColor, setSelectedColor] = useState(
+    editingTier ? { bg: editingTier.backgroundColor, text: editingTier.textColor } : predefinedColors[0]
   );
 
   const { createTier, updateTier, tiersLoading, tiersError } = useAdminTier();
@@ -22,12 +37,14 @@ const AddTierForm = ({ onClose, editingTier }) => {
       setPeriod(editingTier.period || 'month');
       setFeatures(editingTier.features || ['']);
       setIsActive(editingTier.isActive !== undefined ? editingTier.isActive : true);
+      setSelectedColor({ bg: editingTier.backgroundColor, text: editingTier.textColor });
     } else {
       setTierName('');
       setPrice('');
       setPeriod('month');
       setFeatures(['']);
       setIsActive(true);
+      setSelectedColor(predefinedColors[0]);
     }
   }, [editingTier]);
 
@@ -36,6 +53,8 @@ const AddTierForm = ({ onClose, editingTier }) => {
     setLocalError(null);
     const formData = {
       tierName,
+      backgroundColor: selectedColor.bg,
+      textColor: selectedColor.text,
       price,
       period,
       features: features.filter(feature => feature.trim() !== ''),
@@ -166,6 +185,46 @@ const AddTierForm = ({ onClose, editingTier }) => {
           onChange={(e) => setIsActive(e.target.checked)}
         />
         <label htmlFor="isActive" className="text-sm text-gray-700">Active</label>
+      </div>
+
+      {/* Badge Color Selection */}
+      <div>
+        <label className="block font-medium text-gray-700 mb-2">
+          Tier Badge Color
+        </label>
+        <div className="grid grid-cols-4 gap-2">
+          {predefinedColors.map((color, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setSelectedColor(color)}
+              className={`p-2 rounded-md border-2 ${
+                selectedColor.bg === color.bg ? 'border-green-500' : 'border-transparent'
+              }`}
+            >
+              <div
+                className="h-8 rounded flex items-center justify-center"
+                style={{ backgroundColor: color.bg, color: color.text }}
+              >
+                <span className="text-xs font-medium">Aa</span>
+              </div>
+              <span className="text-xs mt-1 block text-gray-500">{color.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Badge Preview */}
+      <div className="mt-4">
+        <label className="block font-medium text-gray-700 mb-2">Preview</label>
+        <div className="p-4 border rounded-md">
+          <span
+            className="px-3 py-1.5 rounded-full text-sm font-medium inline-block"
+            style={{ backgroundColor: selectedColor.bg, color: selectedColor.text }}
+          >
+            {tierName || 'Tier Preview'}
+          </span>
+        </div>
       </div>
 
       {/* Submit Button */}
