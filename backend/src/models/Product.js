@@ -22,10 +22,7 @@ const ProductSchema = new Schema({
         type: String,
         required: true
     },
-    tier: { 
-        type: String, 
-        required: true
-    },
+    tier: { type: Schema.Types.ObjectId, ref: 'Tier', required: true },
     stock: { 
         type: Number,
         default: 0

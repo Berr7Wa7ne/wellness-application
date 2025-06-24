@@ -1,12 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { X, Upload, Image as ImageIcon } from 'lucide-react';
 import { useAdminCategory } from '../../../context/admin/category/AdminCategoryContext';
+import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 import { useAdminProduct } from '../../../context/admin/product/AdminProductContext';
 
 const AddProductForm = ({ onClose, editingProduct = null }) => {
   const { categories, fetchCategories, categoriesLoading, categoriesError } = useAdminCategory();
   const { createProduct, updateProduct } = useAdminProduct();
-  
+  const { tiers, fetchTiers } = useAdminTier();
   // State for form fields
   const [name, setName] = useState(editingProduct?.name || '');
   const [category, setCategory] = useState(editingProduct?.category || '');
@@ -15,7 +16,7 @@ const AddProductForm = ({ onClose, editingProduct = null }) => {
   const [stock, setStock] = useState(editingProduct?.stock || '');
   const [description, setDescription] = useState(editingProduct?.description || '');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(editingProduct?.imageUrl || '');
+  const [previewUrl, setPreviewUrl] = useState(editingProduct?.imageUrl || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -24,20 +25,30 @@ const AddProductForm = ({ onClose, editingProduct = null }) => {
   }, [fetchCategories]);
 
   useEffect(() => {
+    fetchTiers();
+  }, [fetchTiers]);
+
+  useEffect(() => {
     console.log('AddProductForm: Categories updated:', categories);
   }, [categories]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+      if (previewUrl && previewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
     }
   };
 
@@ -181,9 +192,11 @@ const AddProductForm = ({ onClose, editingProduct = null }) => {
           required
         >
           <option value="">Select a tier</option>
-          <option value="Basic">Basic</option>
-          <option value="Pro">Pro</option>
-          <option value="Premium">Premium</option>
+          {tiers.map(tierObj => (
+            <option key={tierObj._id} value={tierObj._id}>
+              {tierObj.name}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -223,43 +236,65 @@ const AddProductForm = ({ onClose, editingProduct = null }) => {
           Product Image 
           {!editingProduct && <span className="text-red-500">*</span>}
         </label>
-        
-        {/* File Input */}
         <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-          <div className="space-y-1 text-center">
-            {previewUrl ? (
-              <div className="mb-4">
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="mx-auto h-32 w-32 object-cover rounded-lg"
-                />
-              </div>
-            ) : (
-              <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
-            )}
-            <div className="flex text-sm text-gray-600">
-              <label
-                htmlFor="image"
-                className="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
+          {previewUrl ? (
+            <div className="flex flex-col items-center">
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="h-32 w-32 object-cover rounded border"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (previewUrl && previewUrl.startsWith('blob:')) {
+                    URL.revokeObjectURL(previewUrl);
+                  }
+                  setSelectedFile(null);
+                  setPreviewUrl(null);
+                }}
+                className="mt-2 text-xs text-red-600 hover:underline"
               >
-                <span>Upload a file</span>
-                <input
-                  id="image"
-                  name="image"
-                  type="file"
-                  accept="image/*"
-                  className="sr-only"
-                  onChange={handleFileChange}
-                  required={!editingProduct}
-                />
-              </label>
-              <p className="pl-1">or drag and drop</p>
+                Remove
+              </button>
             </div>
-            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-          </div>
+          ) : (
+            <div className="space-y-1 text-center">
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                stroke="currentColor"
+                fill="none"
+                viewBox="0 0 48 48"
+                aria-hidden="true"
+              >
+                <path
+                  d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L40 32"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <div className="flex text-sm text-gray-600">
+                <label
+                  htmlFor="image-upload"
+                  className="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
+                >
+                  <span>Upload a file</span>
+                  <input
+                    id="image-upload"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="sr-only"
+                  />
+                </label>
+                <p className="pl-1">or drag and drop</p>
+              </div>
+              <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+            </div>
+          )}
         </div>
-        
         {selectedFile && (
           <div className="mt-2 text-sm text-gray-600">
             <p>Selected file: {selectedFile.name}</p>

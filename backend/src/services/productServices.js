@@ -2,10 +2,21 @@ const Product = require("../models/Product");
 const { AppError, catchAsyncService } = require('../utils/errorHandler');
 const path = require('path');
 const fs = require('fs');
+const Tier = require("../models/Tier");
+const mongoose = require('mongoose');
 
 // Create a new product
 const createProduct = catchAsyncService(async (productData, imageFile) => {
     const { name, description, price, category, tier, stock } = productData;
+
+    if (!tier || !mongoose.Types.ObjectId.isValid(tier)) {
+        throw new AppError('Tier is required and must be a valid ID', 400);
+    } else {
+        const tierExists = await Tier.exists({ _id: tier });
+        if (!tierExists) {
+            throw new AppError('Tier does not exist', 400);
+        }
+    }
 
     // Handle image file upload
     let imageData = null;
@@ -65,6 +76,16 @@ const updateProduct = catchAsyncService(async (id, productData, imageFile) => {
     }
 
     const { name, description, price, category, tier, stock } = productData;
+
+    if (tier && !mongoose.Types.ObjectId.isValid(tier)) {
+        throw new AppError('Tier must be a valid ID', 400);
+    }
+    if (tier) {
+        const tierExists = await Tier.exists({ _id: tier });
+        if (!tierExists) {
+            throw new AppError('Tier does not exist', 400);
+        }
+    }
 
     // Handle image file upload if provided
     if (imageFile) {

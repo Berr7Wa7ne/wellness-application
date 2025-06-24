@@ -24,11 +24,10 @@ const validateCreateProduct = [
     .notEmpty()
     .withMessage('Category is required'),
   body('tier')
-    .trim()
     .notEmpty()
     .withMessage('Tier is required')
-    .isIn(['Basic', 'Pro', 'Premium'])
-    .withMessage('Tier must be Basic, Pro, or Premium'),
+    .isMongoId()
+    .withMessage('Tier must be a valid ID'),
   body('stock')
     .optional()
     .isInt({ min: 0 })
@@ -58,9 +57,8 @@ const validateUpdateProduct = [
     .withMessage('Category cannot be empty'),
   body('tier')
     .optional()
-    .trim()
-    .isIn(['Basic', 'Pro', 'Premium'])
-    .withMessage('Tier must be Basic, Pro, or Premium'),
+    .isMongoId()
+    .withMessage('Tier must be a valid ID'),
   body('stock')
     .optional()
     .isInt({ min: 0 })

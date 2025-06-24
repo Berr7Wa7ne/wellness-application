@@ -3,11 +3,13 @@ import { MoreHorizontal, Edit, Trash2, DollarSign, Package, Star } from 'lucide-
 import { useAdminProduct } from '../../../context/admin/product/AdminProductContext';
 import AdminModal from '../shared/AdminModal';
 import AddProductForm from './AddProductForm';
+import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 
 const ManageProductsCards = () => {
   const { products, fetchProducts, deleteProduct } = useAdminProduct();
   const [editingProduct, setEditingProduct] = useState(null);
   const [showMenu, setShowMenu] = useState(null);
+  const { tiers } = useAdminTier();
 
   useEffect(() => {
     fetchProducts();
@@ -150,17 +152,26 @@ const ManageProductsCards = () => {
               <h3 className="font-medium text-gray-800 text-sm">{product.name}</h3>
               <div className="flex justify-between items-center my-2">
                 <p className="text-sm text-gray-600 mt-1">${product.price}</p>
-                <p className={`text-sm ${(() => {
-                  const tierColors = {
-                    Basic: "bg-indigo-100 text-indigo-800 border border-indigo-200",
-                    Premium: "bg-pink-100 text-pink-700 border border-pink-200",
-                    Professional: "bg-orange-100 text-orange-700 border border-orange-200",
-                    Pro: "bg-green-100 text-green-700 border border-green-200",
-                  };
-                  return tierColors[product.tier] || "bg-gray-100 text-[#213721]";
-                })()} px-2 py-1 rounded-md mt-1`}>
-                  {product.tier}
-                </p>
+                {/* Dynamic Tier Badge */}
+                {(() => {
+                  const tierObj = tiers.find(t => t._id === product.tier || t.name === product.tier);
+                  if (tierObj) {
+                    return (
+                      <span
+                        className="px-2 py-1 rounded-full text-xs font-semibold"
+                        style={{ backgroundColor: tierObj.backgroundColor, color: tierObj.textColor }}
+                      >
+                        {tierObj.name}
+                      </span>
+                    );
+                  } else {
+                    return (
+                      <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
+                        {product.tier}
+                      </span>
+                    );
+                  }
+                })()}
               </div>
               <p className="text-xs text-gray-400 mt-1">Stock: {product.stock}</p>
               <p className="text-sm text-gray-500 line-clamp-2 mt-2">{product.description}</p>
