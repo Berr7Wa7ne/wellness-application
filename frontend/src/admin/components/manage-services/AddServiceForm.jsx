@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useAdminService } from '../../../context/admin/service/AdminServiceContext';
+import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 
 const AddServiceForm = ({ onClose }) => {
   const { createService } = useAdminService();
@@ -14,9 +15,23 @@ const AddServiceForm = ({ onClose }) => {
     isVideoAvailable: false
   });
   const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
+  const { tiers, fetchTiers } = useAdminTier();
+
+  useEffect(() => {
+    fetchTiers();
+  }, [fetchTiers]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const validateFormData = () => {
     const errors = {};
@@ -93,12 +108,6 @@ const AddServiceForm = ({ onClose }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      console.log('Image selected:', {
-        name: file.name,
-        type: file.type,
-        size: file.size
-      });
-      
       if (!file.type.startsWith('image/')) {
         setValidationErrors(prev => ({
           ...prev,
@@ -106,8 +115,11 @@ const AddServiceForm = ({ onClose }) => {
         }));
         return;
       }
-      
       setImageFile(file);
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setPreviewUrl(URL.createObjectURL(file));
       // Clear validation error when user selects a valid file
       if (validationErrors.image) {
         setValidationErrors(prev => ({
@@ -229,22 +241,24 @@ const AddServiceForm = ({ onClose }) => {
       </div>
 
       <div>
-        <label htmlFor="tier" className="block font-medium text-gray-700 mb-1">
-          Tier <span className="text-red-500">*</span>
-        </label>
-        <select
-          id="tier"
-          name="tier"
-          value={formData.tier}
-          onChange={handleChange}
-          className={`mt-1 block w-full rounded-md border ${
-            validationErrors.tier ? 'border-red-500' : 'border-gray-300'
-          } shadow-sm focus:border-green-800 focus:ring-green-800 py-2.5 px-3 text-sm`}
-        >
-          <option value="Basic">Basic</option>
-          <option value="Premium">Premium</option>
-          <option value="Professional">Professional</option>
-        </select>
+      <label htmlFor="tier" className="block font-medium text-gray-700 mb-1">
+        Tier <span className="text-red-500">*</span>
+      </label>
+      <select
+        id="tier"
+        name="tier"
+        value={formData.tier}
+        onChange={handleChange}
+        className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-800 focus:ring-green-800 py-2.5 px-3 text-sm"
+        required
+      >
+        <option value="">Select a tier</option>
+        {tiers.map(tier => (
+          <option key={tier._id} value={tier._id}>
+            {tier.name}
+          </option>
+        ))}
+      </select>
         {validationErrors.tier && (
           <p className="mt-1 text-sm text-red-600">{validationErrors.tier}</p>
         )}
@@ -334,41 +348,61 @@ const AddServiceForm = ({ onClose }) => {
           Service Image <span className="text-red-500">*</span>
         </label>
         <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-          <div className="space-y-1 text-center">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              stroke="currentColor"
-              fill="none"
-              viewBox="0 0 48 48"
-              aria-hidden="true"
-            >
-              <path
-                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L40 32"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <div className="flex text-sm text-gray-600">
-              <label
-                htmlFor="image-upload"
-                className="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
-              >
-                <span>Upload a file</span>
-                <input
-                  id="image-upload"
-                  name="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="sr-only"
-                />
-              </label>
-              <p className="pl-1">or drag and drop</p>
-            </div>
-            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-          </div>
-        </div>
+  {previewUrl ? (
+    <div className="flex flex-col items-center">
+      <img
+        src={previewUrl}
+        alt="Preview"
+        className="h-32 w-32 object-cover rounded border"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          setImageFile(null);
+          setPreviewUrl(null);
+        }}
+        className="mt-2 text-xs text-red-600 hover:underline"
+      >
+        Remove
+      </button>
+    </div>
+  ) : (
+    <div className="space-y-1 text-center">
+      <svg
+        className="mx-auto h-12 w-12 text-gray-400"
+        stroke="currentColor"
+        fill="none"
+        viewBox="0 0 48 48"
+        aria-hidden="true"
+      >
+        <path
+          d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L40 32"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <div className="flex text-sm text-gray-600">
+        <label
+          htmlFor="image-upload"
+          className="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
+        >
+          <span>Upload a file</span>
+          <input
+            id="image-upload"
+            name="image"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="sr-only"
+          />
+        </label>
+        <p className="pl-1">or drag and drop</p>
+      </div>
+      <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+    </div>
+  )}
+</div>
         {imageFile && (
           <p className="mt-2 text-sm text-gray-500">
             Selected file: {imageFile.name}

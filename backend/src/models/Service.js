@@ -7,7 +7,7 @@ const ServiceSchema = new Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     duration: { type: Number, required: true },
-    tier: { type: String, required: true },
+    tier: { type: Schema.Types.ObjectId, ref: 'Tier', required: true },
     price: { type: Number, required: true },
     audience: { type: String, required: true },
     isVideoAvailable: { type: Boolean, default: false },

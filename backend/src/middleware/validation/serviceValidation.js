@@ -27,8 +27,8 @@ const validateCreateService = [
   body('tier')
     .notEmpty()
     .withMessage('Tier is required')
-    .isIn(['Basic', 'Premium', 'Professional'])
-    .withMessage('Invalid tier value'),
+    .isMongoId()
+    .withMessage('Tier must be a valid ID'),
   body('price')
     .notEmpty()
     .withMessage('Price is required')
@@ -64,8 +64,8 @@ const validateUpdateService = [
     .withMessage('Duration must be a positive number in minutes'),
   body('tier')
     .optional()
-    .isIn(['Basic', 'Premium', 'Professional'])
-    .withMessage('Invalid tier value'),
+    .isMongoId()
+    .withMessage('Tier must be a valid ID'),
   body('price')
     .optional()
     .isFloat({ min: 0 })

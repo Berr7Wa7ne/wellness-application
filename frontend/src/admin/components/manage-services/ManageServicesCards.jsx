@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Video, Clock, Users, Trash2, Pencil, Image } from 'lucide-react';
-import { useAdminService } from '../../../context/admin/service/AdminServiceContext';
+import { useAdminService } from '../../../context/admin/service/AdminServiceContext';  
+import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 import AdminModal from '../shared/AdminModal';
 import EditServiceForm from './EditServiceForm';
-
-const tierColors = {
-    Basic: "bg-indigo-100 text-indigo-800 border border-indigo-200",
-    Premium: "bg-pink-100 text-pink-700 border border-pink-200",
-    Professional: "bg-orange-100 text-orange-700 border border-orange-200",
-};
 
 // Default service image
 const defaultServiceImage = '/images/service-placeholder.png';
@@ -27,6 +22,7 @@ const ManageServicesCards = () => {
   const [imageErrors, setImageErrors] = useState({});
   const [editingService, setEditingService] = useState(null);
   const [serviceImages, setServiceImages] = useState([]);
+  const { tiers } = useAdminTier();
 
   useEffect(() => {
     console.log('=== ManageServicesCards Mount ===');
@@ -220,7 +216,7 @@ const ManageServicesCards = () => {
               <div className="p-4">
                 <h3 className="font-semibold text-gray-900 mb-1">{service.title}</h3>
                 <p className="text-sm text-gray-500 mb-3 line-clamp-2">{service.description}</p>
-                <div className="flex items-center gap-3 text-sm text-gray-600 mb-3">
+                <div className="flex justify-between items-center gap-3 text-sm text-gray-600 mb-3">
                   <div className="flex items-center gap-1">
                     <Clock size={14} />
                     {service.duration} mins
@@ -231,9 +227,27 @@ const ManageServicesCards = () => {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className={`px-2 py-1 rounded-full text-xs ${tierColors[service.tier] || 'bg-gray-100 text-gray-800'}`}>
-                    {service.tier}
-                  </span>
+                  {/* Dynamic Tier Badge */}
+                  {(() => {
+                    // Try to match by _id or name (for legacy data)
+                    const tier = tiers.find(t => t._id === service.tier || t.name === service.tier);
+                    if (tier) {
+                      return (
+                        <span
+                          className="px-2 py-1 rounded-full text-xs font-semibold"
+                          style={{ backgroundColor: tier.backgroundColor, color: tier.textColor }}
+                        >
+                          {tier.name}
+                        </span>
+                      );
+                    } else {
+                      return (
+                        <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
+                          {service.tier}
+                        </span>
+                      );
+                    }
+                  })()}
                   <span className="font-semibold text-gray-900">${service.price}</span>
                 </div>
               </div>

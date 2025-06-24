@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useAdminService } from '../../../context/admin/service/AdminServiceContext';
+import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 
 const EditServiceForm = ({ service, onClose }) => {
   const { updateService } = useAdminService();
@@ -18,6 +19,11 @@ const EditServiceForm = ({ service, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
+  const { tiers, fetchTiers } = useAdminTier();
+
+  useEffect(() => {
+    fetchTiers();
+  }, [fetchTiers]);
 
   // Cleanup preview URL when component unmounts
   useEffect(() => {
@@ -311,23 +317,25 @@ const EditServiceForm = ({ service, onClose }) => {
         </div>
       </div>
 
-      <div>
-        <label htmlFor="tier" className="block font-medium text-gray-700 mb-1">
-          Tier <span className="text-red-500">*</span>
-        </label>
-        <select
-          id="tier"
-          name="tier"
-          value={formData.tier}
-          onChange={handleChange}
-          className={`mt-1 block w-full rounded-md border ${
-            validationErrors.tier ? 'border-red-500' : 'border-gray-300'
-          } shadow-sm focus:border-green-800 focus:ring-green-800 py-2.5 px-3 text-sm`}
-        >
-          <option value="Basic">Basic</option>
-          <option value="Premium">Premium</option>
-          <option value="Professional">Professional</option>
-        </select>
+    <div>
+      <label htmlFor="tier" className="block font-medium text-gray-700 mb-1">
+        Tier <span className="text-red-500">*</span>
+      </label>
+      <select
+        id="tier"
+        name="tier"
+        value={formData.tier}
+        onChange={handleChange}
+        className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-800 focus:ring-green-800 py-2.5 px-3 text-sm"
+        required
+      >
+        <option value="">Select a tier</option>
+        {tiers.map(tier => (
+          <option key={tier._id} value={tier._id}>
+            {tier.name}
+          </option>
+        ))}
+      </select>
         {validationErrors.tier && (
           <p className="mt-1 text-sm text-red-600">{validationErrors.tier}</p>
         )}

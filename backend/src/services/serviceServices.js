@@ -1,6 +1,8 @@
 // src/services/serviceService.js
 const Service = require("../models/Service");
 const { AppError, catchAsyncService } = require('../utils/errorHandler');
+const Tier = require("../models/Tier");
+const mongoose = require('mongoose');
 
 // Create a new service (Admin Only)
 const createService = catchAsyncService(async (data) => {
@@ -18,8 +20,14 @@ const createService = catchAsyncService(async (data) => {
     if (!data.description || typeof data.description !== 'string' || !data.description.trim()) {
         errors.description = 'Description is required';
     }
-    if (!data.tier || typeof data.tier !== 'string' || !data.tier.trim()) {
-        errors.tier = 'Tier is required';
+    if (!data.tier || !mongoose.Types.ObjectId.isValid(data.tier)) {
+        errors.tier = 'Tier is required and must be a valid ID';
+    } else {
+        // Optionally check if the Tier exists
+        const tierExists = await Tier.exists({ _id: data.tier });
+        if (!tierExists) {
+            errors.tier = 'Tier does not exist';
+        }
     }
     if (!data.audience || typeof data.audience !== 'string' || !data.audience.trim()) {
         errors.audience = 'Audience is required';
@@ -71,7 +79,7 @@ const createService = catchAsyncService(async (data) => {
         title: data.title.trim(),
         description: data.description.trim(),
         duration: duration,
-        tier: data.tier.trim(),
+        tier: data.tier,
         price: price,
         audience: data.audience.trim(),
         isVideoAvailable: isVideoAvailable,
@@ -110,6 +118,15 @@ const getServiceById = catchAsyncService(async (serviceId) => {
 
 // Update a service (Admin Only)
 const updateService = catchAsyncService(async (serviceId, updates) => {
+    if (updates.tier && !mongoose.Types.ObjectId.isValid(updates.tier)) {
+        throw new AppError('Tier must be a valid ID', 400);
+    }
+    if (updates.tier) {
+        const tierExists = await Tier.exists({ _id: updates.tier });
+        if (!tierExists) {
+            throw new AppError('Tier does not exist', 400);
+        }
+    }
     const service = await Service.findByIdAndUpdate(serviceId, updates, { new: true });
     if (!service) {
         throw new AppError("Service not found", 404);
