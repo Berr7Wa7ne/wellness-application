@@ -12,8 +12,12 @@ const register = catchAsync(async (req, res) => {
         name: req.body.name
     });
     
-    const { name, email, password, role } = req.body;
-    const { message, user, token } = await registerUser({ name, email, password, role });
+    const { name, email, password, role, phone, bio, adminCode } = req.body;
+    let profilePhoto = null;
+    if (req.file) {
+        profilePhoto = `/uploads/profilePhotos/${req.file.filename}`;
+    }
+    const { message, user, token } = await registerUser({ name, email, password, role, phone, bio, adminCode, profilePhoto });
     
     console.log('Registration successful:', { email, role });
     

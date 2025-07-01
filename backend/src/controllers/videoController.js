@@ -3,7 +3,18 @@ const { catchAsync, AppError } = require('../utils/errorHandler');
 
 // Create a new video (Admin only)
 const createVideo = catchAsync(async (req, res) => {
-    const video = await videoService.createVideo(req.body);
+    console.log('=== [createVideo] req.body:', req.body);
+    console.log('=== [createVideo] req.file:', req.file);
+    const videoData = req.body;
+    if (req.file) {
+        videoData.image = {
+            path: req.file.path,
+            filename: req.file.filename,
+            mimetype: req.file.mimetype
+        };
+        console.log('=== [createVideo] videoData.image set:', videoData.image);
+    }
+    const video = await videoService.createVideo(videoData);
     res.status(201).json({
         success: true,
         data: video
@@ -33,7 +44,15 @@ const getVideo = catchAsync(async (req, res) => {
 
 // Update video details (Admin only)
 const updateVideo = catchAsync(async (req, res) => {
-    const video = await videoService.updateVideo(req.params.id, req.body);
+    const updateData = req.body;
+    if (req.file) {
+        updateData.image = {
+            path: req.file.path,
+            filename: req.file.filename,
+            mimetype: req.file.mimetype
+        };
+    }
+    const video = await videoService.updateVideo(req.params.id, updateData);
     if (!video) {
         throw new AppError('Video not found', 404);
     }

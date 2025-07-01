@@ -6,7 +6,7 @@ const PasswordResetToken = require("../models/PasswordResetToken");
 const emailService = require("../utils/emailService");
 const { AppError, catchAsyncService } = require("../utils/errorHandler");
 
-const registerUser = catchAsyncService(async ({ name, email, password, role }) => {
+const registerUser = catchAsyncService(async ({ name, email, password, role, phone, bio, adminCode, profilePhoto }) => {
     console.log('Register service called for:', { email, role });
     
     if (!["user", "admin"].includes(role)) {
@@ -16,11 +16,12 @@ const registerUser = catchAsyncService(async ({ name, email, password, role }) =
 
     // Validate admin registration
     if (role === 'admin') {
-        const adminCode = process.env.ADMIN_REG_CODE;
-        if (!adminCode) {
+        const adminCodeEnv = process.env.ADMIN_REG_CODE;
+        if (!adminCodeEnv) {
             console.log('Admin registration not configured');
             throw new AppError("Admin registration is not configured.", 500);
         }
+        // Optionally validate adminCode here
     }
 
     const existingUser = await User.findOne({ email });
@@ -31,6 +32,15 @@ const registerUser = catchAsyncService(async ({ name, email, password, role }) =
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashedPassword, role });
+    if (role === 'admin') {
+        user.phone = phone;
+        user.bio = bio;
+        user.profilePhoto = profilePhoto;
+        // user.adminCode = adminCode; // Only if you want to store it
+    }
+    if (profilePhoto && role !== 'admin') {
+        user.profilePhoto = profilePhoto;
+    }
     await user.save();
 
     // Get the user without password

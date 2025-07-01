@@ -12,27 +12,31 @@ export const AdminVideoProvider = ({ children }) => {
     const fetchVideos = async () => {
         setVideosLoading(true);
         setVideosError(null);
+        console.log('[fetchVideos] Fetching videos...');
         try {
-            const response = await api.get('/admin/videos');
-            console.log('Videos response:', response.data);
-            
+            const response = await api.get('/public/videos');
+            console.log('[fetchVideos] Raw response:', response);
+            console.log('[fetchVideos] Response data:', response.data);
             const videosData = Array.isArray(response.data) ? response.data : 
                              response.data.data ? response.data.data : [];
-            
+            console.log('[fetchVideos] Parsed videosData:', videosData);
             setVideos(videosData);
+            console.log('[fetchVideos] setVideos called with:', videosData);
         } catch (err) {
-            console.error('Fetch videos error:', err);
+            console.error('[fetchVideos] Fetch videos error:', err);
             setVideosError(err.response?.data?.message || 'Failed to fetch videos');
             setVideos([]);
+            console.log('[fetchVideos] setVideos called with: [] (error case)');
             throw err;
         } finally {
             setVideosLoading(false);
+            console.log('[fetchVideos] setVideosLoading(false)');
         }
     };
 
     const getVideo = async (id) => {
         try {
-            const response = await api.get(`/admin/videos/${id}`);
+            const response = await api.get(`/public/videos/${id}`);
             setCurrentVideo(response.data);
             return response.data;
         } catch (err) {
@@ -71,17 +75,11 @@ export const AdminVideoProvider = ({ children }) => {
                 throw new Error('No data received from server');
             }
 
-            const newVideo = response.data.data || response.data;
-            console.log('Adding new video to state:', newVideo);
-            
-            setVideos(prevVideos => {
-                const newVideos = [...prevVideos, newVideo];
-                console.log('Updated videos state:', newVideos);
-                return newVideos;
-            });
-
+            // Refetch all videos for consistency
+            await fetchVideos();
             console.log('=== Video Creation Success ===');
-            return newVideo;
+            // Optionally return the new video data
+            return response.data.data || response.data;
         } catch (err) {
             console.error('=== Video Creation Error ===');
             console.error('Error details:', {

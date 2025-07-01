@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/auth/AuthContext';
 import { Link } from 'react-router-dom';
-import { Mail, Lock, User, AlertCircle, Shield, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, AlertCircle, Shield, Eye, EyeOff, Phone as PhoneIcon, FileText, Image as ImageIcon } from 'lucide-react';
 import heroPic from '../../../assets/hero-pic.png';
 
 const SignUp = () => {
@@ -14,19 +14,30 @@ const SignUp = () => {
         password: '',
         confirmPassword: '',
         isAdmin: false,
-        adminCode: ''
+        adminCode: '',
+        phone: '',
+        bio: '',
+        profilePhoto: ''
     });
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showAdminCode, setShowAdminCode] = useState(false);
+    const [profilePhotoFile, setProfilePhotoFile] = useState(null);
+    const [profilePhotoPreview, setProfilePhotoPreview] = useState(null);
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
+        const { name, value, type, checked, files } = e.target;
+        if (name === 'profilePhoto' && files && files[0]) {
+            setProfilePhotoFile(files[0]);
+            setFormData(prev => ({ ...prev, profilePhoto: '' }));
+            setProfilePhotoPreview(URL.createObjectURL(files[0]));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: type === 'checkbox' ? checked : value
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -39,15 +50,18 @@ const SignUp = () => {
         }
 
         try {
-            const userData = {
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
-                role: formData.isAdmin ? 'admin' : 'user'
-            };
-
+            const userData = new FormData();
+            userData.append('name', formData.name);
+            userData.append('email', formData.email);
+            userData.append('password', formData.password);
+            userData.append('role', formData.isAdmin ? 'admin' : 'user');
             if (formData.isAdmin) {
-                userData.adminCode = formData.adminCode;
+                userData.append('adminCode', formData.adminCode);
+                userData.append('phone', formData.phone);
+                userData.append('bio', formData.bio);
+            }
+            if (profilePhotoFile) {
+                userData.append('profilePhoto', profilePhotoFile);
             }
 
             const user = await register(userData);
@@ -195,6 +209,7 @@ const SignUp = () => {
                     </div>
 
                     {formData.isAdmin && (
+                        <>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <Shield className="h-5 w-5 text-gray-400" />
@@ -224,6 +239,53 @@ const SignUp = () => {
                                 </button>
                             </div>
                         </div>
+                        <div className="relative mt-4">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <PhoneIcon className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                id="phone"
+                                name="phone"
+                                type="text"
+                                className="appearance-none rounded relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                placeholder="Phone number (admin only)"
+                                value={formData.phone}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="relative mt-4">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <FileText className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <textarea
+                                id="bio"
+                                name="bio"
+                                rows={2}
+                                className="appearance-none rounded relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                placeholder="Short bio (admin only)"
+                                value={formData.bio}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="relative mt-4">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <ImageIcon className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                id="profilePhoto"
+                                name="profilePhoto"
+                                type="file"
+                                accept="image/*"
+                                className="appearance-none rounded relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#213721] focus:border-[#213721] focus:z-10 sm:text-sm"
+                                onChange={handleChange}
+                            />
+                            {profilePhotoPreview && (
+                                <div className="mt-2 flex justify-center">
+                                    <img src={profilePhotoPreview} alt="Preview" className="h-16 w-16 object-cover rounded-full border" />
+                                </div>
+                            )}
+                        </div>
+                        </>
                     )}
 
                     <div>
