@@ -1,7 +1,8 @@
 const { AppError } = require('../../utils/errorHandler');
 
 const validateAdminProfileUpdate = (req, res, next) => {
-    const { name, email, phone, role, permissions } = req.body;
+    console.log('validateAdminProfileUpdate: req.body =', req.body); // Log incoming body
+    const { name, email, phone, bio, password, profilePhoto } = req.body;
 
     // Validate email format if provided
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -18,19 +19,17 @@ const validateAdminProfileUpdate = (req, res, next) => {
         throw new AppError('Name must be at least 2 characters long', 400);
     }
 
-    // Validate role if provided
-    if (role && !['admin', 'super_admin'].includes(role)) {
-        throw new AppError('Invalid role specified', 400);
+    // Validate bio if provided
+    if (bio && typeof bio !== 'string') {
+        throw new AppError('Bio must be a string', 400);
     }
 
-    // Validate permissions if provided
-    if (permissions && !Array.isArray(permissions)) {
-        throw new AppError('Permissions must be an array', 400);
+    // Validate password if provided
+    if (password && password.length < 6) {
+        throw new AppError('Password must be at least 6 characters long', 400);
     }
 
-    if (permissions && permissions.some(perm => typeof perm !== 'string')) {
-        throw new AppError('All permissions must be strings', 400);
-    }
+    // No validation for profilePhoto here (handled by upload middleware if any)
 
     next();
 };

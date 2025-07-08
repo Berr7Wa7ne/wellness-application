@@ -3,12 +3,16 @@ const { AppError, catchAsyncService } = require('../utils/errorHandler');
 const bcrypt = require('bcryptjs');
 
 const getAdminProfile = catchAsyncService(async (userId) => {
+    console.log('getAdminProfile: userId =', userId); // Log userId
     const user = await User.findById(userId);
+    console.log('getAdminProfile: user =', user); // Log user
     if (!user) {
+        console.error('getAdminProfile: User not found for userId =', userId);
         throw new AppError('User not found', 404);
     }
 
     if (user.role !== 'admin') {
+        console.error('getAdminProfile: Unauthorized access for userId =', userId, 'role =', user.role);
         throw new AppError('Unauthorized access', 403);
     }
 
@@ -18,17 +22,22 @@ const getAdminProfile = catchAsyncService(async (userId) => {
         phone: user.phone,
         role: user.role,
         bio: user.bio,
-        profilePhoto: user.profilePhoto
+        profilePhoto: user.profilePhoto,
+        profilePhotoUrl: user.profilePhotoUrl
     };
 });
 
 const updateAdminProfile = catchAsyncService(async (userId, updateData) => {
+    console.log('updateAdminProfile: userId =', userId, 'updateData =', updateData); // Log userId and updateData
     const user = await User.findById(userId);
+    console.log('updateAdminProfile: user =', user); // Log user
     if (!user) {
+        console.error('updateAdminProfile: User not found for userId =', userId);
         throw new AppError('User not found', 404);
     }
 
     if (user.role !== 'admin') {
+        console.error('updateAdminProfile: Unauthorized access for userId =', userId, 'role =', user.role);
         throw new AppError('Unauthorized access', 403);
     }
 
@@ -51,6 +60,7 @@ const updateAdminProfile = catchAsyncService(async (userId, updateData) => {
         { $set: updates },
         { new: true, runValidators: true }
     );
+    console.log('updateAdminProfile: updatedUser =', updatedUser); // Log updatedUser
 
     return {
         name: updatedUser.name,
@@ -58,7 +68,8 @@ const updateAdminProfile = catchAsyncService(async (userId, updateData) => {
         phone: updatedUser.phone,
         role: updatedUser.role,
         bio: updatedUser.bio,
-        profilePhoto: updatedUser.profilePhoto
+        profilePhoto: updatedUser.profilePhoto,
+        profilePhotoUrl: updatedUser.profilePhotoUrl
     };
 });
 
