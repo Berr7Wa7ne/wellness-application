@@ -176,15 +176,21 @@ const VideoTable = () => {
   <span>{video.title}</span>
 </td>
                 <td className="p-3 text-center">
-                  <span
-                    className="px-3 py-1 rounded-full text-xs font-semibold"
-                    style={{
-                      backgroundColor: categoryObj?.backgroundColor || "#f3f3f3",
-                      color: categoryObj?.textColor || "#333"
-                    }}
-                  >
-                    {categoryObj?.name || video.category?.name || video.category}
-                  </span>
+                <span
+  className="px-3 py-1 rounded-full text-xs font-semibold"
+  style={{
+    backgroundColor: categoryObj?.backgroundColor || "#f3f3f3",
+    color: categoryObj?.textColor || "#333",
+    whiteSpace: "nowrap",
+    // overflow: "hidden",
+    // textOverflow: "ellipsis",
+    // maxWidth: "120px", // adjust as needed
+    display: "inline-block", // needed for ellipsis to work
+    verticalAlign: "middle"
+  }}
+>
+  {categoryObj?.name || video.category?.name || video.category}
+</span>
                 </td>
                 <td className="p-3 font-semibold text-center">{video.duration}</td>
                 <td className="p-3 text-center">

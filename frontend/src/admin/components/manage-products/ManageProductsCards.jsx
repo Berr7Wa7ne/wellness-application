@@ -7,12 +7,13 @@ import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 
 const ManageProductsCards = () => {
   const { products, fetchProducts, deleteProduct } = useAdminProduct();
+  const { tiers, fetchTiers } = useAdminTier();
   const [editingProduct, setEditingProduct] = useState(null);
   const [showMenu, setShowMenu] = useState(null);
-  const { tiers } = useAdminTier();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProducts();
+    Promise.all([fetchProducts(), fetchTiers()]).then(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -89,6 +90,10 @@ const ManageProductsCards = () => {
       </span>
     );
   };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
 
   return (
     <>
@@ -167,7 +172,7 @@ const ManageProductsCards = () => {
                   } else {
                     return (
                       <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
-                        {product.tier}
+                        {typeof product.tier === 'string' && product.tier.length < 20 ? product.tier : 'Unknown Tier'}
                       </span>
                     );
                   }

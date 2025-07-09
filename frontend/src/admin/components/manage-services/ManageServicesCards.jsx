@@ -22,14 +22,11 @@ const ManageServicesCards = () => {
   const [imageErrors, setImageErrors] = useState({});
   const [editingService, setEditingService] = useState(null);
   const [serviceImages, setServiceImages] = useState([]);
-  const { tiers } = useAdminTier();
+  const { tiers, fetchTiers } = useAdminTier();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('=== ManageServicesCards Mount ===');
-    console.log('Initial services:', services);
-    fetchServices().catch(error => {
-      console.error('Error fetching services:', error);
-    });
+    Promise.all([fetchServices(), fetchTiers()]).then(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -123,7 +120,7 @@ const ManageServicesCards = () => {
     );
   };
 
-  if (servicesLoading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#213721]"></div>
@@ -229,7 +226,6 @@ const ManageServicesCards = () => {
                 <div className="flex items-center justify-between">
                   {/* Dynamic Tier Badge */}
                   {(() => {
-                    // Try to match by _id or name (for legacy data)
                     const tier = tiers.find(t => t._id === service.tier || t.name === service.tier);
                     if (tier) {
                       return (
@@ -243,7 +239,7 @@ const ManageServicesCards = () => {
                     } else {
                       return (
                         <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
-                          {service.tier}
+                          {typeof service.tier === 'string' && service.tier.length < 20 ? service.tier : 'Unknown Tier'}
                         </span>
                       );
                     }
