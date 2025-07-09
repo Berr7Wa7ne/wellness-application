@@ -2,7 +2,7 @@ const { catchAsync } = require('../utils/errorHandler');
 const { getNotificationPreferences, updateNotificationPreferences } = require('../services/notificationPreferencesService');
 
 const getPreferences = catchAsync(async (req, res) => {
-    const preferences = await getNotificationPreferences(req.user.id);
+    const preferences = await getNotificationPreferences(req.user.userId);
     res.json({
         success: true,
         data: preferences
@@ -10,7 +10,7 @@ const getPreferences = catchAsync(async (req, res) => {
 });
 
 const updatePreferences = catchAsync(async (req, res) => {
-    const updatedPreferences = await updateNotificationPreferences(req.user.id, req.body);
+    const updatedPreferences = await updateNotificationPreferences(req.user.userId, req.body);
     res.json({
         success: true,
         data: updatedPreferences

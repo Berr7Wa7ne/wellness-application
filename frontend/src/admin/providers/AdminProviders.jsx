@@ -4,6 +4,7 @@ import { AdminVideoProvider } from '../../context/admin/video/AdminVideoContext'
 import { AdminProductProvider } from '../../context/admin/product/AdminProductContext';
 import { AdminServiceProvider } from '../../context/admin/service/AdminServiceContext';
 import { AdminTierProvider } from '../../context/admin/tier/AdminTierContext';
+import { AdminNotificationProvider } from '../../context/admin/notification/AdminNotificationContext';
 
 export const AdminProviders = ({ children }) => (
   <AdminCategoryProvider>
@@ -11,7 +12,9 @@ export const AdminProviders = ({ children }) => (
       <AdminProductProvider>
         <AdminServiceProvider>
           <AdminTierProvider>
-          {children}
+            <AdminNotificationProvider>
+              {children}
+            </AdminNotificationProvider>
           </AdminTierProvider>
         </AdminServiceProvider>
       </AdminProductProvider>

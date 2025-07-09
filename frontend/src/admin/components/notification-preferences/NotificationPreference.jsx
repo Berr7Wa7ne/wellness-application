@@ -1,17 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Bell } from 'lucide-react'
+// Uses the AdminNotificationContext for fetching and updating notification preferences
+import { useAdminNotificationContext } from '../../../context/admin/notification/AdminNotificationContext';
 
 const NotificationPreferences = () => {
-  const [preferences, setPreferences] = useState({
+  const { preferences, loading, error, saving, getPreferences, updatePreferences } = useAdminNotificationContext();
+  const [localPrefs, setLocalPrefs] = useState({
     email: true,
     push: false,
     weekly: true,
     marketing: false,
-  })
+  });
+
+  useEffect(() => {
+    console.log('[NotificationPreference] Component mounted');
+  }, []);
+
+  useEffect(() => {
+    if (preferences) {
+      setLocalPrefs(preferences);
+      console.log('[NotificationPreference] Loaded preferences from context:', preferences);
+    }
+  }, [preferences]);
 
   const toggleSwitch = (key) => {
-    setPreferences((prev) => ({ ...prev, [key]: !prev[key] }))
+    setLocalPrefs((prev) => ({ ...prev, [key]: !prev[key] }))
   }
+
+  const handleSave = async () => {
+    console.log('[NotificationPreference] Save button clicked. Saving:', localPrefs);
+    await updatePreferences(localPrefs);
+    // Optionally, show a toast or feedback
+  }
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm max-w-xl mx-auto mt-5">
@@ -36,12 +59,12 @@ const NotificationPreferences = () => {
             <input
               type="checkbox"
               className="sr-only"
-              checked={preferences.email}
+              checked={!!localPrefs.email}
               onChange={() => toggleSwitch('email')}
             />
-            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 ${preferences.email ? 'bg-[#213721]' : 'bg-gray-200'}`}>
+            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 ${localPrefs.email ? 'bg-[#213721]' : 'bg-gray-200'}`}>
               <div
-                className={`bg-white w-4 h-4 rounded-full shadow transform transition-transform duration-300 ${preferences.email ? 'translate-x-5' : ''}`}
+                className={`bg-white w-4 h-4 rounded-full shadow transform transition-transform duration-300 ${localPrefs.email ? 'translate-x-5' : ''}`}
               />
             </div>
           </label>
@@ -59,12 +82,12 @@ const NotificationPreferences = () => {
             <input
               type="checkbox"
               className="sr-only"
-              checked={preferences.push}
+              checked={!!localPrefs.push}
               onChange={() => toggleSwitch('push')}
             />
-            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 ${preferences.push ? 'bg-[#213721]' : 'bg-gray-200'}`}>
+            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 ${localPrefs.push ? 'bg-[#213721]' : 'bg-gray-200'}`}>
               <div
-                className={`bg-white w-4 h-4 rounded-full shadow transform transition-transform duration-300 ${preferences.push ? 'translate-x-5' : ''}`}
+                className={`bg-white w-4 h-4 rounded-full shadow transform transition-transform duration-300 ${localPrefs.push ? 'translate-x-5' : ''}`}
               />
             </div>
           </label>
@@ -82,12 +105,12 @@ const NotificationPreferences = () => {
             <input
               type="checkbox"
               className="sr-only"
-              checked={preferences.weekly}
+              checked={!!localPrefs.weekly}
               onChange={() => toggleSwitch('weekly')}
             />
-            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 ${preferences.weekly ? 'bg-[#213721]' : 'bg-gray-200'}`}>
+            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 ${localPrefs.weekly ? 'bg-[#213721]' : 'bg-gray-200'}`}>
               <div
-                className={`bg-white w-4 h-4 rounded-full shadow transform transition-transform duration-300 ${preferences.weekly ? 'translate-x-5' : ''}`}
+                className={`bg-white w-4 h-4 rounded-full shadow transform transition-transform duration-300 ${localPrefs.weekly ? 'translate-x-5' : ''}`}
               />
             </div>
           </label>
@@ -105,12 +128,12 @@ const NotificationPreferences = () => {
             <input
               type="checkbox"
               className="sr-only"
-              checked={preferences.marketing}
+              checked={!!localPrefs.marketing}
               onChange={() => toggleSwitch('marketing')}
             />
-            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 ${preferences.marketing ? 'bg-[#213721]' : 'bg-gray-200'}`}>
+            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 ${localPrefs.marketing ? 'bg-[#213721]' : 'bg-gray-200'}`}>
               <div
-                className={`bg-white w-4 h-4 rounded-full shadow transform transition-transform duration-300 ${preferences.marketing ? 'translate-x-5' : ''}`}
+                className={`bg-white w-4 h-4 rounded-full shadow transform transition-transform duration-300 ${localPrefs.marketing ? 'translate-x-5' : ''}`}
               />
             </div>
           </label>
@@ -118,10 +141,11 @@ const NotificationPreferences = () => {
       </div>
 
       <button
-        onClick={() => alert('Preferences saved!')}
+        onClick={handleSave}
         className="mt-6 px-5 py-2 bg-[#213721] hover:bg-green-800 text-white text-sm rounded-md"
+        disabled={saving}
       >
-        Save Preferences
+        {saving ? 'Saving...' : 'Save Preferences'}
       </button>
     </div>
   )

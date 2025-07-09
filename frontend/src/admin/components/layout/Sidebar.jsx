@@ -10,6 +10,7 @@ import {
   Table,
   LogOut
 } from 'lucide-react'; // Using lucide-react for icons
+import { useAdminProfileContext } from '../../../context/admin/settings/AdminProfileContext';
 
 const menuItems = [
   { name: "Dashboard", icon: <LayoutGrid size={18} />, path: "/admin/dashboard" },
@@ -23,6 +24,7 @@ const menuItems = [
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { profile, loading } = useAdminProfileContext();
 
   const handleLogout = () => {
     // TODO: Implement logout logic (clear tokens, etc.)
@@ -72,8 +74,12 @@ const Sidebar = () => {
       {/* Bottom User Section */}
       <div className="px-4 py-4 border-t border-gray-700">
         <div className="text-sm text-white mb-2">
-          <div className="font-medium">Admin User</div>
-          <div className="text-xs text-gray-300">admin@example.com</div>
+          <div className="font-medium">
+            {loading ? 'Loading...' : (profile?.name || 'Admin User')}
+          </div>
+          <div className="text-xs text-gray-300">
+            {loading ? '' : (profile?.email || 'admin@example.com')}
+          </div>
         </div>
         <button
           onClick={handleLogout}
