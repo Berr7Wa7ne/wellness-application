@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const User = require("../models/User");
 const PasswordResetToken = require("../models/PasswordResetToken");
 const emailService = require("../utils/emailService");
 const { AppError, catchAsyncService } = require("../utils/errorHandler");

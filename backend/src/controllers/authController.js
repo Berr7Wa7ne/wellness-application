@@ -1,8 +1,8 @@
 // src/controllers/authController.js
 const { registerUser, loginUser, sendPasswordResetEmail, resetPassword: resetPasswordService } = require("../services/authServices");
 const { catchAsync } = require('../utils/errorHandler');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+// const jwt = require('jsonwebtoken');
+// const User = require('../models/User');
 
 // Register a new user
 const register = catchAsync(async (req, res) => {
