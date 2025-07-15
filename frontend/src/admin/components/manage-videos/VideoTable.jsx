@@ -101,6 +101,8 @@ import AdminModal from '../shared/AdminModal';
 //   },
 // ];
 
+console.log('VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
+
 const VideoTable = () => {
   const { videos: contextVideos, deleteVideo, fetchVideos } = useAdminVideo();
   const { categories, fetchCategories } = useAdminCategory();
@@ -154,6 +156,8 @@ const VideoTable = () => {
         </thead>
         <tbody>
           {contextVideos.map((video, index) => {
+            // Log the image URL for each video
+            console.log('Video image URL:', video.imageUrl, 'for video:', video.title);
             const categoryObj = categories.find(
               cat => cat._id === (video.category?._id || video.category)
             );
@@ -166,6 +170,7 @@ const VideoTable = () => {
       src={video.imageUrl || '/images/video-placeholder.png'}
       alt={video.title}
       className="w-[65px] h-[53px] object-cover rounded"
+      onError={() => console.log('Image failed to load:', video.imageUrl, 'for video:', video.title)}
     />
     {video.duration && (
       <span className="absolute inset-0 flex items-center justify-center bg-opacity-60 text-gray-200 text-xs font-semibold rounded">

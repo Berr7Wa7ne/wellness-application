@@ -19,11 +19,22 @@ const createVideo = catchAsync(async (req, res) => {
         success: true,
         data: video
     });
+    console.log('Image uploaded:', {
+        filename: req.file?.originalname,
+        savedPath: req.file?.path,
+        fullUrl: video?.imageUrl
+      });
 });
 
 // Get all videos (Public)
 const getAllVideos = catchAsync(async (req, res) => {
     const videos = await videoService.getAllVideos();
+    videos.forEach(video => {
+        console.log('Returning video:', {
+          id: video._id,
+          imageUrl: video.imageUrl
+        });
+      });
     res.json({
         success: true,
         data: videos

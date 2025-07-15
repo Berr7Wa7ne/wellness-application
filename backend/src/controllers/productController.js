@@ -19,6 +19,11 @@ const createProduct = catchAsync(async (req, res) => {
     const imageFile = req.file;
 
     const product = await productService.createProduct(productData, imageFile);
+    console.log('Image uploaded:', {
+        filename: req.file?.originalname,
+        savedPath: req.file?.path,
+        fullUrl: product?.imageUrl
+      });
     res.status(201).json({
         success: true,
         data: product
@@ -28,6 +33,12 @@ const createProduct = catchAsync(async (req, res) => {
 // Get all products (Public)
 const getAllProducts = catchAsync(async (req, res) => {
     const products = await productService.getAllProducts();
+    products.forEach(product => {
+        console.log('Returning product:', {
+          id: product._id,
+          imageUrl: product.imageUrl
+        });
+      });
     res.json({
         success: true,
         data: products
@@ -74,6 +85,11 @@ const updateProduct = catchAsync(async (req, res) => {
             success: true,
             data: product
         });
+        console.log('Image uploaded:', {
+            filename: imageFile?.originalname,
+            savedPath: imageFile?.path,
+            fullUrl: product?.imageUrl
+          });
     } catch (error) {
         console.error('=== Product Update Error ===');
         console.error('Error details:', {

@@ -59,6 +59,8 @@ console.log('Serving uploads from:', path.join(__dirname, 'uploads'));
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+console.log('BACKEND_URL:', process.env.BACKEND_URL);
+
 connectDB();
 
 // Routes

@@ -46,6 +46,11 @@ const createService = catchAsync(async (req, res) => {
       success: true,
       data: service
     });
+    console.log('Image uploaded:', {
+      filename: req.file?.originalname,
+      savedPath: req.file?.path,
+      fullUrl: service?.imageUrl
+    });
   } catch (error) {
     console.error('=== Service Creation Error ===');
     console.error('Error details:', {
@@ -75,6 +80,12 @@ const createService = catchAsync(async (req, res) => {
 // Get all services (Public)
 const getAllServices = catchAsync(async (req, res) => {
     const services = await serviceService.getAllServices();
+    services.forEach(service => {
+        console.log('Returning service:', {
+          id: service._id,
+          imageUrl: service.imageUrl
+        });
+      });
     res.json({
         success: true,
         data: services

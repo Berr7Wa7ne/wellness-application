@@ -5,6 +5,8 @@ import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 import AdminModal from '../shared/AdminModal';
 import EditServiceForm from './EditServiceForm';
 
+console.log('VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
+
 // Default service image
 const defaultServiceImage = '/images/service-placeholder.png';
 
@@ -150,20 +152,10 @@ const ManageServicesCards = () => {
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
         {servicesArray.map((service) => {
-          console.log('🎯 [4] Rendering Service:', {
-            id: service._id,
-            hasImageData: !!serviceImages.find(img => img.id === service._id),
-            imageUrl: serviceImages.find(img => img.id === service._id)?.imageUrl
-          });
-
-          if (!service || (!service.id && !service._id)) {
-            console.warn('Invalid service object:', service);
-            return null;
-          }
-
           const serviceId = service.id || service._id;
-          // Use the service's imageUrl if available, otherwise use default
           const imageUrl = serviceImages.find(img => img.id === serviceId)?.imageUrl || defaultServiceImage;
+          // Log the image URL for each service
+          console.log('Service image URL:', imageUrl, 'for service:', service.title);
           
           console.log('Service details:', {
             id: serviceId,
@@ -184,7 +176,10 @@ const ManageServicesCards = () => {
                     src={imageUrl}
                     alt={service.title}
                     className="absolute inset-0 w-full h-full object-cover"
-                    onError={() => handleImageError(serviceId)}
+                    onError={() => {
+                      handleImageError(serviceId);
+                      console.log('Image failed to load:', imageUrl, 'for service:', service.title);
+                    }}
                   />
                 )}
                 <div className="absolute inset-0 bg-black/30" />
