@@ -68,9 +68,7 @@ ProductSchema.virtual('imageUrl').get(function() {
         console.log('File exists locally:', fileExistsLocally);
 
         // Use local URL if file exists, otherwise use deployed URL
-        const baseUrl = fileExistsLocally 
-            ? 'http://localhost:5000'
-            : (process.env.BACKEND_URL || 'https://wellness-application.onrender.com');
+        const baseUrl = process.env.BACKEND_URL || 'https://wellness-application.onrender.com';
 
         console.log('Selected base URL:', baseUrl);
         
