@@ -55,39 +55,22 @@ const videoSchema = new mongoose.Schema({
 // Add virtual field for image URL
 videoSchema.virtual('imageUrl').get(function() {
     if (this.image && this.image.path) {
-        // Convert Windows path separators to forward slashes for URLs
-        const normalizedPath = this.image.path.replace(/\\/g, '/');
+        console.log('=== Video Image URL Generation ===');
+        console.log('Image path:', this.image.path);
         
-        console.log('=== Image URL Generation ===');
-        console.log('Original path:', this.image.path);
-        console.log('Normalized path:', normalizedPath);
-
-        // If the path already starts with http(s), return it as is
-        if (normalizedPath.startsWith('http')) {
-            console.log('Using full URL from path:', normalizedPath);
-            return normalizedPath;
+        // If the path already starts with http(s), it's a Cloudinary URL - return as is
+        if (this.image.path.startsWith('http')) {
+            console.log('Using Cloudinary URL:', this.image.path);
+            return this.image.path;
         }
-
-        // Try to check if file exists locally
-        const absolutePath = path.join(__dirname, '../../', normalizedPath);
-        const fileExistsLocally = fs.existsSync(absolutePath);
-        console.log('Checking local file:', absolutePath);
-        console.log('File exists locally:', fileExistsLocally);
-
-        // Use local URL if file exists, otherwise use deployed URL
+        
+        // Otherwise, it's a local file path - construct the full URL
         const baseUrl = process.env.BACKEND_URL || 'https://wellness-application.onrender.com';
-
-        console.log('Selected base URL:', baseUrl);
-        
-        // Remove any trailing slash from backend URL
         const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-        
-        // Remove any leading slash from path
-        const cleanPath = normalizedPath.startsWith('/') ? normalizedPath.slice(1) : normalizedPath;
-        
+        const cleanPath = this.image.path.startsWith('/') ? this.image.path.slice(1) : this.image.path;
         const fullUrl = `${cleanBaseUrl}/${cleanPath}`;
-        console.log('Generated full URL:', fullUrl);
         
+        console.log('Generated local URL:', fullUrl);
         return fullUrl;
     }
     return null;
