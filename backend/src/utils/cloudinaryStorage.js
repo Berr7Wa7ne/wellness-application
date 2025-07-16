@@ -1,6 +1,8 @@
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('./cloudinary');
 
+console.log('Cloudinary storage initialized for uploads');
+
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {

@@ -36,6 +36,7 @@ const createProduct = catchAsyncService(async (productData, imageFile) => {
                 contentType: imageFile.mimetype
             };
         }
+        console.log('Image data being saved (create):', imageData);
     }
 
     const product = new Product({
@@ -108,6 +109,7 @@ const updateProduct = catchAsyncService(async (id, productData, imageFile) => {
                 contentType: imageFile.mimetype
             };
         }
+        console.log('Image data being saved (update):', product.image);
     }
     
     // Update other fields
