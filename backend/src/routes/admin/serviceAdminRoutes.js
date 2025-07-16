@@ -9,12 +9,18 @@ const path = require('path');
 const fs = require('fs');
 
 // --- Flexible Storage Setup ---
+console.log('=== Service Admin Routes Storage Setup ===');
+console.log('STORAGE_TYPE environment variable:', process.env.STORAGE_TYPE);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
 let upload;
 if (process.env.STORAGE_TYPE === 'cloudinary') {
+  console.log('Using Cloudinary storage for services');
   // Use Cloudinary storage for production
   const cloudinaryStorage = require('../../utils/cloudinaryStorage');
   upload = multer({ storage: cloudinaryStorage });
 } else {
+  console.log('Using local disk storage for services');
   // Local storage (default for development)
   const uploadDir = 'uploads/services';
   if (!fs.existsSync(uploadDir)) {

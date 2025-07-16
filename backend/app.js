@@ -3,6 +3,16 @@ const connectDB = require("./src/utils/db");
 const cors = require('cors');
 const multer = require('multer');
 require('dotenv').config();
+
+// Debug environment variables
+console.log('=== Server Startup Environment Variables ===');
+console.log('STORAGE_TYPE:', process.env.STORAGE_TYPE);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('BACKEND_URL:', process.env.BACKEND_URL);
+console.log('CLOUDINARY_CLOUD_NAME:', process.env.CLOUDINARY_CLOUD_NAME ? 'SET' : 'NOT SET');
+console.log('CLOUDINARY_API_KEY:', process.env.CLOUDINARY_API_KEY ? 'SET' : 'NOT SET');
+console.log('CLOUDINARY_API_SECRET:', process.env.CLOUDINARY_API_SECRET ? 'SET' : 'NOT SET');
+
 const path = require('path');
 const authRoutes = require('./src/routes/public/authRoutes');
 const videoRoutes = require('./src/routes/public/videoRoutes');
