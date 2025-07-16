@@ -52,16 +52,44 @@ const app = express();
 // });
 
 app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://wellness-application.vercel.app"
-    ],
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        const allowedOrigins = [
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "https://wellness-application.vercel.app",
+            "https://wellness-application-git-main-wellness-application.vercel.app"
+        ];
+        
+        console.log('CORS check - Origin:', origin);
+        console.log('CORS check - Allowed origins:', allowedOrigins);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            console.log('CORS check - Origin allowed');
+            callback(null, true);
+        } else {
+            console.log('CORS check - Origin blocked:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
 
+// Handle preflight requests
 app.options('*', cors());
+
+// Add request logging middleware
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path} - Origin: ${req.headers.origin || 'No origin'}`);
+    next();
+});
+
 app.use(express.json());
 
 console.log('Serving uploads from:', path.join(__dirname, 'uploads'));
