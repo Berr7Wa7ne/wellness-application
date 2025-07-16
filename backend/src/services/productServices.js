@@ -21,24 +21,21 @@ const createProduct = catchAsyncService(async (productData, imageFile) => {
     // Handle image file upload
     let imageData = null;
     if (imageFile) {
-        const uploadDir = path.join(__dirname, '../../uploads/products');
-        
-        // Create upload directory if it doesn't exist
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
+        if (process.env.STORAGE_TYPE === 'cloudinary') {
+            // Cloudinary: use the URL and public_id
+            imageData = {
+                filename: imageFile.filename, // Cloudinary public_id
+                path: imageFile.path,         // Cloudinary URL
+                contentType: imageFile.mimetype
+            };
+        } else {
+            // Local: file is already saved to disk by multer.diskStorage
+            imageData = {
+                filename: imageFile.filename,
+                path: imageFile.path.startsWith('uploads/') ? imageFile.path : `uploads/products/${imageFile.filename}`,
+                contentType: imageFile.mimetype
+            };
         }
-
-        const fileName = `${Date.now()}-${imageFile.originalname}`;
-        const filePath = path.join(uploadDir, fileName);
-        
-        // Save file
-        fs.writeFileSync(filePath, imageFile.buffer);
-        
-        imageData = {
-            filename: fileName,
-            path: `uploads/products/${fileName}`,
-            contentType: imageFile.mimetype
-        };
     }
 
     const product = new Product({
@@ -89,34 +86,30 @@ const updateProduct = catchAsyncService(async (id, productData, imageFile) => {
 
     // Handle image file upload if provided
     if (imageFile) {
-        const uploadDir = path.join(__dirname, '../../uploads/products');
-        
-        // Create upload directory if it doesn't exist
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-
-        const fileName = `${Date.now()}-${imageFile.originalname}`;
-        const filePath = path.join(uploadDir, fileName);
-        
-        // Save new file
-        fs.writeFileSync(filePath, imageFile.buffer);
-        
-        // Delete old file if exists
-        if (product.image && product.image.path) {
-            const oldFilePath = path.join(__dirname, '../../', product.image.path);
-            if (fs.existsSync(oldFilePath)) {
-                fs.unlinkSync(oldFilePath);
+        if (process.env.STORAGE_TYPE === 'cloudinary') {
+            // Cloudinary: just update the image data
+            product.image = {
+                filename: imageFile.filename,
+                path: imageFile.path,
+                contentType: imageFile.mimetype
+            };
+        } else {
+            // Local: file is already saved to disk by multer.diskStorage
+            // Optionally, delete the old file if it exists
+            if (product.image && product.image.path) {
+                const oldFilePath = path.join(__dirname, '../../', product.image.path);
+                if (fs.existsSync(oldFilePath)) {
+                    fs.unlinkSync(oldFilePath);
+                }
             }
+            product.image = {
+                filename: imageFile.filename,
+                path: imageFile.path.startsWith('uploads/') ? imageFile.path : `uploads/products/${imageFile.filename}`,
+                contentType: imageFile.mimetype
+            };
         }
-        
-        product.image = {
-            filename: fileName,
-            path: `uploads/products/${fileName}`,
-            contentType: imageFile.mimetype
-        };
     }
-
+    
     // Update other fields
     if (name) product.name = name;
     if (description) product.description = description;
