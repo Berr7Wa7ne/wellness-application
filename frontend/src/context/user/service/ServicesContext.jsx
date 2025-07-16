@@ -20,7 +20,7 @@ export const ServicesProvider = ({ children }) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await api.get('/services');
+            const response = await api.get('/public/services');
             const servicesData = Array.isArray(response.data) ? response.data : 
                                response.data.data ? response.data.data : [];
             setServices(servicesData);

@@ -1,8 +1,6 @@
 // src/controllers/authController.js
-const { registerUser, loginUser, sendPasswordResetEmail, resetPassword: resetPasswordService } = require("../services/authServices");
+const { registerUser, loginUser, sendPasswordResetEmail, resetPassword: resetPasswordService, verifyToken: verifyTokenService } = require("../services/authServices");
 const { catchAsync } = require('../utils/errorHandler');
-// const jwt = require('jsonwebtoken');
-// const User = require('../models/User');
 
 // Register a new user
 const register = catchAsync(async (req, res) => {
@@ -64,11 +62,24 @@ const resetPassword = catchAsync(async (req, res) => {
     });
 });
 
+// Verify token
+const verifyToken = catchAsync(async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    
+    const { user } = await verifyTokenService(token);
+    
+    res.json({
+        success: true,
+        user
+    });
+});
+
 const authController = {
     register,
     login,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    verifyToken
 };
 
 module.exports = authController;

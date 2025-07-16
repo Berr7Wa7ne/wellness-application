@@ -21,7 +21,7 @@ export const ProductsProvider = ({ children }) => {
         setProductsLoading(true);
         setProductsError(null);
         try {
-            const response = await api.get('/products');
+            const response = await api.get('/public/products');
             console.log('Products response:', response.data);
             
             const productsData = Array.isArray(response.data) ? response.data : 
@@ -42,7 +42,7 @@ export const ProductsProvider = ({ children }) => {
 
     const getProduct = async (id) => {
         try {
-            const response = await api.get(`/products/${id}`);
+            const response = await api.get(`/public/products/${id}`);
             setCurrentProduct(response.data);
             return response.data;
         } catch (err) {

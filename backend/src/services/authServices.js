@@ -158,4 +158,46 @@ const resetPassword = catchAsyncService(async (userId, token, newPassword) => {
     return { message: "Password reset successful" };
 });
 
-module.exports = { registerUser, loginUser, resetPassword, sendPasswordResetEmail };
+const verifyToken = catchAsyncService(async (token) => {
+    if (!token) {
+        throw new AppError("Access denied. No token provided.", 401);
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        
+        if (!decoded.userId || !decoded.role) {
+            throw new AppError("Invalid token format.", 400);
+        }
+
+        // Get user from database
+        const user = await User.findById(decoded.userId).select('-password');
+        
+        if (!user) {
+            throw new AppError("User not found.", 404);
+        }
+
+        // Return user data
+        const userResponse = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            createdAt: user.createdAt
+        };
+
+        console.log('Token verification successful for user:', { userId: user._id, role: user.role });
+        
+        return { user: userResponse };
+    } catch (err) {
+        console.error('Token verification failed:', err.message);
+        if (err.name === 'JsonWebTokenError') {
+            throw new AppError("Invalid token.", 400);
+        } else if (err.name === 'TokenExpiredError') {
+            throw new AppError("Token expired.", 401);
+        }
+        throw err;
+    }
+});
+
+module.exports = { registerUser, loginUser, resetPassword, sendPasswordResetEmail, verifyToken };
