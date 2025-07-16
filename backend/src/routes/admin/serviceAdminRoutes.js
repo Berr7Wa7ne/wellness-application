@@ -8,35 +8,40 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure uploads directory exists
-const uploadDir = 'uploads/services';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure multer for file upload
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+// --- Flexible Storage Setup ---
+let upload;
+if (process.env.STORAGE_TYPE === 'cloudinary') {
+  // Use Cloudinary storage for production
+  const cloudinaryStorage = require('../../utils/cloudinaryStorage');
+  upload = multer({ storage: cloudinaryStorage });
+} else {
+  // Local storage (default for development)
+  const uploadDir = 'uploads/services';
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
   }
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
-  },
-  fileFilter: function (req, file, cb) {
-    if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('Only image files are allowed!'), false);
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
-    cb(null, true);
-  }
-}).single('image');
+  });
+  upload = multer({
+    storage: storage,
+    limits: {
+      fileSize: 10 * 1024 * 1024 // 10MB limit
+    },
+    fileFilter: function (req, file, cb) {
+      if (!file.mimetype.startsWith('image/')) {
+        return cb(new Error('Only image files are allowed!'), false);
+      }
+      cb(null, true);
+    }
+  });
+}
 
 // Admin Routes (Protected)
 router.get("/services", (req, res, next) => {
@@ -54,7 +59,7 @@ router.post("/services",
     },
     authMiddleware.verifyAdmin,
     (req, res, next) => {
-        upload(req, res, function(err) {
+        upload.single('image')(req, res, function(err) {
             if (err) {
                 console.error('File upload error:', err);
                 return res.status(400).json({
@@ -80,7 +85,7 @@ router.put("/services/:serviceId",
     },
     authMiddleware.verifyAdmin,
     (req, res, next) => {
-        upload(req, res, function(err) {
+        upload.single('image')(req, res, function(err) {
             if (err) {
                 console.error('File upload error:', err);
                 return res.status(400).json({
