@@ -1,104 +1,137 @@
+// backend/src/services/dashboardService.js
+
 const User = require("../models/User");
 const Order = require("../models/Order");
+const Video = require("../models/Video");
+const Product = require("../models/Product");
+const Service = require("../models/Service");
+const Category = require("../models/Category");
 const { AppError, catchAsyncService } = require("../utils/errorHandler");
 
-// Get dashboard statistics
+// Dashboard Stats
 const getDashboardStats = catchAsyncService(async () => {
-    // Get total users
-    const totalUsers = await User.countDocuments();
-    
-    // Get total orders and revenue
-    const orders = await Order.find();
-    const totalOrders = orders.length;
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-    
-    // Get active subscriptions (users with active orders in last 30 days)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const activeSubscriptions = await Order.countDocuments({
-        createdAt: { $gte: thirtyDaysAgo },
-        status: 'completed'
-    });
-
+    const [totalVideos, totalProducts, totalServices, totalCategories] = await Promise.all([
+        Video.countDocuments(),
+        Product.countDocuments(),
+        Service.countDocuments(),
+        Category.countDocuments()
+    ]);
+    if (
+        totalVideos === undefined ||
+        totalProducts === undefined ||
+        totalServices === undefined ||
+        totalCategories === undefined
+    ) {
+        throw new AppError("Failed to fetch dashboard statistics", 500);
+    }
     return {
-        totalUsers,
-        totalOrders,
-        totalRevenue,
-        activeSubscriptions
+        totalVideos,
+        totalProducts,
+        totalServices,
+        totalCategories
     };
 });
 
-// Get recent orders
-const getRecentOrders = catchAsyncService(async (limit = 10) => {
-    const orders = await Order.find()
-        .sort({ createdAt: -1 })
-        .limit(limit)
-        .populate('user', 'name email')
-        .populate('items.product', 'name price');
-
-    return orders;
+// Recent Activity (last 5 actions from videos, products, services, categories)
+const getRecentActivity = catchAsyncService(async () => {
+    const [videos, products, services, categories] = await Promise.all([
+        Video.find().sort({ createdAt: -1 }).limit(5),
+        Product.find().sort({ updatedAt: -1 }).limit(5),
+        Service.find().sort({ updatedAt: -1 }).limit(5),
+        Category.find().sort({ createdAt: -1 }).limit(5)
+    ]);
+    if (!videos && !products && !services && !categories) {
+        throw new AppError("Failed to fetch recent activity", 500);
+    }
+    const activities = [
+        ...videos.map(v => ({ type: 'video', title: v.title, time: v.createdAt, action: 'New video uploaded' })),
+        ...products.map(p => ({ type: 'product', title: p.name, time: p.updatedAt, action: 'Product updated' })),
+        ...services.map(s => ({ type: 'service', title: s.name, time: s.updatedAt, action: 'Service updated' })),
+        ...categories.map(c => ({ type: 'category', title: c.name, time: c.createdAt, action: 'New category added' })),
+    ];
+    activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+    return activities.slice(0, 8);
 });
 
-// Get revenue analytics
-const getRevenueAnalytics = catchAsyncService(async (period = 'monthly') => {
+// Performance Overview (monthly stats for chart)
+const getPerformanceOverview = catchAsyncService(async () => {
     const now = new Date();
-    let startDate;
-
-    switch (period) {
-        case 'daily':
-            startDate = new Date(now.setDate(now.getDate() - 7)); // Last 7 days
-            break;
-        case 'weekly':
-            startDate = new Date(now.setDate(now.getDate() - 28)); // Last 4 weeks
-            break;
-        case 'monthly':
-            startDate = new Date(now.setMonth(now.getMonth() - 6)); // Last 6 months
-            break;
-        default:
-            throw new AppError('Invalid period specified', 400);
+    const months = [];
+    for (let i = 3; i >= 0; i--) {
+        const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+        const videoCount = await Video.countDocuments({ createdAt: { $gte: start, $lt: end } });
+        const productCount = await Product.countDocuments({ createdAt: { $gte: start, $lt: end } });
+        if (videoCount === undefined || productCount === undefined) {
+            throw new AppError("Failed to fetch performance overview", 500);
+        }
+        months.push({
+            month: start.toLocaleString('default', { month: 'long' }),
+            videos: videoCount,
+            products: productCount
+        });
     }
+    return months;
+});
 
-    const orders = await Order.find({
-        createdAt: { $gte: startDate },
-        status: 'completed'
-    }).sort({ createdAt: 1 });
-
-    // Group orders by period
-    const revenueData = orders.reduce((acc, order) => {
-        let key;
-        const date = new Date(order.createdAt);
-
-        switch (period) {
-            case 'daily':
-                key = date.toISOString().split('T')[0];
-                break;
-            case 'weekly':
-                const weekNumber = Math.ceil((date.getDate() + date.getDay()) / 7);
-                key = `Week ${weekNumber}`;
-                break;
-            case 'monthly':
-                key = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-                break;
+// Top Products (by sales)
+const getTopProducts = catchAsyncService(async () => {
+    const topProducts = await Order.aggregate([
+        { $unwind: "$items" },
+        { $group: { _id: "$items.product", totalSold: { $sum: "$items.quantity" } } },
+        { $sort: { totalSold: -1 } },
+        { $limit: 4 },
+        {
+            $lookup: {
+                from: "products",
+                localField: "_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        { $unwind: "$product" },
+        {
+            $project: {
+                name: "$product.name",
+                value: "$totalSold"
+            }
         }
+    ]);
+    if (!topProducts) {
+        throw new AppError("Failed to fetch top products", 500);
+    }
+    return topProducts;
+});
 
-        if (!acc[key]) {
-            acc[key] = 0;
-        }
-        acc[key] += order.totalAmount || 0;
-        return acc;
-    }, {});
-
+// User Engagement (example metrics)
+const getUserEngagement = catchAsyncService(async () => {
+    const totalUsers = await User.countDocuments({ role: 'user' });
+    if (totalUsers === undefined) {
+        throw new AppError("Failed to fetch user engagement data", 500);
+    }
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const activeUsers = await User.countDocuments({ lastLogin: { $gte: sevenDaysAgo }, role: 'user' });
+    if (activeUsers === undefined) {
+        throw new AppError("Failed to fetch active users", 500);
+    }
+    const usersWithOrders = await Order.distinct("user");
+    if (usersWithOrders === undefined) {
+        throw new AppError("Failed to fetch users with orders", 500);
+    }
+    const conversionRate = totalUsers ? (usersWithOrders.length / totalUsers) * 100 : 0;
     return {
-        period,
-        data: Object.entries(revenueData).map(([label, amount]) => ({
-            label,
-            amount
-        }))
+        activeUsers,
+        conversionRate: `${conversionRate.toFixed(1)}%`,
+        sessionDuration: "4m 23s", // Placeholder
+        bounceRate: "32.4%" // Placeholder
     };
 });
 
 module.exports = {
     getDashboardStats,
-    getRecentOrders,
-    getRevenueAnalytics
-}; 
+    getRecentActivity,
+    getPerformanceOverview,
+    getTopProducts,
+    getUserEngagement
+};

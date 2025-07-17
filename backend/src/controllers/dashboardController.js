@@ -1,39 +1,39 @@
+// backend/src/controllers/dashboardController.js
+
 const dashboardService = require("../services/dashboardService");
 const { catchAsync } = require("../utils/errorHandler");
 
-// Get dashboard statistics
 const getDashboardStats = catchAsync(async (req, res) => {
     const stats = await dashboardService.getDashboardStats();
-    res.json({
-        success: true,
-        data: stats
-    });
+    res.json({ success: true, data: stats });
 });
 
-// Get recent orders
-const getRecentOrders = catchAsync(async (req, res) => {
-    const limit = parseInt(req.query.limit) || 10;
-    const orders = await dashboardService.getRecentOrders(limit);
-    res.json({
-        success: true,
-        data: orders
-    });
+const getRecentActivity = catchAsync(async (req, res) => {
+    const activity = await dashboardService.getRecentActivity();
+    res.json({ success: true, data: activity });
 });
 
-// Get revenue analytics
-const getRevenueAnalytics = catchAsync(async (req, res) => {
-    const period = req.query.period || 'monthly';
-    const analytics = await dashboardService.getRevenueAnalytics(period);
-    res.json({
-        success: true,
-        data: analytics
-    });
+const getPerformanceOverview = catchAsync(async (req, res) => {
+    const overview = await dashboardService.getPerformanceOverview();
+    res.json({ success: true, data: overview });
+});
+
+const getTopProducts = catchAsync(async (req, res) => {
+    const products = await dashboardService.getTopProducts();
+    res.json({ success: true, data: products });
+});
+
+const getUserEngagement = catchAsync(async (req, res) => {
+    const engagement = await dashboardService.getUserEngagement();
+    res.json({ success: true, data: engagement });
 });
 
 const dashboardController = {
     getDashboardStats,
-    getRecentOrders,
-    getRevenueAnalytics
+    getRecentActivity,
+    getPerformanceOverview,
+    getTopProducts,
+    getUserEngagement
 };
 
-module.exports = dashboardController; 
+module.exports = dashboardController;

@@ -44,7 +44,7 @@ const OrderSchema = new Schema({
     },
     subscriptionType: {
         type: String,
-        enum: ['Basic', 'Pro', 'Premium'],
+        enum: ['Basic', 'Professional', 'Premium'],
         required: true
     },
     subscriptionDuration: {

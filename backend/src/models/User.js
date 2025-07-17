@@ -9,6 +9,7 @@ const UserSchema = new Schema({
     phone: { type: String },
     bio: { type: String },
     profilePhoto: { type: String },
+    lastLogin: { type: Date },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });

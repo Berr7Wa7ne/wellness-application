@@ -80,6 +80,10 @@ const loginUser = catchAsyncService(async ({ email, password }) => {
         throw new AppError("Invalid credentials.", 401);
     }
 
+    // Set lastLogin to now
+    user.lastLogin = new Date();
+    await user.save();
+
     // Generate token with consistent payload
     const token = jwt.sign(
         { 

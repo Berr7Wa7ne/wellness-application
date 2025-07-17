@@ -1,63 +1,55 @@
-import React from 'react'
+import React from 'react';
 import { Video, Package, List, Layers } from 'lucide-react';
 
+const iconMap = {
+  totalVideos: <Video className="w-6 h-6 text-green-600" />,
+  totalProducts: <Package className="w-6 h-6 text-green-600" />,
+  totalServices: <List className="w-6 h-6 text-green-600" />,
+  totalCategories: <Layers className="w-6 h-6 text-green-600" />,
+};
 
-const stats = [
-  {
-    title: "Total Videos",
-    value: 218,
-    change: "+17% this week",
-    changeColor: "text-green-500",
-    icon: <Video className="w-6 h-6 text-black" />,
-  },
-  {
-    title: "Products",
-    value: 43,
-    change: "+5.3% this week",
-    changeColor: "text-green-500",
-    icon: <Package className="w-6 h-6 text-black" />,
-  },
-  {
-    title: "Services",
-    value: 19,
-    change: "−2.8% this week",
-    changeColor: "text-red-500",
-    icon: <List className="w-6 h-6 text-black" />,
-  },
-  {
-    title: "Categories",
-    value: 12,
-    change: "+1% this week",
-    changeColor: "text-green-500",
-    icon: <Layers className="w-6 h-6 text-black" />,
-  },
-];
+const labelMap = {
+  totalVideos: 'Total Videos',
+  totalProducts: 'Products',
+  totalServices: 'Services',
+  totalCategories: 'Categories',
+};
 
-const DashboardStats = () => {
+const DashboardStats = ({ stats, loading, error }) => {
+  if (loading) {
+    return <div className="p-6">Loading stats...</div>;
+  }
+  if (error) {
+    return <div className="p-6 text-red-500">{error}</div>;
+  }
+  if (!stats) {
+    return null;
+  }
+  // Map stats to array for rendering
+  const statKeys = ['totalVideos', 'totalProducts', 'totalServices', 'totalCategories'];
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-1">Dashboard Overview</h2>
       <p className="text-gray-600 mb-6">
         Welcome back! Here’s what’s happening with your content and services.
       </p>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((item, idx) => (
+        {statKeys.map((key) => (
           <div
-            key={idx}
+            key={key}
             className="flex justify-between items-center p-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:shadow-md transition"
           >
             <div>
-              <h4 className="text-sm text-gray-500">{item.title}</h4>
-              <p className="text-2xl font-semibold">{item.value}</p>
-              <p className={`text-sm ${item.changeColor}`}>{item.change}</p>
+              <h4 className="text-sm text-gray-500">{labelMap[key]}</h4>
+              <p className="text-2xl font-semibold">{stats[key]}</p>
+              {/* You can add change % if backend provides it */}
             </div>
-            <div className="p-2 bg-gray-100 rounded-md">{item.icon}</div>
+            <div className="p-2 bg-gray-100 rounded-md">{iconMap[key]}</div>
           </div>
         ))}
       </div>
     </div>
   );
-}
+};
 
-export default DashboardStats
+export default DashboardStats;
