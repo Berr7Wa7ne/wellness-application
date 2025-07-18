@@ -27,9 +27,10 @@ const Sidebar = () => {
   const { profile, loading } = useAdminProfileContext();
 
   const handleLogout = () => {
-    // TODO: Implement logout logic (clear tokens, etc.)
-    // For now, just redirect to login page
-    navigate('/login');
+    // Remove token from localStorage
+    localStorage.removeItem('token');
+    // Redirect to login page
+    navigate('/');
   };
 
   return (

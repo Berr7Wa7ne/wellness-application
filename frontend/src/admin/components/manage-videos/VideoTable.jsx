@@ -104,8 +104,8 @@ import AdminModal from '../shared/AdminModal';
 console.log('VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
 
 const VideoTable = () => {
-  const { videos: contextVideos, deleteVideo, fetchVideos } = useAdminVideo();
-  const { categories, fetchCategories } = useAdminCategory();
+  const { videos: contextVideos, deleteVideo, fetchVideos, videosLoading } = useAdminVideo();
+  const { categories, fetchCategories, categoriesLoading } = useAdminCategory();
   const [showModal, setShowModal] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
   const [actionMenuIndex, setActionMenuIndex] = useState(null);
@@ -126,6 +126,14 @@ const VideoTable = () => {
       fetchVideos();
     }
   }, [fetchVideos]);
+
+  if (videosLoading || categoriesLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#213721]"></div>
+      </div>
+    );
+  }
 
   const handleEdit = (video) => {
     setEditingVideo(video);

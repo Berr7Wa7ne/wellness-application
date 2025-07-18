@@ -10,25 +10,70 @@ const { AppError, catchAsyncService } = require("../utils/errorHandler");
 
 // Dashboard Stats
 const getDashboardStats = catchAsyncService(async () => {
-    const [totalVideos, totalProducts, totalServices, totalCategories] = await Promise.all([
+    // Calculate current and previous week ranges
+    const now = new Date();
+    const startOfThisWeek = new Date(now);
+    startOfThisWeek.setDate(now.getDate() - now.getDay()); // Sunday
+    startOfThisWeek.setHours(0, 0, 0, 0);
+    const startOfLastWeek = new Date(startOfThisWeek);
+    startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
+    const endOfLastWeek = new Date(startOfThisWeek);
+
+    // Current totals
+    const [
+        totalVideos,
+        totalProducts,
+        totalServices,
+        totalCategories
+    ] = await Promise.all([
         Video.countDocuments(),
         Product.countDocuments(),
         Service.countDocuments(),
         Category.countDocuments()
     ]);
-    if (
-        totalVideos === undefined ||
-        totalProducts === undefined ||
-        totalServices === undefined ||
-        totalCategories === undefined
-    ) {
-        throw new AppError("Failed to fetch dashboard statistics", 500);
+
+    // This week counts
+    const [
+        videosThisWeek,
+        productsThisWeek,
+        servicesThisWeek,
+        categoriesThisWeek
+    ] = await Promise.all([
+        Video.countDocuments({ createdAt: { $gte: startOfThisWeek } }),
+        Product.countDocuments({ createdAt: { $gte: startOfThisWeek } }),
+        Service.countDocuments({ createdAt: { $gte: startOfThisWeek } }),
+        Category.countDocuments({ createdAt: { $gte: startOfThisWeek } })
+    ]);
+
+    // Last week counts
+    const [
+        videosLastWeek,
+        productsLastWeek,
+        servicesLastWeek,
+        categoriesLastWeek
+    ] = await Promise.all([
+        Video.countDocuments({ createdAt: { $gte: startOfLastWeek, $lt: endOfLastWeek } }),
+        Product.countDocuments({ createdAt: { $gte: startOfLastWeek, $lt: endOfLastWeek } }),
+        Service.countDocuments({ createdAt: { $gte: startOfLastWeek, $lt: endOfLastWeek } }),
+        Category.countDocuments({ createdAt: { $gte: startOfLastWeek, $lt: endOfLastWeek } })
+    ]);
+
+    // Calculate percentage change (handle division by zero)
+    function getChange(thisWeek, lastWeek) {
+        if (lastWeek === 0 && thisWeek > 0) return 1; // 100% increase from 0
+        if (lastWeek === 0 && thisWeek === 0) return 0;
+        return (thisWeek - lastWeek) / lastWeek;
     }
+
     return {
         totalVideos,
+        totalVideosChange: getChange(videosThisWeek, videosLastWeek),
         totalProducts,
+        totalProductsChange: getChange(productsThisWeek, productsLastWeek),
         totalServices,
-        totalCategories
+        totalServicesChange: getChange(servicesThisWeek, servicesLastWeek),
+        totalCategories,
+        totalCategoriesChange: getChange(categoriesThisWeek, categoriesLastWeek)
     };
 });
 
