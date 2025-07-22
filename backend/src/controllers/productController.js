@@ -120,14 +120,45 @@ async function updateProductTier(req, res) {
     }
 }
 
+// Get preview products for homepage/about (Public)
+const getPreviewProducts = catchAsync(async (req, res) => {
+    const preview = await productService.getPreviewProducts();
+    res.json({
+        success: true,
+        data: preview
+    });
+});
+
+const getProductBySlug = catchAsync(async (req, res) => {
+    const product = await productService.getProductBySlug(req.params.slug);
+    res.json({ success: true, data: product });
+  });
+
+// Get related products by category, excluding the current product
+const getRelatedProducts = catchAsync(async (req, res) => {
+  const { category, excludeId } = req.params;
+  const related = await productService.getRelatedProducts(category, excludeId);
+  res.json({ success: true, data: related });
+});
+
 const productController = {
     createProduct,
     getAllProducts,
     getProduct,
     updateProduct,
     deleteProduct,
-    updateProductTier
+    updateProductTier,
+    getProductBySlug
 };
 
-module.exports = productController;
+module.exports = {
+    createProduct,
+    getAllProducts,
+    getProduct,
+    updateProduct,
+    deleteProduct,
+    getPreviewProducts, // Export the new controller
+    getProductBySlug,
+    getRelatedProducts
+};
 

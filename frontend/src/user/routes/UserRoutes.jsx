@@ -22,7 +22,7 @@ function UserRoutes({ cartItems, handleAddToCart }) {
         <Route path="/services" element={<Services />} />
         <Route path="/videos" element={<Videos />} />
         <Route path="/merchandise" element={<Merchandise />} />
-        <Route path="/product-preview/:productName" element={<ProductPreview handleAddToCart={handleAddToCart} />} />
+        <Route path="/product-preview/:slug" element={<ProductPreview handleAddToCart={handleAddToCart} />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<CartPage cartItems={cartItems} />} />
       </Route>

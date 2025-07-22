@@ -53,6 +53,5 @@ if (process.env.STORAGE_TYPE === 'cloudinary') {
 router.post("/products", authMiddleware.verifyAdmin, upload.single('image'), validateCreateProduct, productController.createProduct);
 router.put("/products/:productId", authMiddleware.verifyAdmin, upload.single('image'), validateUpdateProduct, productController.updateProduct);
 router.delete("/products/:productId", authMiddleware.verifyAdmin, productController.deleteProduct);
-router.patch("/products/:productId/tier", authMiddleware.verifyAdmin, productController.updateProductTier);
 
 module.exports = router;

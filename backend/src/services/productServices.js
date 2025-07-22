@@ -140,10 +140,45 @@ const deleteProduct = catchAsyncService(async (productId) => {
     return Product.findByIdAndDelete(productId);
 });
 
+// Fetch preview products for homepage/about (one per category for each section)
+const getPreviewProducts = catchAsyncService(async () => {
+    // Get all unique categories
+    const categories = await Product.distinct('category');
+    const mostValuable = {};
+    const topSelling = {};
+    const leastValuable = {};
+
+    for (const category of categories) {
+        // Most valuable (highest price)
+        mostValuable[category] = await Product.findOne({ category }).sort({ price: -1 });
+        // Top selling (highest salesCount, fallback to 0 if missing)
+        topSelling[category] = await Product.findOne({ category }).sort({ salesCount: -1 });
+        // Least valuable (lowest price)
+        leastValuable[category] = await Product.findOne({ category }).sort({ price: 1 });
+    }
+    return { mostValuable, topSelling, leastValuable };
+});
+
+const getProductBySlug = catchAsyncService(async (slug) => {
+    const product = await Product.findOne({ slug });
+    if (!product) throw new AppError("Product not found.", 404);
+    return product;
+  });
+
+const getRelatedProducts = catchAsyncService(async (category, excludeId) => {
+  return await Product.find({
+    category,
+    _id: { $ne: excludeId }
+  }).limit(10);
+});
+
 module.exports = {
     createProduct,
     getAllProducts,
     getProductById,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getPreviewProducts, // Export the new service
+    getProductBySlug,
+    getRelatedProducts
 }; 

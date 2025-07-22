@@ -29,6 +29,7 @@ const profileRoutes = require('./src/routes/public/profileRoutes');
 const dashboardRoutes = require('./src/routes/admin/dashboardRoutes');
 const adminProfileRoutes = require('./src/routes/admin/profileRoutes');
 const notificationRoutes = require('./src/routes/admin/notificationRoutes');
+const categoryRoutes = require('./src/routes/public/categoryRoutes');
 
 const { AppError } = require('./src/utils/errorHandler');
 
@@ -116,7 +117,8 @@ app.use('/public', cartRoutes);
 app.use('/public', profileRoutes);
 app.use('/admin', dashboardRoutes);
 app.use('/admin', adminProfileRoutes);  
-app.use('/admin', notificationRoutes);    
+app.use('/admin', notificationRoutes);
+app.use('/public', categoryRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {

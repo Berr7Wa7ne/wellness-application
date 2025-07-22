@@ -1,6 +1,7 @@
 // src/models/Product.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const slugify = require('slugify')
 const fs = require('fs');
 const path = require('path');
 
@@ -36,6 +37,13 @@ const ProductSchema = new Schema({
         type: Date, 
         default: Date.now 
     },
+    slug: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true
+      },
     updatedAt: { 
         type: Date,
         default: Date.now
@@ -44,6 +52,13 @@ const ProductSchema = new Schema({
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });
+
+ProductSchema.pre('validate', function(next) {
+    if (this.name && !this.slug) {
+      this.slug = slugify(this.name, { lower: true, strict: true });
+    }
+    next();
+  });
 
 // Add virtual field for image URL
 ProductSchema.virtual('imageUrl').get(function() {
