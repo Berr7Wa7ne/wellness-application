@@ -44,13 +44,11 @@ export const AdminCategoryProvider = ({ children }) => {
             console.log('=== Category Creation Start ===');
             console.log('Input category data:', categoryData);
             
-            const response = await api.post('/admin/categories', {
-                name: categoryData.categoryName,
-                description: categoryData.description,
-                type: categoryData.type,
-                backgroundColor: categoryData.backgroundColor,
-                textColor: categoryData.textColor,
-                items: categoryData.items || 0
+            // Send FormData directly - don't convert to JSON
+            const response = await api.post('/admin/categories', categoryData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
             
             console.log('API Response:', {
@@ -93,13 +91,11 @@ export const AdminCategoryProvider = ({ children }) => {
             console.log('Category ID:', categoryId);
             console.log('Update data:', categoryData);
 
-            const response = await api.put(`/admin/categories/${categoryId}`, {
-                name: categoryData.categoryName,
-                description: categoryData.description,
-                type: categoryData.type,
-                backgroundColor: categoryData.backgroundColor,
-                textColor: categoryData.textColor,
-                items: categoryData.items
+            // Send FormData directly - don't convert to JSON
+            const response = await api.put(`/admin/categories/${categoryId}`, categoryData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
             
             const updatedCategory = response.data.data || response.data;

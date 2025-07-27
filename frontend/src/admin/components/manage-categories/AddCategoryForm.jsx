@@ -26,19 +26,37 @@ const AddCategoryForm = ({ onClose, editingCategory = null }) => {
             ? { bg: editingCategory.backgroundColor, text: editingCategory.textColor }
             : predefinedColors[0]
     );
+    // State for image upload
+    const [selectedImageFile, setSelectedImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(editingCategory?.imageUrl || null);
+
+    const handleImageChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setSelectedImageFile(file);
+            
+            // Create preview URL
+            const previewUrl = URL.createObjectURL(file);
+            setImagePreview(previewUrl);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         
         try {
-            const formData = {
-                categoryName,
-                type,
-                description,
-                backgroundColor: selectedColor.bg,
-                textColor: selectedColor.text
-            };
+            const formData = new FormData();
+            formData.append('name', categoryName);
+            formData.append('description', description);
+            formData.append('type', type);
+            formData.append('backgroundColor', selectedColor.bg);
+            formData.append('textColor', selectedColor.text);
+
+            // Append image file if selected
+            if (selectedImageFile) {
+                formData.append('image', selectedImageFile);
+            }
             
             if (editingCategory) {
                 await updateCategory(editingCategory._id, formData);
@@ -59,7 +77,7 @@ const AddCategoryForm = ({ onClose, editingCategory = null }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 text-sm text-gray-700">
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4 text-sm text-gray-700">
             {/* Modal Header */}
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">
@@ -118,6 +136,29 @@ const AddCategoryForm = ({ onClose, editingCategory = null }) => {
                     onChange={(e) => setDescription(e.target.value)}
                     required
                 />
+            </div>
+
+            {/* Image Upload */}
+            <div>
+                <label className="block font-medium text-gray-700 mb-2">
+                    Category Image
+                </label>
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                />
+                {imagePreview && (
+                    <div className="mt-2">
+                        <p className="text-xs text-gray-500 mb-2">
+                            {selectedImageFile ? `Selected: ${selectedImageFile.name}` : 'Current Image'}
+                        </p>
+                        <img src={imagePreview} alt="Preview" className="h-20 w-20 object-cover rounded border"/>
+                    </div>
+                )}
             </div>
 
             {/* Color Selection */}

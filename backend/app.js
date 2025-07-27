@@ -104,21 +104,26 @@ connectDB();
 
 // Routes
 app.use('/auth', authRoutes);
+
+// Public routes
 app.use('/public', videoRoutes);
-app.use('/admin', videoAdminRoutes);
 app.use('/public', serviceRoutes);
-app.use('/admin', serviceAdminRoutes);
 app.use('/public', productRoutes);
-app.use('/admin', productAdminRoutes);
-app.use('/admin', categoryAdminRoutes);
-app.use('/admin', tierAdminRoutes);
+app.use('/public', categoryRoutes);
 app.use('/public', tierRoutes);
 app.use('/public', cartRoutes);
 app.use('/public', profileRoutes);
+
+// Admin routes
+app.use('/admin', videoAdminRoutes);
+app.use('/admin', serviceAdminRoutes);
+app.use('/admin', productAdminRoutes);
+app.use('/admin', categoryAdminRoutes);
+app.use('/admin', tierAdminRoutes);
 app.use('/admin', dashboardRoutes);
 app.use('/admin', adminProfileRoutes);  
 app.use('/admin', notificationRoutes);
-app.use('/public', categoryRoutes);
+
 
 // Global error handler
 app.use((err, req, res, next) => {

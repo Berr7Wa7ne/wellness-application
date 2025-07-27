@@ -4,6 +4,7 @@ require("dotenv").config();
 
 // General Authentication Middleware
 const authenticate = (req, res, next) => {
+    console.log('Auth middleware called for:', req.path);
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
 

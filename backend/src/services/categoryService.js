@@ -2,7 +2,7 @@ const Category = require("../models/Category");
 const { AppError, catchAsyncService } = require('../utils/errorHandler');
 
 // Create a new category
-const createCategory = catchAsyncService(async (name, description, type, backgroundColor, textColor) => {
+const createCategory = catchAsyncService(async (name, description, type, backgroundColor, textColor, image = null) => {
     if (!name || !description || !backgroundColor || !textColor) {
         throw new AppError("Name, description, and colors are required.", 400);
     }
@@ -18,7 +18,8 @@ const createCategory = catchAsyncService(async (name, description, type, backgro
         description, 
         type, 
         backgroundColor, 
-        textColor 
+        textColor,
+        image: image // Save image details if provided
     });
     return category.save();
 });
@@ -38,7 +39,7 @@ const getCategoryById = catchAsyncService(async (id) => {
 });
 
 // Update a category
-const updateCategory = catchAsyncService(async (id, name, description, type, backgroundColor, textColor) => {
+const updateCategory = catchAsyncService(async (id, name, description, type, backgroundColor, textColor, image = null) => {
     const category = await Category.findById(id);
     if (!category) {
         throw new AppError("Category not found.", 404);
@@ -57,6 +58,12 @@ const updateCategory = catchAsyncService(async (id, name, description, type, bac
     if (type) category.type = type;
     if (backgroundColor) category.backgroundColor = backgroundColor;
     if (textColor) category.textColor = textColor;
+    
+    // Update image if a new one was provided
+    if (image) {
+        category.image = image;
+    }
+    
     category.updatedAt = Date.now();
 
     return category.save();

@@ -3,13 +3,28 @@ const { catchAsync, AppError } = require('../utils/errorHandler');
 
 // Create a new category
 const createCategory = catchAsync(async (req, res) => {
+    console.log('=== CREATE CATEGORY DEBUG ===');
+    console.log('req.body:', req.body);
+    console.log('req.file:', req.file);
+    
     const { name, description, type, backgroundColor, textColor } = req.body;
-    const category = await categoryService.createCategory(name, description, type, backgroundColor, textColor);
+    
+    // Handle image upload
+    const image = req.file ? {
+        filename: req.file.filename,
+        path: req.file.path,
+        contentType: req.file.mimetype
+    } : null;
+
+    console.log('Extracted data:', { name, description, type, backgroundColor, textColor, image });
+
+    const category = await categoryService.createCategory(name, description, type, backgroundColor, textColor, image);
     res.status(201).json({ message: "Category created successfully", category });
 });
 
 // Get all categories
 const getAllCategories = catchAsync(async (req, res) => {
+    console.log('getAllCategories called');
     const categories = await categoryService.getAllCategories();
     res.json({
         success: true,
@@ -19,7 +34,7 @@ const getAllCategories = catchAsync(async (req, res) => {
 
 // Get category by ID
 const getCategory = catchAsync(async (req, res) => {
-    const category = await categoryService.getCategory(req.params.categoryId);
+    const category = await categoryService.getCategoryById(req.params.categoryId);
     if (!category) {
         throw new AppError('Category not found', 404);
     }
@@ -31,8 +46,22 @@ const getCategory = catchAsync(async (req, res) => {
 
 // Update category
 const updateCategory = catchAsync(async (req, res) => {
+    console.log('=== UPDATE CATEGORY DEBUG ===');
+    console.log('req.body:', req.body);
+    console.log('req.file:', req.file);
+    
     const { name, description, type, backgroundColor, textColor } = req.body;
-    const category = await categoryService.updateCategory(req.params.categoryId, name, description, type, backgroundColor, textColor);
+    
+    // Handle image upload
+    const image = req.file ? {
+        filename: req.file.filename,
+        path: req.file.path,
+        contentType: req.file.mimetype
+    } : null;
+
+    console.log('Extracted data:', { name, description, type, backgroundColor, textColor, image });
+
+    const category = await categoryService.updateCategory(req.params.categoryId, name, description, type, backgroundColor, textColor, image);
     if (!category) {
         throw new AppError('Category not found', 404);
     }
@@ -51,12 +80,10 @@ const deleteCategory = catchAsync(async (req, res) => {
     });
 });
 
-const categoryController = {
+module.exports = {
     createCategory,
     getAllCategories,
     getCategory,
     updateCategory,
     deleteCategory
 };
-
-module.exports = categoryController;
