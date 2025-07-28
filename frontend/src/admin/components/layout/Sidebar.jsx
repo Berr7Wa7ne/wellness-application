@@ -11,20 +11,23 @@ import {
   LogOut
 } from 'lucide-react'; // Using lucide-react for icons
 import { useAdminProfileContext } from '../../../context/admin/settings/AdminProfileContext';
-
-const menuItems = [
-  { name: "Dashboard", icon: <LayoutGrid size={18} />, path: "/admin/dashboard" },
-  { name: "Manage Videos", icon: <Video size={18} />, path: "/admin/videos", badge: 4 },
-  { name: "Manage Products", icon: <Box size={18} />, path: "/admin/products" },
-  { name: "Manage Services", icon: <Server size={18} />, path: "/admin/services" },
-  { name: "Manage Tiers", icon: <Layers size={18} />, path: "/admin/tiers" },
-  { name: "Manage Categories", icon: <Table size={18} />, path: "/admin/categories" },
-];
+import { useAdminVideo } from '../../../context/admin/video/AdminVideoContext';
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { profile, loading } = useAdminProfileContext();
+  const { videos } = useAdminVideo();
+  const videoCount = videos.length;
+
+  const menuItems = [
+    { name: "Dashboard", icon: <LayoutGrid size={18} />, path: "/admin/dashboard" },
+    { name: "Manage Videos", icon: <Video size={18} />, path: "/admin/videos", badge: videoCount },
+    { name: "Manage Products", icon: <Box size={18} />, path: "/admin/products" },
+    { name: "Manage Services", icon: <Server size={18} />, path: "/admin/services" },
+    { name: "Manage Tiers", icon: <Layers size={18} />, path: "/admin/tiers" },
+    { name: "Manage Categories", icon: <Table size={18} />, path: "/admin/categories" },
+  ];
 
   const handleLogout = () => {
     // Remove token from localStorage
@@ -59,7 +62,7 @@ const Sidebar = () => {
                     {item.icon}
                     <span className="text-sm">{item.name}</span>
                   </div>
-                  {item.badge && (
+                  {item.badge > 0 && (
                     <span className="bg-gray-200 text-xs text-gray-600 rounded-full px-2 py-0.5">
                       {item.badge}
                     </span>

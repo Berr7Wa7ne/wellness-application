@@ -45,7 +45,13 @@ const [publishedDate, setPublishedDate] = useState(
     : ''
 );
 
-  useEffect(() => { fetchCategories(); }, [fetchCategories]);
+useEffect(() => {
+  // Only fetch categories if not already loaded and not editing
+  if ((!categories || categories.length === 0) && !editingVideo) {
+    fetchCategories();
+  }
+}, [fetchCategories, categories, editingVideo]);
+
   useEffect(() => () => { if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
 
   const handleFileChange = (e) => {

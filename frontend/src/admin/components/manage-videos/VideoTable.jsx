@@ -103,11 +103,12 @@ import AdminModal from '../shared/AdminModal';
 
 console.log('VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
 
-const VideoTable = () => {
+const VideoTable = ({ selectedCategory }) => {
   const { videos: contextVideos, deleteVideo, fetchVideos, videosLoading } = useAdminVideo();
   const { categories, fetchCategories, categoriesLoading } = useAdminCategory();
   const [showModal, setShowModal] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
+  const [pendingVideo, setPendingVideo] = useState(null);
   const [actionMenuIndex, setActionMenuIndex] = useState(null);
 
   console.log('[VideoTable] Rendered. Videos:', contextVideos, 'Categories:', categories);
@@ -119,6 +120,13 @@ const VideoTable = () => {
     }
   }, [fetchCategories]);
 
+  const filteredVideos = selectedCategory === 'all'
+    ? contextVideos
+    : contextVideos.filter(video =>
+        video.category?._id === selectedCategory ||
+        video.category === selectedCategory
+      );
+
   useEffect(() => {
     console.log('[VideoTable] useEffect called. Videos:', contextVideos);
     if (!contextVideos || contextVideos.length === 0) {
@@ -126,6 +134,18 @@ const VideoTable = () => {
       fetchVideos();
     }
   }, [fetchVideos]);
+
+  // Robust modal open/data fetch pattern
+  useEffect(() => {
+    if (showModal && pendingVideo) {
+      if (!categories || categories.length === 0) {
+        fetchCategories().then(() => setEditingVideo(pendingVideo));
+      } else {
+        setEditingVideo(pendingVideo);
+      }
+    }
+    // eslint-disable-next-line
+  }, [showModal, pendingVideo, categories]);
 
   if (videosLoading || categoriesLoading) {
     return (
@@ -136,8 +156,8 @@ const VideoTable = () => {
   }
 
   const handleEdit = (video) => {
-    setEditingVideo(video);
-    setShowModal(true);
+    setPendingVideo(video); // Store the video to edit
+    setShowModal(true);     // Open the modal immediately
     setActionMenuIndex(null);
   };
 
@@ -146,6 +166,12 @@ const VideoTable = () => {
       await deleteVideo(video._id);
     }
     setActionMenuIndex(null);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingVideo(null);
+    setPendingVideo(null);
   };
 
   return (
@@ -163,7 +189,7 @@ const VideoTable = () => {
           </tr>
         </thead>
         <tbody>
-          {contextVideos.map((video, index) => {
+          {filteredVideos.map((video, index) => {
             // Log the image URL for each video
             console.log('Video image URL:', video.imageUrl, 'for video:', video.title);
             const categoryObj = categories.find(
@@ -195,10 +221,7 @@ const VideoTable = () => {
     backgroundColor: categoryObj?.backgroundColor || "#f3f3f3",
     color: categoryObj?.textColor || "#333",
     whiteSpace: "nowrap",
-    // overflow: "hidden",
-    // textOverflow: "ellipsis",
-    // maxWidth: "120px", // adjust as needed
-    display: "inline-block", // needed for ellipsis to work
+    display: "inline-block",
     verticalAlign: "middle"
   }}
 >
@@ -217,14 +240,16 @@ const VideoTable = () => {
                     {video.status}
                   </span>
                 </td>
-                <td className="p-3 font-semibold text-center">
-                  {video.status === 'Published' && video.published && (
+                <td className="p-3 font-semibold text-center">{
+                  video.status === 'Published' && video.published && (
                     <>Published on {new Date(video.published).toLocaleDateString()}</>
-                  )}
-                  {video.status === 'Scheduled' && video.published && (
+                  )
+                }
+                {
+                  video.status === 'Scheduled' && video.published && (
                     <>Scheduled for {new Date(video.published).toLocaleDateString()}</>
-                  )}
-                </td>
+                  )
+                }</td>
                 <td className="p-3 font-semibold text-center">{video.views}</td>
                 <td className="p-3 text-center relative">
                   <button className="p-1 rounded hover:bg-gray-200" onClick={() => setActionMenuIndex(index)}>
@@ -243,8 +268,14 @@ const VideoTable = () => {
         </tbody>
       </table>
       {showModal && (
-        <AdminModal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <AddVideoForm onClose={() => setShowModal(false)} editingVideo={editingVideo} />
+        <AdminModal isOpen={showModal} onClose={handleCloseModal}>
+          {categoriesLoading || !editingVideo ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#213721]"></div>
+            </div>
+          ) : (
+            <AddVideoForm onClose={handleCloseModal} editingVideo={editingVideo} />
+          )}
         </AdminModal>
       )}
     </div>

@@ -1,10 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Search, Filter } from 'lucide-react'
 import AddVideoForm from './AddVideoForm'
 import AdminModal from '../shared/AdminModal'
+import { useAdminCategory } from '../../../context/admin/category/AdminCategoryContext'
 
-const ManageVideosHeader = () => {
+const VIDEO_CATEGORIES = ["Meditation Videos", "Audio Guides"];
+
+const ManageVideosHeader = ({ selectedCategory, setSelectedCategory }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { categories, fetchCategories, categoriesLoading } = useAdminCategory();
+
+    useEffect(() => {
+      fetchCategories();
+    }, [fetchCategories]);
+
+    const videoCategories = categories.filter(cat =>
+      VIDEO_CATEGORIES.includes(cat.name)
+    );
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -39,24 +51,17 @@ const ManageVideosHeader = () => {
               </div>
             </div>
             <div className="mb-4 relative">
-              <div className="flex items-center">
-                <input
-                  type="text"
-                  placeholder="All"
-                  className="w-[135px] h-[44px] pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7fa876] text-sm"
-                />
-                <Filter className="absolute left-3 text-gray-400" size={18} />
-              </div>
-            </div>
-            <div className="mb-4 relative">
-              <div className="flex items-center">
-                <input
-                  type="text"
-                  placeholder="All"
-                  className="w-[135px] h-[44px] pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7fa876] text-sm"
-                />
-                <Filter className="absolute left-3 text-gray-400" size={18} />
-              </div>
+              <select
+                value={selectedCategory}
+                onChange={e => setSelectedCategory(e.target.value)}
+                className="w-[180px] h-[44px] pl-3 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7fa876] text-sm"
+                disabled={categoriesLoading}
+              >
+                <option value="all">All Categories</option>
+                {videoCategories.map(cat => (
+                  <option key={cat._id} value={cat._id}>{cat.name}</option>
+                ))}
+              </select>
             </div>
           </div>
 
