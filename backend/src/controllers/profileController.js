@@ -3,7 +3,7 @@ const { catchAsync, AppError } = require("../utils/errorHandler");
 
 // Get user profile
 const getProfile = catchAsync(async (req, res) => {
-    const profile = await profileService.getUserProfile(req.user.id);
+    const profile = await profileService.getUserProfile(req.user.userId);
     profile.forEach(profile => {
         console.log('Returning profile:', {
           id: profile._id,
@@ -18,7 +18,7 @@ const getProfile = catchAsync(async (req, res) => {
 
 // Update user profile
 const updateProfile = catchAsync(async (req, res) => {
-    const profile = await profileService.updateUserProfile(req.user.id, req.body);
+    const profile = await profileService.updateUserProfile(req.user.userId, req.body);
     res.json({
         success: true,
         data: profile

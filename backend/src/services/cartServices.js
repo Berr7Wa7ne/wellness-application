@@ -5,7 +5,7 @@ const { AppError, catchAsyncService } = require('../utils/errorHandler');
 // Get user's cart
 const getUserCart = catchAsyncService(async (userId) => {
     const cart = await Cart.findOne({ user: userId })
-        .populate({ path: 'items.productId', select: 'name price stock images' });
+        .populate({ path: 'items.productId', select: 'name price stock image imageUrl' });
 
     if (!cart) {
         return { items: [], total: 0 };

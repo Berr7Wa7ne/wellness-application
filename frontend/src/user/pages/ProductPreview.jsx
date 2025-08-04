@@ -7,10 +7,31 @@ import { ProductDetails } from '../components/product/ProductDetails';
 import { RelatedProductsSection } from '../components/product/RelatedProductsSection';
 import { useProductPreviewLogic } from '../hooks/useProductPreviewLogic';
 import { useCategories } from '../../context/user/category/CategoryContext';
+import { useCart } from '../../context/user/cart/CartContext';
+import { useNavigate } from 'react-router-dom';
 
-const ProductPreview = ({ handleAddToCart }) => {
+const ProductPreview = () => {
+  // All hooks must be called at the top, before any conditional returns
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
+  
+  const { 
+    product,
+    relatedProducts,
+    isAddToCartModalOpen,
+    handleCloseAddToCartModal,
+    handleBuyNow,
+    setIsAddToCartModalOpen,
+    isLoading,
+  } = useProductPreviewLogic();
 
+  const handleLocalAddToCart = () => {
+    // Just open the modal, don't add to cart immediately
+    setIsAddToCartModalOpen(true);
+  };
+
+  // Now we can have conditional returns after all hooks are called
   if (categoriesLoading) {
     return (
       <div>
@@ -23,6 +44,7 @@ const ProductPreview = ({ handleAddToCart }) => {
       </div>
     );
   }
+  
   if (categoriesError) {
     return (
       <div>
@@ -40,21 +62,6 @@ const ProductPreview = ({ handleAddToCart }) => {
   categories.forEach(cat => {
     categoryColors[cat.name] = `${cat.backgroundColor} ${cat.textColor}`;
   });
-
-  const { 
-    product,
-    relatedProducts,
-    isAddToCartModalOpen,
-    handleCloseAddToCartModal,
-    handleBuyNow,
-    setIsAddToCartModalOpen,
-    isLoading,
-  } = useProductPreviewLogic();
-
-  const handleLocalAddToCart = (product) => {
-    handleAddToCart(product);
-    setIsAddToCartModalOpen(true);
-  };
 
   if (isLoading) {
     return (
@@ -115,8 +122,7 @@ const ProductPreview = ({ handleAddToCart }) => {
       <AddToCartModal
         isOpen={isAddToCartModalOpen}
         onClose={handleCloseAddToCartModal}
-        productName={product ? product.name : ''}
-        productPrice={product ? product.price : ''}
+        product={product}
       />
     </div>
   );

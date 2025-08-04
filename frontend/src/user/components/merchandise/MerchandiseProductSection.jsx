@@ -99,7 +99,9 @@ export const MerchandiseProductSection = () => {
   const handleBuyNowClick = (product) => {
     setSelectedProduct(product);
     setIsPaymentModalOpen(true);
-    setTimeout(scrollToGrid, 100);
+    setTimeout(() => {
+      scrollToGrid();
+    }, 100);
   };
 
   const handleClosePaymentModal = () => {
@@ -257,8 +259,6 @@ export const ProductCard = ({ id, name, price, image, imageUrl, description }) =
           </p>
           <div className="text-lg text-green-950">★ ★ ★ ★ ☆</div>
         </div>
-      </div>
-      <div className="px-6 pb-4 mt-auto">
       </div>
     </div>
   );

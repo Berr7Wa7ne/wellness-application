@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Menu } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import Sidebar from './Sidebar';
+import { CartIcon } from '../shared/CartIcon';
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -61,6 +62,7 @@ const Navbar = () => {
             </NavLink>
           </nav>
           <div className='hidden md:flex justify-between items-center space-x-4 my-6'>
+            <CartIcon />
             <Link
                 to="/"
                 className='bg-[#617C5F] text-white px-[33px] py-[10px] shadow hover:bg-green-800 font-semibold'

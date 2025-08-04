@@ -5,7 +5,7 @@ const { catchAsync, AppError } = require('../utils/errorHandler');
 const cartController = {
     // Get user's cart
     getCart: catchAsync(async (req, res) => {
-        const cart = await cartService.getUserCart(req.user.id);
+        const cart = await cartService.getUserCart(req.user.userId);
         res.json({
             success: true,
             data: cart
@@ -15,7 +15,7 @@ const cartController = {
     // Add item to cart
     addToCart: catchAsync(async (req, res) => {
         const { productId, quantity } = req.body;
-        const cart = await cartService.addToCart(req.user.id, productId, quantity);
+        const cart = await cartService.addToCart(req.user.userId, productId, quantity);
         res.json({
             success: true,
             data: cart
@@ -26,7 +26,7 @@ const cartController = {
     updateCartItem: catchAsync(async (req, res) => {
         const { quantity } = req.body;
         const cart = await cartService.updateCartItem(
-            req.user.id,
+            req.user.userId,
             req.params.productId,
             quantity
         );
@@ -39,7 +39,7 @@ const cartController = {
     // Remove item from cart
     removeFromCart: catchAsync(async (req, res) => {
         const cart = await cartService.removeFromCart(
-            req.user.id,
+            req.user.userId,
             req.params.productId
         );
         res.json({
@@ -50,7 +50,7 @@ const cartController = {
 
     // Clear cart
     clearCart: catchAsync(async (req, res) => {
-        const cart = await cartService.clearCart(req.user.id);
+        const cart = await cartService.clearCart(req.user.userId);
         res.json({
             success: true,
             data: cart

@@ -12,7 +12,7 @@ import ProductPreview from '../pages/ProductPreview'
 import CartPage from '../pages/CartPage'
 // import other pages when ready (e.g. Services, Contact, etc.)
 
-function UserRoutes({ cartItems, handleAddToCart }) {
+function UserRoutes() {
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -22,9 +22,9 @@ function UserRoutes({ cartItems, handleAddToCart }) {
         <Route path="/services" element={<Services />} />
         <Route path="/videos" element={<Videos />} />
         <Route path="/merchandise" element={<Merchandise />} />
-        <Route path="/product-preview/:slug" element={<ProductPreview handleAddToCart={handleAddToCart} />} />
+        <Route path="/product-preview/:slug" element={<ProductPreview />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/cart" element={<CartPage cartItems={cartItems} />} />
+        <Route path="/cart" element={<CartPage />} />
       </Route>
     </Routes>
   );

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../../api/config';
 
 const CartContext = createContext();
@@ -9,84 +9,153 @@ export const CartProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [total, setTotal] = useState(0);
 
-    // Load cart from localStorage on mount
-    useEffect(() => {
-        const savedCart = localStorage.getItem('cart');
-        if (savedCart) {
-            try {
-                const parsedCart = JSON.parse(savedCart);
-                setCartItems(parsedCart);
-                calculateTotal(parsedCart);
-            } catch (err) {
-                console.error('Failed to parse saved cart:', err);
-                localStorage.removeItem('cart');
+    // Load cart from API on mount
+    const fetchCart = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await api.get('/public/carts');
+            const cartData = response.data.data;
+            setCartItems(cartData.items || []);
+            setTotal(cartData.total || 0);
+        } catch (err) {
+            console.error('Failed to fetch cart:', err);
+            setError(err.response?.data?.message || 'Failed to load cart');
+            // If user is not authenticated, cart will be empty
+            if (err.response?.status !== 401) {
+                setCartItems([]);
+                setTotal(0);
             }
+        } finally {
+            setLoading(false);
         }
     }, []);
 
-    // Save cart to localStorage whenever it changes
     useEffect(() => {
-        localStorage.setItem('cart', JSON.stringify(cartItems));
-        calculateTotal(cartItems);
-    }, [cartItems]);
+        // Only fetch cart if user is authenticated
+        const token = localStorage.getItem('token');
+        if (token) {
+            fetchCart();
+        }
+    }, [fetchCart]);
 
-    const calculateTotal = (items) => {
-        const newTotal = items.reduce((sum, item) => {
-            return sum + (item.price * item.quantity);
-        }, 0);
-        setTotal(newTotal);
+    const addToCart = async (productId, quantity = 1) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            const error = new Error('Please log in to add items to your cart');
+            error.response = { status: 401, data: { message: 'Authentication required' } };
+            throw error;
+        }
+
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await api.post('/public/carts/items', {
+                productId,
+                quantity
+            });
+            const cartData = response.data.data;
+            setCartItems(cartData.items || []);
+            setTotal(cartData.total || 0);
+            
+            // Return success for UI feedback
+            return { success: true, data: cartData };
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to add item to cart');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const addToCart = (item) => {
-        setCartItems(prevItems => {
-            const existingItem = prevItems.find(i => 
-                i._id === item._id && i.type === item.type
-            );
+    const removeFromCart = async (productId) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            const error = new Error('Please log in to manage your cart');
+            error.response = { status: 401, data: { message: 'Authentication required' } };
+            throw error;
+        }
 
-            if (existingItem) {
-                return prevItems.map(i => 
-                    i._id === item._id && i.type === item.type
-                        ? { ...i, quantity: i.quantity + 1 }
-                        : i
-                );
-            }
-
-            return [...prevItems, { ...item, quantity: 1 }];
-        });
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await api.delete(`/public/carts/items/${productId}`);
+            const cartData = response.data.data;
+            setCartItems(cartData.items || []);
+            setTotal(cartData.total || 0);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to remove item from cart');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const removeFromCart = (itemId, type) => {
-        setCartItems(prevItems => 
-            prevItems.filter(item => !(item._id === itemId && item.type === type))
-        );
-    };
+    const updateQuantity = async (productId, quantity) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            const error = new Error('Please log in to manage your cart');
+            error.response = { status: 401, data: { message: 'Authentication required' } };
+            throw error;
+        }
 
-    const updateQuantity = (itemId, type, quantity) => {
         if (quantity < 1) {
-            removeFromCart(itemId, type);
+            await removeFromCart(productId);
             return;
         }
 
-        setCartItems(prevItems =>
-            prevItems.map(item =>
-                item._id === itemId && item.type === type
-                    ? { ...item, quantity }
-                    : item
-            )
-        );
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await api.put(`/public/carts/items/${productId}`, {
+                quantity
+            });
+            const cartData = response.data.data;
+            setCartItems(cartData.items || []);
+            setTotal(cartData.total || 0);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to update cart item');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const clearCart = () => {
-        setCartItems([]);
-        localStorage.removeItem('cart');
+    const clearCart = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            const error = new Error('Please log in to manage your cart');
+            error.response = { status: 401, data: { message: 'Authentication required' } };
+            throw error;
+        }
+
+        setLoading(true);
+        setError(null);
+        try {
+            await api.delete('/public/carts');
+            setCartItems([]);
+            setTotal(0);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to clear cart');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
     };
 
     const checkout = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            const error = new Error('Please log in to checkout');
+            error.response = { status: 401, data: { message: 'Authentication required' } };
+            throw error;
+        }
+
         setLoading(true);
         setError(null);
         try {
             const response = await api.post('/orders', { items: cartItems });
-            clearCart();
+            await clearCart();
             return response.data;
         } catch (err) {
             setError(err.response?.data?.message || 'Checkout failed');
@@ -105,7 +174,8 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         clearCart,
-        checkout
+        checkout,
+        fetchCart
     };
 
     return (
