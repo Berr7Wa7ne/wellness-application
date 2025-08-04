@@ -7,7 +7,7 @@ import { useAdminTier } from '../../../context/admin/tier/AdminTierContext';
 
 console.log('VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
 
-const ManageProductsCards = () => {
+const ManageProductsCards = ({ selectedCategory }) => {
   const { products, fetchProducts, deleteProduct } = useAdminProduct();
   const { tiers, fetchTiers } = useAdminTier();
   const [editingProduct, setEditingProduct] = useState(null);
@@ -18,9 +18,23 @@ const ManageProductsCards = () => {
     Promise.all([fetchProducts(), fetchTiers()]).then(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    console.log('Products:', products);
-  }, [products]);
+  // Filter products by selected category (by _id or string)
+  const filteredProducts = selectedCategory === 'all'
+  ? products
+  : products.filter(product => {
+      const productCategory = typeof product.category === 'object' 
+        ? product.category?.name 
+        : product.category;
+      return productCategory === selectedCategory;
+    });
+    
+useEffect(() => {
+  console.log('[ManageProductsCards] useEffect called. Products:', products);
+  if (!products || products.length === 0) {
+    console.log('[ManageProductsCards] Fetching products...');
+    fetchProducts();
+  }
+}, [fetchProducts]);
 
   const handleEdit = (product) => {
     setEditingProduct(product);
@@ -101,10 +115,14 @@ const ManageProductsCards = () => {
     );
   }
 
+  console.log('Filtered products count:', filteredProducts.length);
+console.log('Total products:', products.length);
+console.log('Selected category:', selectedCategory);
+
   return (
     <>
       <div className="px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-        {products.map((product) => {
+        {filteredProducts.map((product) => {
           // Log the image URL for each product
           console.log('Product image URL:', product.imageUrl, 'for product:', product.name);
           return (
@@ -137,9 +155,9 @@ const ManageProductsCards = () => {
                       'Healing Tools': "bg-[#E3F2FD] text-[#42A5F5]",
                       'Books & Journals': "bg-[#F3E5F5] text-[#AB47BC]"
                     };
-                    return categoryColors[product.category] || "bg-gray-200 text-gray-800";
+                    return categoryColors[typeof product.category === 'object' ? product.category?.name : product.category] || "bg-gray-200 text-gray-800";
                   })()}`}>
-                    {product.category}
+                    {typeof product.category === 'object' ? product.category?.name : product.category}
                   </span>
                   <div className="relative">
                     <button

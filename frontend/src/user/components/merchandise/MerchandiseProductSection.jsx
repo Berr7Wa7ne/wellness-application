@@ -1,401 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import moonlightCalm from "../../../assets/Moonlight Calm.jpg";
-import manifestFire from "../../../assets/Manifest Fire.jpg";
-import heartOpening from "../../../assets/Heart Opening.jpg";
-import energyClearing from "../../../assets/Energy Clearing Spray.jpg";
-import intuitionCrystal from "../../../assets/Intuition Crystal Kit.jpg";
-import sacredRitual from "../../../assets/Sacred Ritual Journal.jpg";
-import protectionCharm from "../../../assets/Protection Charm Bundle.jpg";
-import miniAltar from "../../../assets/Mini Altar Starter Kit.jpg";
-import licensePortal from "../../../assets/License to Portal.jpg";
-import lavenderDream from "../../../assets/Lavender Dream.jpg";
-import protectionBlend from "../../../assets/Protection Blend.jpg";
-import abundanceOil from "../../../assets/Abundance Oil.jpg";
-import healingHarmony from "../../../assets/Healing Harmony.jpg";
-import spiritualClarity from "../../../assets/Spiritual Clarity.jpg";
-import loveAttraction from "../../../assets/Love Attraction.jpg";
-import groundingEssence from "../../../assets/Grounding Essence.jpg";
-import morningMindfulness from "../../../assets/Morning Mindfulness.jpg";
-import deepSleepJourney from "../../../assets/Deep Sleep Journey.jpg";
-import stressRelief from "../../../assets/Stress Relief Session.jpg";
-import chakraBalancing from "../../../assets/Chakra Balancing.jpg";
-import anxietyRelief from "../../../assets/Anxiety Relief.jpg";
-import manifestationPractice from "../../../assets/Manifestation Practice.jpg";
-import bodyScanRelaxation from "../../../assets/Body Scan Relaxation.jpg";
-import gratitudeMeditation from "../../../assets/Gratitude Meditation.jpg";
-import energyClearingVideo from "../../../assets/Energy Clearing.jpg";
-import premiumAccess from "../../../assets/Premium Access License.jpg";
-import professionalPractitioner from "../../../assets/Professional Practitioner.jpg";
-import studentLicense from "../../../assets/Student License.jpg";
-import groupAccess from "../../../assets/Group Access License.jpg";
-import lifetimeAccess from "../../../assets/Lifetime Access.jpg";
-import familyLicense from "../../../assets/Family License.jpg";
-import corporateLicense from "../../../assets/Corporate License.jpg";
-import communityLicense from "../../../assets/Community License.jpg";
-import chakraBalancingAudio from "../../../assets/Chakra Balancing Audio.jpg";
-import manifestationAffirmations from "../../../assets/Manifestation Affirmations.jpg";
-import healingFrequencyTones from "../../../assets/Healing Frequency Tones.jpg";
-import guidedVisualization from "../../../assets/Guided Visualization.jpg";
-import sleepSoundscapes from "../../../assets/Sleep Soundscapes.jpg";
-import meditationMusic from "../../../assets/Meditation Music.jpg";
-import natureSounds from "../../../assets/Nature Sounds.jpg";
-import binauralBeats from "../../../assets/Binaural Beats.jpg";
-import sacredMantras from "../../../assets/Sacred Mantras.jpg";
-import chakraStonesSet from "../../../assets/Chakra Stones Set.jpg";
-import healingWand from "../../../assets/Healing Wand.jpg";
-import meditationCushion from "../../../assets/Meditation Cushion.jpg";
-import soundBowl from "../../../assets/Sound Bowl.jpg";
-import moonPhaseJournal from "../../../assets/Moon Phase Journal.jpg";
-import gratitudeJournal from "../../../assets/Gratitude Journal.jpg";
-import spellBook from "../../../assets/Spell Book.jpg";
-import meditationWorkbook from "../../../assets/Meditation Workbook.jpg";
-import chakraGuide from "../../../assets/Chakra Guide.jpg";
-import crystalHealingBook from "../../../assets/Crystal Healing Book.jpg";
-import herbalRemediesGuide from "../../../assets/Herbal Remedies Guide.jpg";
-import astrologyJournal from "../../../assets/Astrology Journal.jpg";
 import CategoryNavigation from "../shared/CategoryNavigation";
 import Pagination from "../shared/Pagination";
 import PaymentModal from "../shared/PaymentModal";
 import PaymentForm from "../shared/PaymentForm";
 import { useSearchParams, useNavigate } from 'react-router-dom';
-
-const products = [
-  // Magickal Oils (9 products)
-  { 
-    name: "Moonlight Calm", 
-    price: "$24.99", 
-    image: moonlightCalm,
-    category: "Magickal Oils"
-  },
-  { 
-    name: "Manifest Fire", 
-    price: "$27.99", 
-    image: manifestFire,
-    category: "Magickal Oils"
-  },
-  { 
-    name: "Lavender Dream", 
-    price: "$24.99", 
-    image: lavenderDream,
-    category: "Magickal Oils"
-  },
-  { 
-    name: "Protection Blend", 
-    price: "$29.99", 
-    image: protectionBlend,
-    category: "Magickal Oils"
-  },
-  { 
-    name: "Abundance Oil", 
-    price: "$27.99", 
-    image: abundanceOil,
-    category: "Magickal Oils"
-  },
-  { 
-    name: "Healing Harmony", 
-    price: "$26.99", 
-    image: healingHarmony,
-    category: "Magickal Oils"
-  },
-  { 
-    name: "Spiritual Clarity", 
-    price: "$28.99", 
-    image: spiritualClarity,
-    category: "Magickal Oils"
-  },
-  { 
-    name: "Love Attraction", 
-    price: "$25.99", 
-    image: loveAttraction,
-    category: "Magickal Oils"
-  },
-  { 
-    name: "Grounding Essence", 
-    price: "$23.99", 
-    image: groundingEssence,
-    category: "Magickal Oils"
-  },
-
-  // Meditation Videos (9 products)
-  { 
-    name: "Morning Mindfulness", 
-    price: "$15", 
-    image: morningMindfulness,
-    category: "Meditation Videos"
-  },
-  { 
-    name: "Deep Sleep Journey", 
-    price: "$15", 
-    image: deepSleepJourney,
-    category: "Meditation Videos"
-  },
-  { 
-    name: "Stress Relief Session", 
-    price: "$15", 
-    image: stressRelief,
-    category: "Meditation Videos"
-  },
-  { 
-    name: "Chakra Balancing", 
-    price: "$15", 
-    image: chakraBalancing,
-    category: "Meditation Videos"
-  },
-  { 
-    name: "Anxiety Relief", 
-    price: "$15", 
-    image: anxietyRelief,
-    category: "Meditation Videos"
-  },
-  { 
-    name: "Manifestation Practice", 
-    price: "$15", 
-    image: manifestationPractice,
-    category: "Meditation Videos"
-  },
-  { 
-    name: "Body Scan Relaxation", 
-    price: "$15", 
-    image: bodyScanRelaxation,
-    category: "Meditation Videos"
-  },
-  { 
-    name: "Gratitude Meditation", 
-    price: "$15", 
-    image: gratitudeMeditation,
-    category: "Meditation Videos"
-  },
-  { 
-    name: "Energy Clearing", 
-    price: "$15", 
-    image: energyClearingVideo,
-    category: "Meditation Videos"
-  },
-
-  // Licenses (9 products)
-  { 
-    name: "License to Portal – Access Tiers", 
-    price: "$99.99", 
-    image: licensePortal,
-    category: "Licenses"
-  },
-  { 
-    name: "Premium Access License", 
-    price: "$50", 
-    image: premiumAccess,
-    category: "Licenses"
-  },
-  { 
-    name: "Professional Practitioner", 
-    price: "$100", 
-    image: professionalPractitioner,
-    category: "Licenses"
-  },
-  { 
-    name: "Student License", 
-    price: "$30", 
-    image: studentLicense,
-    category: "Licenses"
-  },
-  { 
-    name: "Group Access License", 
-    price: "$75", 
-    image: groupAccess,
-    category: "Licenses"
-  },
-  { 
-    name: "Lifetime Access", 
-    price: "$200", 
-    image: lifetimeAccess,
-    category: "Licenses"
-  },
-  { 
-    name: "Family License", 
-    price: "$90", 
-    image: familyLicense,
-    category: "Licenses"
-  },
-  { 
-    name: "Corporate License", 
-    price: "$150", 
-    image: corporateLicense,
-    category: "Licenses"
-  },
-  { 
-    name: "Community License", 
-    price: "$120", 
-    image: communityLicense,
-    category: "Licenses"
-  },
-
-  // Audio Guides (9 products)
-  { 
-    name: "Chakra Balancing Audio", 
-    price: "$12", 
-    image: chakraBalancingAudio,
-    category: "Audio Guides"
-  },
-  { 
-    name: "Manifestation Affirmations", 
-    price: "$12", 
-    image: manifestationAffirmations,
-    category: "Audio Guides"
-  },
-  { 
-    name: "Healing Frequency Tones", 
-    price: "$12", 
-    image: healingFrequencyTones,
-    category: "Audio Guides"
-  },
-  { 
-    name: "Guided Visualization", 
-    price: "$12", 
-    image: guidedVisualization,
-    category: "Audio Guides"
-  },
-  { 
-    name: "Sleep Soundscapes", 
-    price: "$12", 
-    image: sleepSoundscapes,
-    category: "Audio Guides"
-  },
-  { 
-    name: "Meditation Music", 
-    price: "$12", 
-    image: meditationMusic,
-    category: "Audio Guides"
-  },
-  { 
-    name: "Nature Sounds", 
-    price: "$12", 
-    image: natureSounds,
-    category: "Audio Guides"
-  },
-  { 
-    name: "Binaural Beats", 
-    price: "$12", 
-    image: binauralBeats,
-    category: "Audio Guides"
-  },
-  { 
-    name: "Sacred Mantras", 
-    price: "$12", 
-    image: sacredMantras,
-    category: "Audio Guides"
-  },
-
-  // Healing Tools (9 products)
-  {
-    name: "Chakra Stones Set",
-    price: "$49.99",
-    image: chakraStonesSet,
-    category: "Healing Tools",
-  },
-  {
-    name: "Healing Wand",
-    price: "$39.99",
-    image: healingWand,
-    category: "Healing Tools",
-  },
-  {
-    name: "Meditation Cushion",
-    price: "$34.99",
-    image: meditationCushion,
-    category: "Healing Tools",
-  },
-  {
-    name: "Sound Bowl",
-    price: "$89.99",
-    image: soundBowl,
-    category: "Healing Tools",
-  },
-  {
-    name: "Heart Opening",
-    price: "$44.99",
-    image: heartOpening,
-    category: "Healing Tools",
-  },
-  {
-    name: "Energy Clearing Spray",
-    price: "$29.99",
-    image: energyClearing,
-    category: "Healing Tools",
-  },
-  {
-    name: "Intuition Crystal Kit",
-    price: "$54.99",
-    image: intuitionCrystal,
-    category: "Healing Tools",
-  },
-  {
-    name: "Protection Charm Bundle",
-    price: "$39.99",
-    image: protectionCharm,
-    category: "Healing Tools",
-  },
-  {
-    name: "Mini Altar Starter Kit",
-    price: "$49.99",
-    image: miniAltar,
-    category: "Healing Tools",
-  },
-
-  // Books & Journals (9 products)
-  { 
-    name: "Sacred Ritual Journal", 
-    price: "$24.99", 
-    image: sacredRitual,
-    category: "Books & Journals"
-  },
-  { 
-    name: "Moon Phase Journal", 
-    price: "$18", 
-    image: moonPhaseJournal,
-    category: "Books & Journals"
-  },
-  { 
-    name: "Gratitude Journal", 
-    price: "$15", 
-    image: gratitudeJournal,
-    category: "Books & Journals"
-  },
-  { 
-    name: "Spell Book", 
-    price: "$25", 
-    image: spellBook,
-    category: "Books & Journals"
-  },
-  { 
-    name: "Meditation Workbook", 
-    price: "$20", 
-    image: meditationWorkbook,
-    category: "Books & Journals"
-  },
-  { 
-    name: "Chakra Guide", 
-    price: "$22", 
-    image: chakraGuide,
-    category: "Books & Journals"
-  },
-  { 
-    name: "Crystal Healing Book", 
-    price: "$24", 
-    image: crystalHealingBook,
-    category: "Books & Journals"
-  },
-  { 
-    name: "Herbal Remedies Guide", 
-    price: "$23", 
-    image: herbalRemediesGuide,
-    category: "Books & Journals"
-  },
-  { 
-    name: "Astrology Journal", 
-    price: "$21", 
-    image: astrologyJournal,
-    category: "Books & Journals"
-  }
-];
+import { useProducts } from '../../../context/user/product/ProductsContext'; // Import the context
 
 export const MerchandiseProductSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("Magickal Oils");
@@ -407,9 +16,28 @@ export const MerchandiseProductSection = () => {
   const gridRef = useRef(null);
   const [searchParams] = useSearchParams();
 
+  // Use the products context
+  const { 
+    products, 
+    filteredProducts, 
+    productsLoading, 
+    productsError, 
+    fetchProducts,
+    updateFilters,
+    clearFilters 
+  } = useProducts();
+
+  // Track if we've already tried to fetch products
+  const [hasFetched, setHasFetched] = useState(false);
+
   useEffect(() => {
     setIsActive(true);
-  }, []);
+    // Fetch products when component mounts (only once)
+    if (!hasFetched && products.length === 0 && !productsLoading) {
+      setHasFetched(true);
+      fetchProducts().catch(console.error);
+    }
+  }, [hasFetched, products.length, productsLoading, fetchProducts]);
 
   // Handle URL parameters
   useEffect(() => {
@@ -430,12 +58,21 @@ export const MerchandiseProductSection = () => {
         }, 100);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, products]);
 
   // Reset to first page when category changes
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedCategory]);
+
+  // Filter products by category when category changes
+  useEffect(() => {
+    if (selectedCategory) {
+      updateFilters({ category: selectedCategory });
+    } else {
+      clearFilters();
+    }
+  }, [selectedCategory, updateFilters, clearFilters]);
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
@@ -470,33 +107,81 @@ export const MerchandiseProductSection = () => {
     setSelectedProduct(null);
   };
 
-  const filteredProducts = products.filter(
-    product => product.category === selectedCategory
+  // Get unique categories from products and filter to only show allowed ones
+  const allowedCategories = ["Magickal Oils", "Licenses", "Healing Tools", "Books & Journals"];
+  const availableCategories = [...new Set(products.map(p => p.category))].filter(
+    category => allowedCategories.includes(category)
+  );
+
+  // Only show products from allowed categories
+  const categoryFilteredProducts = filteredProducts.filter(
+    product => allowedCategories.includes(product.category)
   );
 
   // Calculate pagination
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(categoryFilteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+  const currentProducts = categoryFilteredProducts.slice(startIndex, endIndex);
+
+  // Loading state
+  if (productsLoading) {
+    return (
+      <div className="py-16">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg text-[#213721]">Loading products...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (productsError) {
+    return (
+      <div className="py-16">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg text-red-600">Error loading products: {productsError}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-16">
-      <CategoryNavigation
-        selectedCategory={selectedCategory}
-        onCategorySelect={handleCategoryChange}
-      />
+      {/* Only show CategoryNavigation if we have available categories */}
+      {availableCategories.length > 0 && (
+        <CategoryNavigation
+          selectedCategory={selectedCategory}
+          onCategorySelect={handleCategoryChange}
+          pageType="merchandise"
+          availableCategories={availableCategories}
+        />
+      )}
       <section 
         className={`px-8 md:px-16 lg:px-24 xl:px-32 py-12 bg-white text-black transition-all duration-1000 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} 
         ref={gridRef}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {currentProducts.map((product, idx) => (
-            <div key={idx}>
-              <ProductCard {...product} />
-            </div>
-          ))}
-        </div>
+        {currentProducts.length === 0 && !productsLoading ? (
+          <div className="text-center py-12">
+            <p className="text-lg text-[#213721]">No products found in this category.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {currentProducts.map((product, idx) => (
+              <div key={product.id || product._id || idx}>
+                <ProductCard 
+                  id={product.id || product._id}
+                  name={product.name}
+                  price={product.price}
+                  image={product.image}
+                  imageUrl={product.imageUrl}
+                  description={product.description}
+                  category={product.category}
+                />
+              </div>
+            ))}
+          </div>
+        )}
 
         {totalPages > 1 && (
           <div className="mt-8">
@@ -520,12 +205,23 @@ export const MerchandiseProductSection = () => {
   );
 };
 
-export const ProductCard = ({ name, price, image }) => {
+export const ProductCard = ({ id, name, price, image, imageUrl, description }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/product-preview/${name.replace(/\s/g, '-')}`);
   };
+
+  // Format price if it's a number
+  const formatPrice = (price) => {
+    if (typeof price === 'number') {
+      return `${price.toFixed(2)}`;
+    }
+    return price;
+  };
+
+  // Use imageUrl if available, fallback to image
+  const imageSrc = imageUrl || image;
 
   return (
     <div 
@@ -535,9 +231,14 @@ export const ProductCard = ({ name, price, image }) => {
       <div className="relative w-full pt-[50%]">
         <div className="absolute inset-0">
           <img
-            src={image}
+            src={imageSrc}
             alt={name}
             className="w-full h-full object-cover rounded-t-lg transition-transform duration-500 group-hover:scale-105"
+            onError={(e) => {
+              console.error('Image failed to load:', imageSrc);
+              // Optional: Set a fallback image
+              // e.target.src = '/path/to/fallback-image.jpg';
+            }}
           />
         </div>
       </div>
@@ -545,9 +246,14 @@ export const ProductCard = ({ name, price, image }) => {
         <h4 className="font-medium text-[20px] text-[#213721] mb-2 font-mono group-hover:text-[#617C5F] transition-colors duration-300">
           {name}
         </h4>
+        {description && (
+          <p className="text-sm text-[#617C5F] mb-2 line-clamp-2">
+            {description}
+          </p>
+        )}
         <div className="flex justify-between items-center">
           <p className="text-[16px] text-[#213721] font-serif font-semibold group-hover:text-[#617C5F] transition-colors duration-300">
-            {price}
+            {formatPrice(price)}
           </p>
           <div className="text-lg text-green-950">★ ★ ★ ★ ☆</div>
         </div>

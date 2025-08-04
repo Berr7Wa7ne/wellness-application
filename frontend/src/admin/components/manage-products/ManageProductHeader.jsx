@@ -1,10 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Search, Filter } from 'lucide-react'
 import AddProductForm from './AddProductForm'
 import AdminModal from '../shared/AdminModal'
+import { useAdminCategory } from '../../../context/admin/category/AdminCategoryContext'
 
-const ManageProductHeader = () => {
+const PRODUCT_CATEGORIES = ["Magickal Oils", "Licenses", "Healing Tools", "Books & Journals" ];
+
+const ManageProductHeader = ({ selectedCategory, setSelectedCategory }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { categories, fetchCategories, categoriesLoading } = useAdminCategory();
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const productCategories = categories.filter(cat =>
+    PRODUCT_CATEGORIES.includes(cat.name)
+  );
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -15,6 +27,8 @@ const ManageProductHeader = () => {
   //   // Handle form submission here
   //   setIsModalOpen(false);
   // };
+  console.log('Available categories:', productCategories);
+console.log('Selected category value:', selectedCategory);
 
   return (
     <div className="p-6">
@@ -43,20 +57,17 @@ const ManageProductHeader = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         </div>
         <div className="relative">
-          <button
-            className="w-[140px] h-[44px] pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7fa876] text-sm"
-          >
-            Category: All
-          </button>
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-        </div>
-        <div className="relative">
-          <button
-            className="w-[140px] h-[44px] pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7fa876] text-sm"
-          >
-            Tier: All
-          </button>
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+        <select
+                value={selectedCategory}
+                onChange={e => setSelectedCategory(e.target.value)}
+                className="w-[180px] h-[44px] pl-3 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7fa876] text-sm"
+                disabled={categoriesLoading}
+              >
+                <option value="all">All Categories</option>
+                {productCategories.map(cat => (
+                  <option key={cat._id} value={cat.name}>{cat.name}</option>
+                ))}
+              </select>
         </div>
       </div>
 
