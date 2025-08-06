@@ -3,16 +3,50 @@ import PayPal from '../../../assets/PayPal.png';
 import StripeCheckout from './StripeCheckout';
 import PaypalCheckout from './PaypalCheckout';
 
-const PaymentForm = ({ onClose, amount = 10.00 }) => {
+const PaymentForm = ({ 
+  onClose, 
+  amount = 10.00, 
+  currency = 'USD',
+  shippingInfo = { cost: 0, method: 'pickup' }
+}) => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('creditCard');
+
+  // Fix decimal precision issues by rounding to 2 decimal places
+  const fixedAmount = parseFloat(Number(amount).toFixed(2));
 
   const handlePaymentMethodChange = (event) => {
     setSelectedPaymentMethod(event.target.value);
   };
 
+  // Format currency for display
+  const formatCurrency = (amount, currencyCode) => {
+    if (currencyCode === 'NGN') {
+      return `₦${amount.toLocaleString('en-US')}`;
+    }
+    return `${currencyCode} ${amount.toLocaleString('en-US', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    })}`;
+  };
+
   return (
     <div className="flex flex-col bg-white p-6 rounded-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center">Complete Your Purchase</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Complete Your Purchase</h2>
+      
+      {/* Order Summary */}
+      <div className="bg-gray-50 p-4 rounded-lg mb-6">
+        <div className="flex justify-between items-center">
+          <span className="text-lg font-medium">Total Amount:</span>
+          <span className="text-xl font-bold text-[#213721]">
+            {formatCurrency(fixedAmount, currency)}
+          </span>
+        </div>
+        {shippingInfo.method !== 'pickup' && shippingInfo.cost > 0 && (
+          <p className="text-sm text-gray-600 mt-1">
+            Includes {formatCurrency(shippingInfo.cost, currency)} shipping
+          </p>
+        )}
+      </div>
 
       <div className={`p-4 rounded-t-lg transition-colors duration-200 ${selectedPaymentMethod === 'creditCard' ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-100`}>
         <label className="inline-flex items-center cursor-pointer w-full">
@@ -23,7 +57,6 @@ const PaymentForm = ({ onClose, amount = 10.00 }) => {
             className="" 
             checked={selectedPaymentMethod === 'creditCard'}
             onChange={handlePaymentMethodChange}
-            // style={{ accentColor: '#f1bf60' }}
           />
           <span className="ml-2 text-lg font-medium">Credit or debit card</span>
           <div className="flex justify-end space-x-2 mt-0 ml-auto">
@@ -35,7 +68,11 @@ const PaymentForm = ({ onClose, amount = 10.00 }) => {
         </label>
         {selectedPaymentMethod === 'creditCard' && (
           <div className="mt-4">
-            <StripeCheckout amount={amount} />
+            <StripeCheckout 
+              amount={fixedAmount} 
+              currency={currency}
+              shippingInfo={shippingInfo}
+            />
           </div>
         )}
       </div>
@@ -50,7 +87,6 @@ const PaymentForm = ({ onClose, amount = 10.00 }) => {
               className="" 
               checked={selectedPaymentMethod === 'paypal'}
               onChange={handlePaymentMethodChange}
-              // style={{ accentColor: '#f1bf60' }}
             />
             <span className="ml-2 text-lg font-medium">PayPal</span>
           </label>
@@ -59,7 +95,11 @@ const PaymentForm = ({ onClose, amount = 10.00 }) => {
         {selectedPaymentMethod === 'paypal' && (
           <div className="mt-4">
             <p className="text-gray-700 mb-4">Connect your PayPal account and use it to pay your bills. You'll be redirected to PayPal to add your billing information.</p>
-            <PaypalCheckout amount={amount} />
+            <PaypalCheckout 
+              amount={fixedAmount} 
+              currency={currency}
+              shippingInfo={shippingInfo}
+            />
           </div>
         )}
       </div>
@@ -82,4 +122,4 @@ const PaymentForm = ({ onClose, amount = 10.00 }) => {
   );
 };
 
-export default PaymentForm; 
+export default PaymentForm;

@@ -3,15 +3,40 @@ import { useCart } from '../../../context/user/cart/CartContext';
 import PaymentModal from '../shared/PaymentModal';
 import PaymentForm from '../shared/PaymentForm';
 
-export const ProceedToCheckoutButton = ({ onClick }) => {
+export const ProceedToCheckoutButton = ({ 
+  onClick,
+  orderTotal,
+  currency = 'USD',
+  shippingInfo = { cost: 0, method: 'pickup' }
+}) => {
   const { cartItems, loading, total } = useCart();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+
+  // Use orderTotal if provided, otherwise fall back to cart total
+  const finalTotal = orderTotal !== undefined ? orderTotal : total;
+
+  // Format currency display
+  const formatCurrency = (amount, currencyCode) => {
+    if (currencyCode === 'NGN') {
+      return `₦${amount.toLocaleString('en-US')}`;
+    }
+    return `${currencyCode} ${amount.toLocaleString('en-US', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    })}`;
+  };
 
   const handleOpenPaymentModal = () => {
     if (cartItems.length === 0) {
       alert('Your cart is empty. Please add items before proceeding to checkout.');
       return;
     }
+    
+    // Call the onClick prop if provided
+    if (onClick) {
+      onClick();
+    }
+    
     setIsPaymentModalOpen(true);
   };
 
@@ -26,12 +51,22 @@ export const ProceedToCheckoutButton = ({ onClick }) => {
         onClick={handleOpenPaymentModal}
         disabled={loading || cartItems.length === 0}
       >
-        {loading ? 'Processing...' : 'Proceed To Checkout'}
+        {loading 
+          ? 'Processing...' 
+          : cartItems.length === 0 
+            ? 'Cart is Empty'
+            : `Proceed To Checkout • ${formatCurrency(finalTotal, currency)}`
+        }
       </button>
 
       <PaymentModal isOpen={isPaymentModalOpen} onClose={handleClosePaymentModal}>
-        <PaymentForm onClose={handleClosePaymentModal} amount={total} />
+        <PaymentForm 
+          onClose={handleClosePaymentModal} 
+          amount={finalTotal}
+          currency={currency}
+          shippingInfo={shippingInfo}
+        />
       </PaymentModal>
     </>
   );
-}; 
+};

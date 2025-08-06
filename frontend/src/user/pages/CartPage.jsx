@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../context/user/cart/CartContext';
 import { CartItemsTable } from '../components/cart/CartItemsTable';
 import { CartActions } from '../components/cart/CartActions';
@@ -9,10 +9,23 @@ import { ShippingTaxEstimator } from '../components/cart/ShippingTaxEstimator';
 
 const CartPage = () => {
   const { cartItems, total, loading, error, fetchCart, isUpdating } = useCart();
+  
+  // State to manage shipping information
+  const [shippingInfo, setShippingInfo] = useState({
+    cost: 0,
+    currency: 'USD',
+    method: 'pickup',
+    country: 'NG',
+    state: ''
+  });
 
-  // Calculate shipping (you can modify this logic based on your requirements)
-  const shipping = 0; // Free shipping for now
-  const orderTotal = total + shipping;
+  // Handle shipping information updates from ShippingTaxEstimator
+  const handleShippingChange = (newShippingInfo) => {
+    setShippingInfo(newShippingInfo);
+  };
+
+  // Calculate the order total including shipping
+  const orderTotal = total + (shippingInfo.cost || 0);
 
   if (loading) {
     return (
@@ -97,15 +110,20 @@ const CartPage = () => {
             <div className="space-y-6">
               <OrderSummary 
                 subtotal={total} 
-                shipping={shipping} 
-                orderTotal={orderTotal} 
+                shipping={shippingInfo}
+                orderTotal={orderTotal}
+                currency={shippingInfo.currency}
               />
               
-              <ProceedToCheckoutButton />
+              <ProceedToCheckoutButton 
+                orderTotal={orderTotal}
+                currency={shippingInfo.currency}
+                shippingInfo={shippingInfo}
+              />
               
               <DiscountSection />
               
-              <ShippingTaxEstimator />
+              <ShippingTaxEstimator onShippingChange={handleShippingChange} />
             </div>
           </div>
         )}
@@ -114,4 +132,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage; 
+export default CartPage;
