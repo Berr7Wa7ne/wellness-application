@@ -8,7 +8,7 @@ import { DiscountSection } from '../components/cart/DiscountSection';
 import { ShippingTaxEstimator } from '../components/cart/ShippingTaxEstimator';
 
 const CartPage = () => {
-  const { cartItems, total, loading, error, fetchCart } = useCart();
+  const { cartItems, total, loading, error, fetchCart, isUpdating } = useCart();
 
   // Calculate shipping (you can modify this logic based on your requirements)
   const shipping = 0; // Free shipping for now
@@ -35,7 +35,7 @@ const CartPage = () => {
             <p className="text-gray-600">{error}</p>
             <button 
               onClick={fetchCart}
-              className="mt-4 bg-[#213721] text-white px-4 py-2 rounded hover:bg-green-800"
+              className="mt-4 bg-[#213721] text-white px-4 py-2 rounded hover:bg-green-800 transition-colors duration-300"
             >
               Try Again
             </button>
@@ -46,7 +46,7 @@ const CartPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-16">
+    <div className="min-h-screen bg-gray-50 py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#213721]">Shopping Cart</h1>
@@ -56,6 +56,12 @@ const CartPage = () => {
               : `${cartItems.length} item${cartItems.length !== 1 ? 's' : ''} in your cart`
             }
           </p>
+          {isUpdating && (
+            <div className="mt-2 flex items-center text-sm text-[#617C5F]">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#617C5F] mr-2"></div>
+              Updating cart...
+            </div>
+          )}
         </div>
 
         {cartItems.length === 0 ? (

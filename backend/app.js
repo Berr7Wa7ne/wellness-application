@@ -30,6 +30,7 @@ const dashboardRoutes = require('./src/routes/admin/dashboardRoutes');
 const adminProfileRoutes = require('./src/routes/admin/profileRoutes');
 const notificationRoutes = require('./src/routes/admin/notificationRoutes');
 const categoryRoutes = require('./src/routes/public/categoryRoutes');
+const paymentRoutes = require('./src/routes/public/paymentRoutes');
 
 const { AppError } = require('./src/utils/errorHandler');
 
@@ -113,6 +114,7 @@ app.use('/public', categoryRoutes);
 app.use('/public', tierRoutes);
 app.use('/public', cartRoutes);
 app.use('/public', profileRoutes);
+app.use('/public', paymentRoutes);
 
 // Admin routes
 app.use('/admin', videoAdminRoutes);

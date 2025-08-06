@@ -12,6 +12,13 @@ const Navbar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleLogout = () => {
+    // Remove token from localStorage
+    localStorage.removeItem('token');
+    // Redirect to login page
+    navigate('/');
+  };
+
   return (
     <>
       <header className="fixed top-0 left-0 w-full z-[100] px-6 bg-black/70">
@@ -65,9 +72,10 @@ const Navbar = () => {
             <CartIcon />
             <Link
                 to="/"
+                onClick={handleLogout}
                 className='bg-[#617C5F] text-white px-[33px] py-[10px] shadow hover:bg-green-800 font-semibold'
             >
-                Sign In
+                Sign Out
             </Link>
             <Link
                 to="/sign-up"

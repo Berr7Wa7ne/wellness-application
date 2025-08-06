@@ -3,14 +3,18 @@ import { VideosCard } from './VideosCard';
 import CategoryNavigation from '../shared/CategoryNavigation';
 import Pagination from '../shared/Pagination';
 import { useVideos } from '../../../context/user/video/VideoContext';
+import { useSearchParams } from 'react-router-dom';
 
 export const VideoGrid = () => {
   const { videos, loading, error } = useVideos();
-  const [selectedCategory, setSelectedCategory] = useState("Meditation Videos");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   const gridRef = useRef(null);
   const [isVisible, setIsVisible] = useState(true);
+
+  // Get selected category from URL params or default to "Meditation Videos"
+  const selectedCategory = searchParams.get('category') || "Meditation Videos";
 
   // Debug logs
   useEffect(() => {
@@ -83,6 +87,13 @@ export const VideoGrid = () => {
     setTimeout(scrollToGrid, 100);
   };
 
+  const handleCategoryChange = (category) => {
+    // Update URL parameters to persist the selected category
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('category', category);
+    setSearchParams(newSearchParams);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -102,10 +113,12 @@ export const VideoGrid = () => {
   return (
   <section className="px-6 md:px-20 py-16" ref={gridRef}>
       <div className="mb-8 animate-fade-in-up">
+        <h2 className="text-3xl font-bold text-gray-300 italic text-center mb-6">Categories</h2>
         <CategoryNavigation
           selectedCategory={selectedCategory}
-          onCategorySelect={setSelectedCategory}
-          filteredCategories={["Meditation Videos", "Audio Guides"]}
+          onCategorySelect={handleCategoryChange}
+          pageType="videos"
+          availableCategories={["Meditation Videos", "Audio Guides"]}
         />
       </div>
 
@@ -141,4 +154,3 @@ export const VideoGrid = () => {
     </section>
   );
 };
-  

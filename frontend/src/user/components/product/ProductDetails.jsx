@@ -43,7 +43,7 @@ export const ProductDetails = ({ product, handleAddToCart, handleBuyNow }) => {
       <DeliveryDetails />
 
       <PaymentModal isOpen={isPaymentModalOpen} onClose={handleClosePaymentModal}>
-        <PaymentForm onClose={handleClosePaymentModal} />
+        <PaymentForm onClose={handleClosePaymentModal} amount={product.price} />
       </PaymentModal>
     </div>
   );

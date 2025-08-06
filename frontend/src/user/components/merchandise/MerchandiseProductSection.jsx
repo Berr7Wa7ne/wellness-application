@@ -7,14 +7,16 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useProducts } from '../../../context/user/product/ProductsContext'; // Import the context
 
 export const MerchandiseProductSection = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Magickal Oils");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [isActive, setIsActive] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const itemsPerPage = 6;
   const gridRef = useRef(null);
-  const [searchParams] = useSearchParams();
+
+  // Get selected category from URL params or default to "Magickal Oils"
+  const selectedCategory = searchParams.get('category') || "Magickal Oils";
 
   // Use the products context
   const { 
@@ -39,14 +41,9 @@ export const MerchandiseProductSection = () => {
     }
   }, [hasFetched, products.length, productsLoading, fetchProducts]);
 
-  // Handle URL parameters
+  // Handle URL parameters for product modal
   useEffect(() => {
-    const category = searchParams.get('category');
     const productName = searchParams.get('product');
-
-    if (category) {
-      setSelectedCategory(category);
-    }
 
     if (productName) {
       const product = products.find(p => p.name === productName);
@@ -75,7 +72,10 @@ export const MerchandiseProductSection = () => {
   }, [selectedCategory, updateFilters, clearFilters]);
 
   const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
+    // Update URL parameters to persist the selected category
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('category', category);
+    setSearchParams(newSearchParams);
   };
 
   const scrollToGrid = () => {
@@ -152,12 +152,15 @@ export const MerchandiseProductSection = () => {
     <div className="py-16">
       {/* Only show CategoryNavigation if we have available categories */}
       {availableCategories.length > 0 && (
-        <CategoryNavigation
-          selectedCategory={selectedCategory}
-          onCategorySelect={handleCategoryChange}
-          pageType="merchandise"
-          availableCategories={availableCategories}
-        />
+        <div>
+          <h2 className="text-3xl font-bold text-gray-300 italic text-center mb-6">Categories</h2>
+          <CategoryNavigation
+            selectedCategory={selectedCategory}
+            onCategorySelect={handleCategoryChange}
+            pageType="merchandise"
+            availableCategories={availableCategories}
+          />
+        </div>
       )}
       <section 
         className={`px-8 md:px-16 lg:px-24 xl:px-32 py-12 bg-white text-black transition-all duration-1000 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} 
@@ -179,6 +182,7 @@ export const MerchandiseProductSection = () => {
                   imageUrl={product.imageUrl}
                   description={product.description}
                   category={product.category}
+                  slug={product.slug}
                 />
               </div>
             ))}
@@ -199,7 +203,7 @@ export const MerchandiseProductSection = () => {
       <PaymentModal isOpen={isPaymentModalOpen} onClose={handleClosePaymentModal}>
         {selectedProduct && (
           <div>
-            <PaymentForm onClose={handleClosePaymentModal} />
+            <PaymentForm onClose={handleClosePaymentModal} amount={selectedProduct.price} />
           </div>
         )}
       </PaymentModal>
@@ -207,11 +211,13 @@ export const MerchandiseProductSection = () => {
   );
 };
 
-export const ProductCard = ({ id, name, price, image, imageUrl, description }) => {
+export const ProductCard = ({ id, name, price, image, imageUrl, description, slug }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/product-preview/${name.replace(/\s/g, '-')}`);
+    // Use the actual slug from the product data, fallback to generated slug if not available
+    const productSlug = slug || name.replace(/\s/g, '-').toLowerCase();
+    navigate(`/product-preview/${productSlug}`);
   };
 
   // Format price if it's a number

@@ -8,6 +8,7 @@ export const CartProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [total, setTotal] = useState(0);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     // Load cart from API on mount
     const fetchCart = useCallback(async () => {
@@ -31,6 +32,23 @@ export const CartProvider = ({ children }) => {
         }
     }, []);
 
+    // Separate function for refreshing cart without affecting loading state
+    const refreshCart = useCallback(async () => {
+        setIsUpdating(true);
+        setError(null);
+        try {
+            const response = await api.get('/public/carts');
+            const cartData = response.data.data;
+            setCartItems(cartData.items || []);
+            setTotal(cartData.total || 0);
+        } catch (err) {
+            console.error('Failed to refresh cart:', err);
+            setError(err.response?.data?.message || 'Failed to refresh cart');
+        } finally {
+            setIsUpdating(false);
+        }
+    }, []);
+
     useEffect(() => {
         // Only fetch cart if user is authenticated
         const token = localStorage.getItem('token');
@@ -38,6 +56,12 @@ export const CartProvider = ({ children }) => {
             fetchCart();
         }
     }, [fetchCart]);
+
+    // Optimistic update function
+    const updateCartOptimistically = (newItems, newTotal) => {
+        setCartItems(newItems);
+        setTotal(newTotal);
+    };
 
     const addToCart = async (productId, quantity = 1) => {
         const token = localStorage.getItem('token');
@@ -47,8 +71,37 @@ export const CartProvider = ({ children }) => {
             throw error;
         }
 
-        setLoading(true);
+        setIsUpdating(true);
         setError(null);
+        
+        // Optimistic update
+        const existingItemIndex = cartItems.findIndex(item => 
+            item.product?._id === productId || item.productId === productId
+        );
+        
+        let optimisticItems = [...cartItems];
+        let optimisticTotal = total;
+        
+        if (existingItemIndex >= 0) {
+            // Update existing item
+            optimisticItems[existingItemIndex] = {
+                ...optimisticItems[existingItemIndex],
+                quantity: optimisticItems[existingItemIndex].quantity + quantity
+            };
+            optimisticTotal += (optimisticItems[existingItemIndex].product?.price || 0) * quantity;
+        } else {
+            // Add new item (we'll need to fetch the product details)
+            const newItem = {
+                id: `temp-${Date.now()}`,
+                productId,
+                quantity,
+                product: { price: 0 } // Temporary placeholder
+            };
+            optimisticItems.push(newItem);
+        }
+        
+        updateCartOptimistically(optimisticItems, optimisticTotal);
+
         try {
             const response = await api.post('/public/carts/items', {
                 productId,
@@ -58,13 +111,14 @@ export const CartProvider = ({ children }) => {
             setCartItems(cartData.items || []);
             setTotal(cartData.total || 0);
             
-            // Return success for UI feedback
             return { success: true, data: cartData };
         } catch (err) {
+            // Revert optimistic update on error
+            refreshCart();
             setError(err.response?.data?.message || 'Failed to add item to cart');
             throw err;
         } finally {
-            setLoading(false);
+            setIsUpdating(false);
         }
     };
 
@@ -76,18 +130,32 @@ export const CartProvider = ({ children }) => {
             throw error;
         }
 
-        setLoading(true);
+        setIsUpdating(true);
         setError(null);
+        
+        // Optimistic update
+        const itemToRemove = cartItems.find(item => 
+            item.product?._id === productId || item.productId === productId
+        );
+        const optimisticItems = cartItems.filter(item => 
+            item.product?._id !== productId && item.productId !== productId
+        );
+        const optimisticTotal = total - ((itemToRemove?.product?.price || 0) * (itemToRemove?.quantity || 0));
+        
+        updateCartOptimistically(optimisticItems, optimisticTotal);
+
         try {
             const response = await api.delete(`/public/carts/items/${productId}`);
             const cartData = response.data.data;
             setCartItems(cartData.items || []);
             setTotal(cartData.total || 0);
         } catch (err) {
+            // Revert optimistic update on error
+            refreshCart();
             setError(err.response?.data?.message || 'Failed to remove item from cart');
             throw err;
         } finally {
-            setLoading(false);
+            setIsUpdating(false);
         }
     };
 
@@ -104,8 +172,30 @@ export const CartProvider = ({ children }) => {
             return;
         }
 
-        setLoading(true);
+        setIsUpdating(true);
         setError(null);
+        
+        // Optimistic update
+        const itemIndex = cartItems.findIndex(item => 
+            item.product?._id === productId || item.productId === productId
+        );
+        
+        if (itemIndex >= 0) {
+            const item = cartItems[itemIndex];
+            const oldTotal = (item.product?.price || 0) * item.quantity;
+            const newTotal = (item.product?.price || 0) * quantity;
+            const totalDifference = newTotal - oldTotal;
+            
+            const optimisticItems = [...cartItems];
+            optimisticItems[itemIndex] = {
+                ...item,
+                quantity
+            };
+            
+            const optimisticTotal = total + totalDifference;
+            updateCartOptimistically(optimisticItems, optimisticTotal);
+        }
+
         try {
             const response = await api.put(`/public/carts/items/${productId}`, {
                 quantity
@@ -114,10 +204,12 @@ export const CartProvider = ({ children }) => {
             setCartItems(cartData.items || []);
             setTotal(cartData.total || 0);
         } catch (err) {
+            // Revert optimistic update on error
+            refreshCart();
             setError(err.response?.data?.message || 'Failed to update cart item');
             throw err;
         } finally {
-            setLoading(false);
+            setIsUpdating(false);
         }
     };
 
@@ -129,17 +221,23 @@ export const CartProvider = ({ children }) => {
             throw error;
         }
 
-        setLoading(true);
+        setIsUpdating(true);
         setError(null);
+        
+        // Optimistic update
+        updateCartOptimistically([], 0);
+
         try {
             await api.delete('/public/carts');
             setCartItems([]);
             setTotal(0);
         } catch (err) {
+            // Revert optimistic update on error
+            refreshCart();
             setError(err.response?.data?.message || 'Failed to clear cart');
             throw err;
         } finally {
-            setLoading(false);
+            setIsUpdating(false);
         }
     };
 
@@ -170,12 +268,14 @@ export const CartProvider = ({ children }) => {
         loading,
         error,
         total,
+        isUpdating,
         addToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
         checkout,
-        fetchCart
+        fetchCart,
+        refreshCart
     };
 
     return (

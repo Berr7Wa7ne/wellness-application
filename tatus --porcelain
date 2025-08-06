@@ -1,0 +1,5 @@
+warning: in the working copy of 'frontend/src/admin/components/manage-products/ManageProductsCards.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/user/components/videos/VideosGrid.jsx', LF will be replaced by CRLF the next time Git touches it
+frontend/src/admin/components/manage-products/ManageProductHeader.jsx
+frontend/src/admin/components/manage-products/ManageProductsCards.jsx
+frontend/src/user/components/videos/VideosGrid.jsx

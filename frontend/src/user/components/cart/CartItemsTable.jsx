@@ -3,23 +3,40 @@ import { X } from 'lucide-react';
 import { useCart } from '../../../context/user/cart/CartContext';
 
 export const CartItemsTable = ({ items }) => {
-  const { updateQuantity, removeFromCart, loading } = useCart();
+  const { updateQuantity, removeFromCart, isUpdating } = useCart();
   const [imageErrors, setImageErrors] = useState({});
+  const [updatingItems, setUpdatingItems] = useState(new Set());
 
   const handleQuantityChange = async (productId, newQuantity) => {
+    if (newQuantity < 1) return;
+    
+    setUpdatingItems(prev => new Set(prev).add(productId));
     try {
       await updateQuantity(productId, newQuantity);
     } catch (error) {
       console.error('Failed to update quantity:', error);
+    } finally {
+      setUpdatingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
     }
   };
 
   const handleRemoveItem = async (productId) => {
     if (window.confirm('Are you sure you want to remove this item from your cart?')) {
+      setUpdatingItems(prev => new Set(prev).add(productId));
       try {
         await removeFromCart(productId);
       } catch (error) {
         console.error('Failed to remove item:', error);
+      } finally {
+        setUpdatingItems(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(productId);
+          return newSet;
+        });
       }
     }
   };
@@ -80,9 +97,11 @@ export const CartItemsTable = ({ items }) => {
           {items.map((item) => {
             const imageUrl = getImageUrl(item);
             const productName = item.product?.name || 'Product';
+            const productId = item.product?._id || item.productId;
+            const isItemUpdating = updatingItems.has(productId);
             
             return (
-              <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50">
+              <tr key={item.id} className={`border-b border-gray-200 hover:bg-gray-50 ${isItemUpdating ? 'opacity-75' : ''}`}>
                 <td className="py-3 px-6 text-left whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="mr-3">
@@ -103,9 +122,9 @@ export const CartItemsTable = ({ items }) => {
                 <td className="py-3 px-6 text-center">
                   <div className="flex items-center justify-center space-x-2">
                     <button 
-                      className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => handleQuantityChange(item.product?._id || item.productId, item.quantity - 1)}
-                      disabled={loading || item.quantity <= 1}
+                      className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      onClick={() => handleQuantityChange(productId, item.quantity - 1)}
+                      disabled={isItemUpdating || item.quantity <= 1}
                     >
                       -
                     </button>
@@ -114,19 +133,24 @@ export const CartItemsTable = ({ items }) => {
                       value={item.quantity}
                       onChange={(e) => {
                         const newQuantity = parseInt(e.target.value) || 1;
-                        handleQuantityChange(item.product?._id || item.productId, newQuantity);
+                        handleQuantityChange(productId, newQuantity);
                       }}
-                      className="w-12 text-center border border-gray-300 rounded py-1"
+                      className="w-12 text-center border border-gray-300 rounded py-1 focus:outline-none focus:ring-2 focus:ring-[#617C5F] focus:border-[#617C5F]"
                       min="1"
-                      disabled={loading}
+                      disabled={isItemUpdating}
                     />
                     <button 
-                      className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => handleQuantityChange(item.product?._id || item.productId, item.quantity + 1)}
-                      disabled={loading}
+                      className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      onClick={() => handleQuantityChange(productId, item.quantity + 1)}
+                      disabled={isItemUpdating}
                     >
                       +
                     </button>
+                    {isItemUpdating && (
+                      <div className="ml-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#617C5F]"></div>
+                      </div>
+                    )}
                   </div>
                 </td>
                 <td className="py-3 px-6 text-right">
@@ -134,9 +158,9 @@ export const CartItemsTable = ({ items }) => {
                 </td>
                 <td className="py-3 px-6 text-center">
                   <button 
-                    className="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={() => handleRemoveItem(item.product?._id || item.productId)}
-                    disabled={loading}
+                    className="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    onClick={() => handleRemoveItem(productId)}
+                    disabled={isItemUpdating}
                   >
                     <X size={20} />
                   </button>
