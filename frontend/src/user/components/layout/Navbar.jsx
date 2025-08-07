@@ -26,6 +26,7 @@ const Navbar = () => {
           <div className="text-2xl font-bold tracking-wide text-white">
             SoulScape
           </div>
+          
           <nav className="hidden md:flex gap-6 text-xl font-medium font-mono uppercase text-white">
             <NavLink 
               to="/about" 
@@ -68,6 +69,8 @@ const Navbar = () => {
               Contact Us
             </NavLink>
           </nav>
+
+          {/* Desktop Actions */}
           <div className='hidden md:flex justify-between items-center space-x-4 my-6'>
             <CartIcon />
             <Link
@@ -84,15 +87,24 @@ const Navbar = () => {
                 Sign Up
             </Link>
           </div>
-          {/* Hamburger - only shows when sidebar is closed */}
-          {!isSidebarOpen && (
-            <button 
-              className="md:hidden p-2 rounded text-white"
-              onClick={toggleSidebar}
-            >
-              <Menu className="h-6 w-6" />
-            </button>
-          )}
+
+          {/* Mobile Actions */}
+          <div className="md:hidden flex items-center space-x-3">
+            {/* Cart Icon for Mobile */}
+            <div className="text-white">
+              <CartIcon />
+            </div>
+            
+            {/* Hamburger - only shows when sidebar is closed */}
+            {!isSidebarOpen && (
+              <button 
+                className="p-2 rounded text-white"
+                onClick={toggleSidebar}
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+            )}
+          </div>
         </div>
       </header>
       

@@ -59,7 +59,7 @@ const CartPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-36">
+    <div className="min-h-screen bg-gray-50 py-20 md:py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#213721]">Shopping Cart</h1>

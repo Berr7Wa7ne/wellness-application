@@ -129,7 +129,7 @@ export const MerchandiseProductSection = () => {
   // Loading state
   if (productsLoading) {
     return (
-      <div className="py-16">
+      <div className="py-8 md:py-16">
         <div className="flex justify-center items-center h-64">
           <div className="text-lg text-[#213721]">Loading products...</div>
         </div>
@@ -140,7 +140,7 @@ export const MerchandiseProductSection = () => {
   // Error state
   if (productsError) {
     return (
-      <div className="py-16">
+      <div className="py-8 md:py-16">
         <div className="flex justify-center items-center h-64">
           <div className="text-lg text-red-600">Error loading products: {productsError}</div>
         </div>
@@ -149,11 +149,11 @@ export const MerchandiseProductSection = () => {
   }
 
   return (
-    <div className="py-16">
+    <div className="py-8 md:py-16">
       {/* Only show CategoryNavigation if we have available categories */}
       {availableCategories.length > 0 && (
         <div>
-          <h2 className="text-3xl font-bold text-gray-300 italic text-center mb-6">Categories</h2>
+          <h2 className="text-3xl font-bold text-gray-300 italic text-center mb-4 md:mb-6">Categories</h2>
           <CategoryNavigation
             selectedCategory={selectedCategory}
             onCategorySelect={handleCategoryChange}
@@ -163,7 +163,7 @@ export const MerchandiseProductSection = () => {
         </div>
       )}
       <section 
-        className={`px-8 md:px-16 lg:px-24 xl:px-32 py-12 bg-white text-black transition-all duration-1000 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} 
+        className={`px-8 md:px-16 lg:px-24 xl:px-32 py-6 md:py-12 bg-white text-black transition-all duration-1000 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} 
         ref={gridRef}
       >
         {currentProducts.length === 0 && !productsLoading ? (

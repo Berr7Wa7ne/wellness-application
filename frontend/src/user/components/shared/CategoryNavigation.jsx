@@ -104,7 +104,7 @@ const CategoryNavigation = ({
     return null;
   }
 
-  // Determine grid layout based on number of categories
+  // Determine grid layout based on number of categories (for larger screens)
   const getGridClass = () => {
     const count = displayCategories.length;
     if (count <= 2) return 'grid-cols-1 md:grid-cols-2';
@@ -113,8 +113,36 @@ const CategoryNavigation = ({
   };
 
   return (
-    <div className={`px-8 md:px-16 lg:px-24 xl:px-32 py-8 transition-all duration-1000 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-      <div className={`grid ${getGridClass()} gap-4 justify-center`}>
+    <div className={`px-8 md:px-16 lg:px-24 xl:px-32 py-4 md:py-8 transition-all duration-1000 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      {/* Mobile/Tablet View - Horizontal Scrollable */}
+      <div className="md:hidden">
+        <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+          {displayCategories.map((cat, idx) => (
+            <button
+              key={idx}
+              onClick={() => onCategorySelect(cat.category)}
+              className="flex-shrink-0 pb-2 text-sm font-medium whitespace-nowrap transition-all duration-300 relative"
+            >
+              <span 
+                className="text-[#617C5F]"
+              >
+                {cat.category}
+              </span>
+              {selectedCategory === cat.category && (
+                <div 
+                  className="absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300"
+                  style={{
+                    backgroundColor: cat.textColor
+                  }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop View - Grid Layout (unchanged) */}
+      <div className={`hidden md:grid ${getGridClass()} gap-4 justify-center`}>
         {displayCategories.map((cat, idx) => (
           <button
             key={idx}
@@ -162,6 +190,16 @@ const CategoryNavigation = ({
           </button>
         ))}
       </div>
+
+      <style jsx>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;  /* Chrome, Safari and Opera */
+        }
+      `}</style>
     </div>
   );
 };

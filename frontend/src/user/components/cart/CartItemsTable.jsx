@@ -82,94 +82,184 @@ export const CartItemsTable = ({ items }) => {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full bg-white border border-gray-200">
-        <thead>
-          <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-            <th className="py-3 px-6 text-left">Item</th>
-            <th className="py-3 px-6 text-left">Price</th>
-            <th className="py-3 px-6 text-center">Qty</th>
-            <th className="py-3 px-6 text-right">Subtotal</th>
-            <th className="py-3 px-6 text-center"></th>
-          </tr>
-        </thead>
-        <tbody className="text-gray-700 text-sm font-light">
-          {items.map((item) => {
-            const imageUrl = getImageUrl(item);
-            const productName = item.product?.name || 'Product';
-            const productId = item.product?._id || item.productId;
-            const isItemUpdating = updatingItems.has(productId);
-            
-            return (
-              <tr key={item.id} className={`border-b border-gray-200 hover:bg-gray-50 ${isItemUpdating ? 'opacity-75' : ''}`}>
-                <td className="py-3 px-6 text-left whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="mr-3">
-                      <img 
-                        src={imageUrl}
-                        alt={productName}
-                        className="w-16 h-16 object-cover rounded"
-                        onError={() => handleImageError(item.id)}
-                        loading="lazy"
+    <>
+      {/* Mobile Card Layout */}
+      <div className="md:hidden space-y-4">
+        {items.map((item) => {
+          const imageUrl = getImageUrl(item);
+          const productName = item.product?.name || 'Product';
+          const productId = item.product?._id || item.productId;
+          const isItemUpdating = updatingItems.has(productId);
+          
+          return (
+            <div key={item.id} className={`bg-white border border-gray-200 rounded-lg p-4 ${isItemUpdating ? 'opacity-75' : ''}`}>
+              <div className="flex space-x-4">
+                {/* Product Image */}
+                <div className="flex-shrink-0">
+                  <img 
+                    src={imageUrl}
+                    alt={productName}
+                    className="w-20 h-20 object-cover rounded-lg"
+                    onError={() => handleImageError(item.id)}
+                    loading="lazy"
+                  />
+                </div>
+                
+                {/* Product Details */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-medium text-gray-900 mb-1">{productName}</h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    USD {item.product?.price?.toLocaleString('en-US') || '0'}
+                  </p>
+                  
+                  {/* Quantity Controls */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        onClick={() => handleQuantityChange(productId, item.quantity - 1)}
+                        disabled={isItemUpdating || item.quantity <= 1}
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => {
+                          const newQuantity = parseInt(e.target.value) || 1;
+                          handleQuantityChange(productId, newQuantity);
+                        }}
+                        className="w-12 h-8 text-center text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#617C5F] focus:border-[#617C5F]"
+                        min="1"
+                        disabled={isItemUpdating}
                       />
+                      <button 
+                        className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        onClick={() => handleQuantityChange(productId, item.quantity + 1)}
+                        disabled={isItemUpdating}
+                      >
+                        +
+                      </button>
+                      {isItemUpdating && (
+                        <div className="ml-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#617C5F]"></div>
+                        </div>
+                      )}
                     </div>
-                    <span>{productName}</span>
+                    
+                    {/* Remove Button */}
+                    <button 
+                      className="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors p-1"
+                      onClick={() => handleRemoveItem(productId)}
+                      disabled={isItemUpdating}
+                    >
+                      <X size={18} />
+                    </button>
                   </div>
-                </td>
-                <td className="py-3 px-6 text-left">
-                  USD {item.product?.price?.toLocaleString('en-US') || '0'}
-                </td>
-                <td className="py-3 px-6 text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <button 
-                      className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-                      onClick={() => handleQuantityChange(productId, item.quantity - 1)}
-                      disabled={isItemUpdating || item.quantity <= 1}
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => {
-                        const newQuantity = parseInt(e.target.value) || 1;
-                        handleQuantityChange(productId, newQuantity);
-                      }}
-                      className="w-12 text-center border border-gray-300 rounded py-1 focus:outline-none focus:ring-2 focus:ring-[#617C5F] focus:border-[#617C5F]"
-                      min="1"
-                      disabled={isItemUpdating}
-                    />
-                    <button 
-                      className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-                      onClick={() => handleQuantityChange(productId, item.quantity + 1)}
-                      disabled={isItemUpdating}
-                    >
-                      +
-                    </button>
-                    {isItemUpdating && (
-                      <div className="ml-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#617C5F]"></div>
+                  
+                  {/* Subtotal */}
+                  <div className="mt-2 text-right">
+                    <span className="text-sm font-medium text-gray-900">
+                      Subtotal: USD {((item.product?.price || 0) * item.quantity).toLocaleString('en-US')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table Layout */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <th className="py-3 px-6 text-left">Item</th>
+              <th className="py-3 px-6 text-left">Price</th>
+              <th className="py-3 px-6 text-center">Qty</th>
+              <th className="py-3 px-6 text-right">Subtotal</th>
+              <th className="py-3 px-6 text-center"></th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-700 text-sm font-light">
+            {items.map((item) => {
+              const imageUrl = getImageUrl(item);
+              const productName = item.product?.name || 'Product';
+              const productId = item.product?._id || item.productId;
+              const isItemUpdating = updatingItems.has(productId);
+              
+              return (
+                <tr key={item.id} className={`border-b border-gray-200 hover:bg-gray-50 ${isItemUpdating ? 'opacity-75' : ''}`}>
+                  <td className="py-3 px-6 text-left whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="mr-3">
+                        <img 
+                          src={imageUrl}
+                          alt={productName}
+                          className="w-16 h-16 object-cover rounded"
+                          onError={() => handleImageError(item.id)}
+                          loading="lazy"
+                        />
                       </div>
-                    )}
-                  </div>
-                </td>
-                <td className="py-3 px-6 text-right">
-                  USD {((item.product?.price || 0) * item.quantity).toLocaleString('en-US')}
-                </td>
-                <td className="py-3 px-6 text-center">
-                  <button 
-                    className="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    onClick={() => handleRemoveItem(productId)}
-                    disabled={isItemUpdating}
-                  >
-                    <X size={20} />
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+                      <span>{productName}</span>
+                    </div>
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    USD {item.product?.price?.toLocaleString('en-US') || '0'}
+                  </td>
+                  <td className="py-3 px-6 text-center">
+                    <div className="flex items-center justify-center space-x-2">
+                      <button 
+                        className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        onClick={() => handleQuantityChange(productId, item.quantity - 1)}
+                        disabled={isItemUpdating || item.quantity <= 1}
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => {
+                          const newQuantity = parseInt(e.target.value) || 1;
+                          handleQuantityChange(productId, newQuantity);
+                        }}
+                        className="w-12 text-center border border-gray-300 rounded py-1 focus:outline-none focus:ring-2 focus:ring-[#617C5F] focus:border-[#617C5F]"
+                        min="1"
+                        disabled={isItemUpdating}
+                      />
+                      <button 
+                        className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        onClick={() => handleQuantityChange(productId, item.quantity + 1)}
+                        disabled={isItemUpdating}
+                      >
+                        +
+                      </button>
+                      {isItemUpdating && (
+                        <div className="ml-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#617C5F]"></div>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-3 px-6 text-right">
+                    USD {((item.product?.price || 0) * item.quantity).toLocaleString('en-US')}
+                  </td>
+                  <td className="py-3 px-6 text-center">
+                    <button 
+                      className="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      onClick={() => handleRemoveItem(productId)}
+                      disabled={isItemUpdating}
+                    >
+                      <X size={20} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
-}; 
+};

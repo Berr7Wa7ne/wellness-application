@@ -20,7 +20,7 @@ export const ServiceCard = ({ img, title, desc, backgroundColor, textColor }) =>
               }}
             />
         </div>
-        <div className="p-6 group-hover:bg-[#4D664A]/5 transition-colors duration-300">
+        <div className="py-6 group-hover:bg-[#4D664A]/5 transition-colors duration-300">
             <span 
               className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-3"
               style={badgeStyle}

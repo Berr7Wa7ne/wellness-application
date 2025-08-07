@@ -140,7 +140,7 @@ export const ProductPreviewSection = () => {
       </h2>
       {sections.map((section, idx) => (
         <div key={section.key} className="py-6 md:mb-10">
-          <h3 className="md:text-[40px] text-[20px] text-[#213721] font-semibold mb-10 px-16">
+          <h3 className="md:text-[40px] text-[20px] text-[#213721] font-semibold mb-10 px-4">
             {section.title}
           </h3>
           <ScrollableRow

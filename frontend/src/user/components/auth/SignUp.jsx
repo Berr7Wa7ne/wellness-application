@@ -72,7 +72,7 @@ const SignUp = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center relative">
+        <div className="min-h-screen flex items-center justify-center relative px-4">
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -83,7 +83,7 @@ const SignUp = () => {
                 <div className="absolute inset-0 bg-black/50" />
             </div>
 
-            <div className="max-w-md w-full space-y-8 p-8 bg-white/90 backdrop-blur-sm rounded-lg shadow-xl relative z-10">
+            <div className="max-w-md w-full space-y-8 p-6 sm:p-8 bg-white/90 backdrop-blur-sm rounded-lg shadow-xl relative z-10">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                         Create your account

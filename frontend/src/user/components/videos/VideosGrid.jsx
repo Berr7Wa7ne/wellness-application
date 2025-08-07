@@ -112,7 +112,7 @@ export const VideoGrid = () => {
 
   return (
   <section className="px-6 md:px-20 py-16" ref={gridRef}>
-      <div className="mb-8 animate-fade-in-up">
+      <div className="mb-4 md:mb-8 animate-fade-in-up">
         <h2 className="text-3xl font-bold text-gray-300 italic text-center mb-6">Categories</h2>
         <CategoryNavigation
           selectedCategory={selectedCategory}
