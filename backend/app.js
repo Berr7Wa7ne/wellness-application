@@ -101,8 +101,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 console.log('BACKEND_URL:', process.env.BACKEND_URL);
 
+console.log('Stripe key loaded:', process.env.STRIPE_SECRET_KEY ? 'Yes' : 'No');
+
 connectDB();
 
+app.use('/public', paymentRoutes);
 // Routes
 app.use('/auth', authRoutes);
 
@@ -114,7 +117,6 @@ app.use('/public', categoryRoutes);
 app.use('/public', tierRoutes);
 app.use('/public', cartRoutes);
 app.use('/public', profileRoutes);
-app.use('/public', paymentRoutes);
 
 // Admin routes
 app.use('/admin', videoAdminRoutes);

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useCart } from '../../../context/user/cart/CartContext';
+import { useAuth } from '../../../context/auth/AuthContext';
 import StripeCheckout from './StripeCheckout';
 import PaypalCheckout from './PaypalCheckout';
 
@@ -8,12 +10,67 @@ const PaymentForm = ({
   currency = 'USD',
   shippingInfo = { cost: 0, method: 'pickup' },
 }) => {
+  const { clearCart } = useCart();
+  const { user } = useAuth();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('creditCard');
   const fixedAmount = parseFloat(Number(amount).toFixed(2));
 
   const handlePaymentMethodChange = (event) => {
     setSelectedPaymentMethod(event.target.value);
   };
+
+  // Handle successful payment
+  const handlePaymentSuccess = async () => {
+    try {
+      // Only clear cart if user is logged in
+      if (user) {
+        await clearCart();
+      }
+      // Close the modal
+      onClose();
+      // Show success message
+      if (user) {
+        alert('Payment successful! Your order has been processed and your cart has been cleared.');
+      } else {
+        alert('Payment successful! Your order has been processed.');
+      }
+    } catch (error) {
+      console.error('Error clearing cart after payment:', error);
+      // Still close the modal even if cart clearing fails
+      onClose();
+      // Show a modified success message
+      if (error.response?.status === 401) {
+        alert('Payment successful! Your order has been processed. Please log in to manage your cart.');
+      } else {
+        alert('Payment successful! Your order has been processed.');
+      }
+    }
+  };
+
+  // Check if user is logged in
+  if (!user) {
+    return (
+      <div className="flex flex-col bg-white p-4 sm:p-6 rounded-lg">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center">
+          Authentication Required
+        </h2>
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">
+            Please log in to complete your purchase.
+          </p>
+          <button
+            onClick={() => {
+              onClose();
+              window.location.href = '/';
+            }}
+            className="bg-[#213721] text-white px-6 py-3 rounded hover:bg-green-800 transition-colors duration-300"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const formatCurrency = (amount, currencyCode) => {
     if (currencyCode === 'NGN') {
@@ -91,6 +148,7 @@ const PaymentForm = ({
               amount={fixedAmount}
               currency={currency}
               shippingInfo={shippingInfo}
+              onPaymentSuccess={handlePaymentSuccess}
             />
           </div>
         )}
@@ -130,6 +188,7 @@ const PaymentForm = ({
               amount={fixedAmount}
               currency={currency}
               shippingInfo={shippingInfo}
+              onPaymentSuccess={handlePaymentSuccess}
             />
           </div>
         )}

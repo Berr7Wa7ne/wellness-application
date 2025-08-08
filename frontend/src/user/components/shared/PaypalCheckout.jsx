@@ -5,7 +5,8 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 const PaypalCheckout = ({ 
   amount = 10.00, 
   currency = 'USD',
-  shippingInfo = { cost: 0, method: 'pickup' }
+  shippingInfo = { cost: 0, method: 'pickup' },
+  onPaymentSuccess
 }) => {
   // CRITICAL: Fix decimal precision issues that cause PayPal errors
   const fixedAmount = parseFloat(Number(amount).toFixed(2));
@@ -49,7 +50,13 @@ const PaypalCheckout = ({
         onApprove={(data, actions) => {
           return actions.order.capture().then((details) => {
             console.log('PayPal payment successful:', details);
-            alert(`Transaction completed by ${details.payer.name.given_name}!`);
+            
+            // Call the success callback instead of showing alert
+            if (onPaymentSuccess) {
+              onPaymentSuccess();
+            } else {
+              alert(`Transaction completed by ${details.payer.name.given_name}!`);
+            }
             
             // Here you can call your backend to save the transaction
             // Example:
